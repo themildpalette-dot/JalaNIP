@@ -2977,7 +2977,7 @@ function vAtur(){atInit();if(ATAB==='aman'||ATAB==='data')ATAB='profil';const A=
   <div class="atg"><aside class="apc"><div class="cv">${COVER()}</div>
     <div class="av" style="${S.avatar?`background-image:url(${S.avatar})`:''}">${S.avatar?'':esc(ini)}<label title="Ganti foto">${ic('cam',16,2)}<input type="file" accept="image/*" onchange="atAvatar(this.files[0])"></label></div>
     <div class="nm"><b>${esc(nm)}</b><span>${esc(S.email||'Email belum diisi')}</span><br><span class="bdg">${ic('users',16,2)}Peserta ${esc(S.tahun||'CPNS 2026')}</span>${S.avatar?`<br><button class="rm" onclick="S.avatar='';save();render()">Hapus foto</button>`:''}</div>
-    <nav class="amenu">${menu.map(([k,t,i])=>`<button class="${ATAB===k?'on':''}" onclick="ATAB='${k}';render()">${ic(i,21,2)}${t}</button>`).join('')}${window.JNIP_ACC?`<button onclick="JNIP_ACC.out()">${ic('logout',21,2)}Keluar akun</button>`:''}</nav>${window.JNIP_ACC?`<div class="small muted" style="padding:6px 14px 0">Masuk sebagai <b>${esc(JNIP_ACC.email)}</b>${JNIP_ACC.sampai?`<br>Akses aktif sampai ${esc(JNIP_ACC.sampai)}`:''}</div>`:''}</aside>
+    <nav class="amenu">${menu.map(([k,t,i])=>`<button class="${ATAB===k?'on':''}" onclick="ATAB='${k}';render()">${ic(i,21,2)}${t}</button>`).join('')}${window.JNIP_ACC?`<button onclick="JNIP_ACC.out()">${ic('logout',21,2)}Keluar akun</button>`:''}</nav>${window.JNIP_ACC?`<div class="small muted" style="padding:6px 14px 0">Masuk sebagai <b>${esc(JNIP_ACC.email)}</b>${JNIP_ACC.sampai?`<br>${JNIP_ACC.trial?'Trial':'Akses aktif'} sampai ${esc(JNIP_ACC.sampai)}`:''}</div>`:''}</aside>
    <div>${body}
     <div class="abar"><span class="dirty" id="atDirty" style="${dirty?'':'display:none'}">● Ada perubahan yang belum disimpan</span><button class="btn line" onclick="atCancel()">Batal</button><button class="bsave" onclick="atSave()">${ic('check',18,2.6)}Simpan Perubahan</button></div></div></div>`;
 }
@@ -3322,7 +3322,7 @@ window.__jnipStart=function(){applyTheme();render();initCloud();};
 <div id="jn-boot" style="position:fixed;inset:0;display:grid;place-items:center;font:600 15px 'Plus Jakarta Sans',system-ui,sans-serif;color:#1d4e7a;background:#f4f6fa">Memuat Jalan NIP Academy…</div>
 <script type="module">
 import { createJNIP, uname } from './jnip-auth.js';
-const JNIP_CONFIG = {supabaseUrl:'https://ksdykoybpunvvnfewxmc.supabase.co',supabaseAnonKey:'sb_publishable_g_DiYNQn7zwSAnyymtCzKQ_62a428YO',midtransClientKey:'SB-Mid-client-ISI_NANTI',adminUrl:'admin.html',midtransProduction:false,waAdmin:'',infoAktivasi:''};
+const JNIP_CONFIG = {supabaseUrl:'https://ksdykoybpunvvnfewxmc.supabase.co',supabaseAnonKey:'sb_publishable_g_DiYNQn7zwSAnyymtCzKQ_62a428YO',midtransClientKey:'SB-Mid-client-ISI_NANTI',adminUrl:'admin.html',midtransProduction:false,waAdmin:'081776377908',infoAktivasi:''};
 const jnip = createJNIP(JNIP_CONFIG);
 const bootEl = document.getElementById('jn-boot');
 const say = t => { if (bootEl) bootEl.textContent = t; };
@@ -3371,6 +3371,7 @@ window.JNIP = jnip;
 window.JNIP_ACC = {
   email: '@' + uname(user.email),
   sampai: profile && profile.akses_sampai ? new Date(profile.akses_sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '',
+  trial: !!(profile && profile.is_trial),
   out: () => { if (confirm('Keluar dari akun ini?')) jnip.signOut(); },
 };
 // cek masa akses tiap 5 menit; bila habis, kembali ke layar gerbang
@@ -3380,6 +3381,7 @@ setInterval(async () => {
 }, 300000);
 bootEl.remove();
 window.__jnipStart();
+if (window.JNIP_ACC.trial && typeof toast === 'function') setTimeout(() => toast('Kamu sedang dalam masa trial sampai ' + window.JNIP_ACC.sampai + '. Hubungi admin untuk akses penuh.'), 800);
 </script>
 </body>
 </html>
