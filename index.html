@@ -3374,6 +3374,89 @@ window.JNIP_ACC = {
   trial: !!(profile && profile.is_trial),
   out: () => { if (confirm('Keluar dari akun ini?')) jnip.signOut(); },
 };
+// --- pengumuman dari admin (tabel berita, hanya yang terbit) ---
+const fmtTgl = (d) => d ? new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+const escH = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+async function muatBerita(popup) {
+  try {
+    const { data, error } = await jnip.sb.from('berita').select('*').eq('status', 'terbit').order('created_at', { ascending: false }).limit(30);
+    if (error) return;
+    CLOUD.berita = (data || []).map((r) => ({ id: r.id, t: r.judul, b: r.ringkasan || '', d: fmtTgl(r.tanggal || r.created_at), src: r.sumber || 'Admin Jalan NIP', u: r.tautan || r.file_url || '', tag: r.label || r.jenis || 'Pengumuman', ts: Date.parse(r.created_at) || 0 }));
+    cloudChanged('berita');
+    annDraw();
+  } catch (e) {}
+}
+// --- kartu pengumuman mengambang (tetap ada di semua halaman; tombol X hanya mengecilkan) ---
+const annEl = document.createElement('div'); annEl.id = 'ann'; document.body.appendChild(annEl);
+const annCss = document.createElement('style');
+annCss.textContent = `#ann{position:fixed;z-index:70;left:calc(250px + 24px);right:24px;bottom:20px;display:flex;justify-content:center;pointer-events:none}
+#ann>*{pointer-events:auto}
+#ann .ac{width:100%;max-width:620px;background:var(--card,#fff);color:var(--ink,#0f1b2d);border:1px solid var(--line,#e3e8ef);border-left:5px solid #f2b705;border-radius:16px;box-shadow:0 14px 40px rgba(15,35,80,.18);padding:14px 14px 14px 16px;display:flex;gap:12px;align-items:flex-start;animation:annIn .3s ease}
+#ann .ai{flex:none;width:40px;height:40px;border-radius:12px;background:#fff6d6;color:#b07d00;display:grid;place-items:center}
+#ann .ab{flex:1;min-width:0}#ann .at{font-weight:800;font-size:15px;margin:2px 0 3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ann .ax{font-size:13.5px;color:var(--mut,#5f6b78);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-line}
+#ann .am{font-size:11.5px;font-weight:700;color:#b07d00;text-transform:uppercase;letter-spacing:.4px}
+#ann .ak{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}#ann .ak button,#ann .ak a{font:inherit;font-size:13px;font-weight:700;border-radius:9px;padding:6px 12px;cursor:pointer;text-decoration:none}
+#ann .k1{background:#0b3f91;color:#fff;border:0}#ann .k2{background:transparent;color:#0b3f91;border:1.5px solid #cfdcf0}
+#ann .ac .x{flex:none;background:none;border:0;color:var(--mut,#6b7686);font-size:20px;line-height:1;cursor:pointer;padding:2px 4px}
+#ann .pill2{margin-left:auto;display:flex;align-items:center;gap:8px;background:#0b3f91;color:#fff;border:0;border-radius:999px;padding:10px 16px 10px 12px;font:inherit;font-weight:700;font-size:14px;box-shadow:0 10px 26px rgba(11,63,145,.35);cursor:pointer}
+#ann .pill2 i{font-style:normal;background:#f2b705;color:#3a2a00;border-radius:999px;font-size:11.5px;padding:1px 7px}
+@keyframes annIn{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
+@media(max-width:900px){#ann{left:12px;right:12px;bottom:12px}}
+body.has-ann #toast{top:84px;bottom:auto}
+#trialbar{display:flex;align-items:center;gap:10px;justify-content:space-between;background:#eef4ff;border:1px solid #cfdcf6;color:#1e3f7a;border-radius:12px;padding:9px 10px 9px 14px;margin:0 0 14px;font-size:13.5px}
+#trialbar a{color:#0b3f91;font-weight:700;margin-left:4px}
+#trialbar button{flex:none;background:none;border:0;color:#5f6b78;font-size:20px;line-height:1;cursor:pointer;padding:0 4px}body.ann-min #toast{bottom:76px}`;
+document.head.appendChild(annCss);
+const MEGA = '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+function trialDraw() {
+  const old = document.getElementById('trialbar'); if (old) old.remove();
+  const acc = window.JNIP_ACC; if (!acc || !acc.trial) return;
+  const hariIni = new Date().toISOString().slice(0, 10);
+  if (S.trialTutup === hariIni) return;
+  const main = document.querySelector('#shell main'); if (!main) return;
+  const wa = JNIP_CONFIG.waAdmin ? 'https://wa.me/' + String(JNIP_CONFIG.waAdmin).replace(/\D/g, '').replace(/^0/, '62') + '?text=' + encodeURIComponent('Halo admin Jalan NIP Academy, saya ingin membuka akses penuh untuk akun dengan username: ' + acc.email.replace(/^@/, '')) : '';
+  const el = document.createElement('div'); el.id = 'trialbar';
+  el.innerHTML = `<span>Masa <b>trial</b> sampai <b>${escH(acc.sampai)}</b>.${wa ? ` <a href="${wa}" target="_blank" rel="noopener">Minta akses penuh</a>` : ' Hubungi admin untuk akses penuh.'}</span><button aria-label="Tutup" onclick="trialTutup()">×</button>`;
+  main.prepend(el);
+}
+window.trialTutup = () => { S.trialTutup = new Date().toISOString().slice(0, 10); save(); trialDraw(); };
+function annSibuk() { try { return !!(EX || LS || FS || SKQ); } catch (e) { return false; } }
+function annDraw() {
+  const top = CLOUD.berita[0];
+  const sibuk = annSibuk();
+  document.body.classList.remove('has-ann', 'ann-min');
+  if (!top || sibuk || S.nInfo === false) { annEl.innerHTML = ''; return; }
+  const baru = CLOUD.berita.filter((b) => b.id > (S.seenBerita || 0)).length;
+  if (S.annMin === top.id) {
+    document.body.classList.add('ann-min');
+    annEl.innerHTML = `<button class="pill2" onclick="annBuka()">${MEGA}Pengumuman${baru ? `<i>${baru} baru</i>` : ''}</button>`;
+    return;
+  }
+  document.body.classList.add('has-ann');
+  annEl.innerHTML = `<div class="ac" role="status"><div class="ai">${MEGA}</div><div class="ab"><div class="am">${escH(top.tag)} · ${escH(top.d)}</div><div class="at">${escH(top.t)}</div><div class="ax">${escH(top.b)}</div>
+    <div class="ak"><button class="k1" onclick="annDetail()">Selengkapnya</button>${/^https?:\/\//.test(top.u) ? `<a class="k2" href="${escH(top.u)}" target="_blank" rel="noopener">Buka lampiran</a>` : ''}</div></div>
+    <button class="x" aria-label="Kecilkan pengumuman" onclick="annKecil()">×</button></div>`;
+}
+window.annKecil = () => { const top = CLOUD.berita[0]; if (!top) return; S.annMin = top.id; S.seenBerita = Math.max(S.seenBerita || 0, top.id); save(); annDraw(); };
+window.annBuka = () => { S.annMin = 0; save(); annDraw(); };
+window.annDetail = () => {
+  const list = CLOUD.berita.slice(0, 5); const top = list[0]; if (!top) return;
+  S.seenBerita = Math.max(S.seenBerita || 0, top.id); save(); annDraw();
+  modal(`<h2 style="margin-top:0">Pengumuman</h2>${list.map((b, i) => `<div style="${i ? 'border-top:1px solid var(--line,#e3e8ef);padding-top:12px;margin-top:12px' : ''}"><span class="pill pri">${escH(b.tag)}</span>
+    <h3 style="margin:8px 0 4px">${escH(b.t)}</h3><p class="small muted" style="margin:0 0 6px">${escH(b.d)} · ${escH(b.src)}</p><p style="white-space:pre-line;margin:0">${escH(b.b)}</p>
+    ${/^https?:\/\//.test(b.u) ? `<a class="btn line" style="margin-top:8px;display:inline-flex" href="${escH(b.u)}" target="_blank" rel="noopener">Buka lampiran / tautan</a>` : ''}</div>`).join('')}
+    <button class="btn block" style="margin-top:14px" onclick="modal('')">Tutup</button>`, true);
+};
+// gambar ulang setiap kali halaman berganti (dan sembunyikan saat ujian berlangsung)
+const _render = window.render;
+window.render = function () { const r = _render.apply(this, arguments); annDraw(); trialDraw(); return r; };
+addEventListener('hashchange', () => setTimeout(() => { annDraw(); trialDraw(); }, 0));
+// saat ujian/latihan/flashcard berjalan, kartu disembunyikan (beberapa layar tidak lewat render())
+setInterval(() => { const b = annSibuk(); if (b && annEl.innerHTML) annDraw(); else if (!b && !annEl.innerHTML && CLOUD.berita.length) annDraw(); }, 800);
+setTimeout(() => muatBerita(true), 1200);
+setInterval(() => muatBerita(true), 120000);
+
 // cek masa akses tiap 5 menit; bila habis, kembali ke layar gerbang
 setInterval(async () => {
   try { const { data } = await jnip.sb.from('profiles').select('akses_sampai,is_admin').eq('id', user.id).maybeSingle();
@@ -3381,7 +3464,7 @@ setInterval(async () => {
 }, 300000);
 bootEl.remove();
 window.__jnipStart();
-if (window.JNIP_ACC.trial && typeof toast === 'function') setTimeout(() => toast('Kamu sedang dalam masa trial sampai ' + window.JNIP_ACC.sampai + '. Hubungi admin untuk akses penuh.'), 800);
+
 </script>
 </body>
 </html>
