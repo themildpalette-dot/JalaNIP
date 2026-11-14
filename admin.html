@@ -221,7 +221,9 @@ async function dash() {
   const { data: last } = await sb.from("payments").select("order_id,gross_amount,status,created_at,user_id").order("created_at", { ascending: false }).limit(8);
   const em = await emails((last || []).map((x) => x.user_id));
   const mx = Math.max(1, ...s.harian.map((d) => d.pendapatan));
+  const { count: tunggu } = await sb.from("profiles").select("id", { count: "exact", head: true }).is("akses_sampai", null).eq("is_admin", false);
   shell(`<h1>Dasbor</h1><p class="muted">Ringkasan Jalan NIP Academy.</p>
+  ${tunggu ? `<div class="card row" style="justify-content:space-between;border:1.5px solid #f2c94c;background:#fff8e1"><div><b>${tunggu} akun menunggu persetujuan</b><div class="small muted">Setujui setelah pembayaran diterima.</div></div><button class="btn" onclick="window.A.goTunggu()">Lihat & setujui</button></div>` : ""}
   <div class="stats">
    <div class="stat"><div class="ic">${ic("users")}</div><div><div class="k">Pengguna terdaftar</div><div class="v">${s.pengguna}</div><div class="s">+${s.pengguna_7hari} dalam 7 hari</div></div></div>
    <div class="stat"><div class="ic">${ic("check")}</div><div><div class="k">Akses aktif</div><div class="v">${s.akses_aktif}</div><div class="s">${s.pengguna ? Math.round(s.akses_aktif / s.pengguna * 100) : 0}% dari pengguna</div></div></div>
@@ -242,20 +244,26 @@ async function users() {
   let q = sb.from("profiles").select("*", { count: "exact" }).order("created_at", { ascending: false }).range(UP * 50, UP * 50 + 49);
   if (UQ) q = q.or(`email.ilike.%${UQ}%,nama.ilike.%${UQ}%,nick.ilike.%${UQ}%`);
   const now = new Date().toISOString();
-  if (UF === "aktif") q = q.gt("akses_sampai", now); if (UF === "belum") q = q.or(`akses_sampai.is.null,akses_sampai.lte.${now}`); if (UF === "admin") q = q.eq("is_admin", true);
+  if (UF === "aktif") q = q.gt("akses_sampai", now); if (UF === "belum") q = q.or(`akses_sampai.is.null,akses_sampai.lte.${now}`); if (UF === "admin") q = q.eq("is_admin", true); if (UF === "menunggu") q = q.is("akses_sampai", null).eq("is_admin", false);
   const { data, count, error } = await q; if (error) throw error;
   shell(`<h1>Pengguna</h1><p class="muted">${count ?? 0} pengguna. Atur masa akses atau status admin.</p>
   <div class="card row"><input id="uq" class="grow" placeholder="Cari username, nama, atau nama tampilan…" value="${h(UQ)}" style="flex:1;min-width:200px">
-   <select id="uf" style="width:auto">${[["all", "Semua"], ["aktif", "Akses aktif"], ["belum", "Belum/akses habis"], ["admin", "Admin"]].map(([k, t]) => `<option value="${k}" ${UF === k ? "selected" : ""}>${t}</option>`).join("")}</select>
+   <select id="uf" style="width:auto">${[["all", "Semua"], ["menunggu", "Menunggu persetujuan"], ["aktif", "Akses aktif"], ["belum", "Belum/akses habis"], ["admin", "Admin"]].map(([k, t]) => `<option value="${k}" ${UF === k ? "selected" : ""}>${t}</option>`).join("")}</select>
    <button class="btn" onclick="window.A.uSearch()">Cari</button></div>
   <div class="card tw" style="padding:4px"><table><tr><th>Pengguna</th><th>Daftar</th><th>Akses sampai</th><th>Peran</th><th>Aksi</th></tr>
   ${(data || []).map((u) => { const on = u.akses_sampai && new Date(u.akses_sampai) > new Date(); return `<tr><td><b>${h(u.nama || u.nick || "—")}</b><div class="small muted">@${h(UN(u.email))}</div></td><td class="small">${tgl(u.created_at)}</td>
-   <td><span class="pill ${on ? "ok" : "bad"}">${on ? "Aktif" : "Tidak aktif"}</span><div class="small muted">${tgl(u.akses_sampai)}</div></td><td>${u.is_admin ? '<span class="pill pri">Admin</span>' : '<span class="small muted">Pengguna</span>'}</td>
-   <td class="row" style="gap:4px"><button class="btn sm line" onclick="window.A.uAkses('${u.id}',30)">+30 hari</button><button class="btn sm line" onclick="window.A.uAkses('${u.id}',180)">+180 hari</button><button class="btn sm line" onclick="window.A.uTgl('${u.id}','${u.akses_sampai || ""}')">Atur tanggal</button>${on ? `<button class="btn sm danger" onclick="window.A.uCabut('${u.id}')">Cabut</button>` : ""}<button class="btn sm line" onclick="window.A.uSandi('${u.id}','${h(UN(u.email))}')">Reset sandi</button><button class="btn sm line" onclick="window.A.uAdmin('${u.id}',${!u.is_admin})">${u.is_admin ? "Cabut admin" : "Jadikan admin"}</button></td></tr>`; }).join("") || `<tr><td colspan="5" class="muted">Tidak ada pengguna.</td></tr>`}</table></div>
+   <td><span class="pill ${on ? "ok" : u.akses_sampai || u.is_admin ? "bad" : "warn"}">${on ? "Aktif" : u.akses_sampai ? "Habis" : u.is_admin ? "—" : "Menunggu"}</span><div class="small muted">${tgl(u.akses_sampai)}</div></td><td>${u.is_admin ? '<span class="pill pri">Admin</span>' : '<span class="small muted">Pengguna</span>'}</td>
+   <td class="row" style="gap:4px">${!on && !u.is_admin ? `<button class="btn sm" onclick="window.A.uSetujui('${u.id}')">${u.akses_sampai ? "Perpanjang" : "Setujui"}</button>` : ""}<button class="btn sm line" onclick="window.A.uAkses('${u.id}',30)">+30 hari</button><button class="btn sm line" onclick="window.A.uAkses('${u.id}',180)">+180 hari</button><button class="btn sm line" onclick="window.A.uTgl('${u.id}','${u.akses_sampai || ""}')">Atur tanggal</button>${on ? `<button class="btn sm danger" onclick="window.A.uCabut('${u.id}')">Cabut</button>` : ""}<button class="btn sm line" onclick="window.A.uSandi('${u.id}','${h(UN(u.email))}')">Reset sandi</button><button class="btn sm line" onclick="window.A.uAdmin('${u.id}',${!u.is_admin})">${u.is_admin ? "Cabut admin" : "Jadikan admin"}</button></td></tr>`; }).join("") || `<tr><td colspan="5" class="muted">Tidak ada pengguna.</td></tr>`}</table></div>
   <div class="row"><button class="btn line" ${UP ? "" : "disabled"} onclick="window.A.uPage(-1)">‹ Sebelumnya</button><span class="small muted">Halaman ${UP + 1}</span><button class="btn line" ${(UP + 1) * 50 < (count || 0) ? "" : "disabled"} onclick="window.A.uPage(1)">Berikutnya ›</button></div>`);
   $("#uq").onkeydown = (e) => { if (e.key === "Enter") A.uSearch(); };
 }
 A.uSearch = () => { UQ = $("#uq").value.trim().replace(/[,()%]/g, ""); UF = $("#uf").value; UP = 0; route(); };
+A.uSetujui = async (id) => {
+  const { data: pk } = await sb.from("paket").select("durasi_hari").eq("aktif", true).order("urutan").limit(1);
+  const hari = pk?.[0]?.durasi_hari || 180;
+  if (!confirm(`Setujui akun ini dan buka akses selama ${hari} hari?`)) return;
+  await A.uAkses(id, hari);
+};
 A.uSandi = async (id, un) => {
   const pw = prompt(`Kata sandi baru untuk @${un} (minimal 8 karakter):`);
   if (pw === null) return;
@@ -263,6 +271,7 @@ A.uSandi = async (id, un) => {
   const { error } = await sb.rpc("admin_reset_password", { p_user: id, p_pass: pw });
   flash(error ? "Gagal: " + error.message : `Kata sandi @${un} sudah diganti. Sampaikan ke pengguna lewat WhatsApp.`, !error);
 };
+A.goTunggu = () => { UF = "menunggu"; UQ = ""; UP = 0; location.hash === "#users" ? route() : (location.hash = "users"); };
 A.uPage = (d) => { UP = Math.max(0, UP + d); route(); };
 A.uAkses = async (id, hari) => {
   const { data: u } = await sb.from("profiles").select("akses_sampai").eq("id", id).single();

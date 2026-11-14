@@ -3322,7 +3322,7 @@ window.__jnipStart=function(){applyTheme();render();initCloud();};
 <div id="jn-boot" style="position:fixed;inset:0;display:grid;place-items:center;font:600 15px 'Plus Jakarta Sans',system-ui,sans-serif;color:#1d4e7a;background:#f4f6fa">Memuat Jalan NIP Academy…</div>
 <script type="module">
 import { createJNIP, uname } from './jnip-auth.js';
-const JNIP_CONFIG = {supabaseUrl:'https://ksdykoybpunvvnfewxmc.supabase.co',supabaseAnonKey:'sb_publishable_g_DiYNQn7zwSAnyymtCzKQ_62a428YO',midtransClientKey:'SB-Mid-client-ISI_NANTI',adminUrl:'admin.html',midtransProduction:false};
+const JNIP_CONFIG = {supabaseUrl:'https://ksdykoybpunvvnfewxmc.supabase.co',supabaseAnonKey:'sb_publishable_g_DiYNQn7zwSAnyymtCzKQ_62a428YO',midtransClientKey:'SB-Mid-client-ISI_NANTI',adminUrl:'admin.html',midtransProduction:false,waAdmin:'',infoAktivasi:''};
 const jnip = createJNIP(JNIP_CONFIG);
 const bootEl = document.getElementById('jn-boot');
 const say = t => { if (bootEl) bootEl.textContent = t; };
@@ -3373,6 +3373,11 @@ window.JNIP_ACC = {
   sampai: profile && profile.akses_sampai ? new Date(profile.akses_sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '',
   out: () => { if (confirm('Keluar dari akun ini?')) jnip.signOut(); },
 };
+// cek masa akses tiap 5 menit; bila habis, kembali ke layar gerbang
+setInterval(async () => {
+  try { const { data } = await jnip.sb.from('profiles').select('akses_sampai,is_admin').eq('id', user.id).maybeSingle();
+    if (data && !data.is_admin && !(data.akses_sampai && new Date(data.akses_sampai) > new Date())) location.reload(); } catch (e) {}
+}, 300000);
 bootEl.remove();
 window.__jnipStart();
 </script>

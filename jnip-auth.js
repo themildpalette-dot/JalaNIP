@@ -55,6 +55,8 @@ export function createJNIP(cfg) {
     eye: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
     eyeoff: '<path d="M3 3l18 18"/><path d="M10.6 5.1A10.7 10.7 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.5 7 10 7c1.9 0 3.6-.6 5-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    chat: '<path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4.6A8 8 0 1 1 21 12z"/>',
   };
   const ico = (k) => `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[k]}</svg>`;
 
@@ -94,7 +96,7 @@ export function createJNIP(cfg) {
       #jnip-gate .msg{font-size:13.5px;margin-top:14px;padding:10px 12px;border-radius:10px;background:#eef4ff;color:#1e3f7a;line-height:1.45}
       #jnip-gate .err{background:#fdecec;color:#9a1f1f}
       #jnip-gate button.alt{width:100%;border:0;border-radius:12px;padding:13px;font:inherit;font-weight:700;background:#eef3fb;color:#0b3f91;margin-top:10px;cursor:pointer}
-      #jnip-gate .pk{border:1.5px solid #e3e8ef;border-radius:14px;padding:14px;margin-top:10px;cursor:pointer}#jnip-gate .pk.on{border-color:#1f63e0;background:#eef4ff}
+      #jnip-gate a.go{text-decoration:none;box-sizing:border-box}#jnip-gate .pend{width:64px;height:64px;border-radius:18px;background:#eef4ff;color:#1f55c8;display:grid;place-items:center;margin-bottom:14px}#jnip-gate .pend svg{width:32px;height:32px}#jnip-gate .pk{border:1.5px solid #e3e8ef;border-radius:14px;padding:14px;margin-top:10px;cursor:pointer}#jnip-gate .pk.on{border-color:#1f63e0;background:#eef4ff}
       #jnip-gate .pk b{display:block}#jnip-gate .pk .hr{font-size:20px;font-weight:800;color:#0b3f91}
     </style>${SCENE}<div class="bx" id="jnip-bx"></div>`;
     document.body.appendChild(root);
@@ -153,29 +155,28 @@ export function createJNIP(cfg) {
     box().querySelectorAll("input").forEach((el) => el.onkeydown = (e) => { if (e.key === "Enter") go(); });
   }
 
-  async function showPaywall(resolve, user) {
-    const { data: paket } = await sb.from("paket").select("*").eq("aktif", true).order("urutan");
-    let sel = paket?.[0]?.id;
-    box().innerHTML = `${brand}<h1>Aktifkan akses</h1><p>Akun <b>${h(uname(user.email))}</b> belum memiliki akses aktif. Pilih paket lalu bayar dengan QRIS, transfer bank (VA), atau e-wallet.</p>
-      <div id="jn-pk">${(paket || []).map((p) => `<div class="pk ${p.id === sel ? "on" : ""}" data-id="${h(p.id)}"><b>${h(p.nama)}</b><span class="hr">${rupiah(p.harga)}</span><br><small>Berlaku ${p.durasi_hari} hari</small></div>`).join("")}</div>
-      <label>Kode voucher (opsional)</label><input id="jn-v" style="text-transform:uppercase">
-      <button class="go" id="jn-pay">Bayar sekarang ${ico("arrow")}</button><button class="alt" id="jn-out">Keluar dari akun</button><div id="jn-msg"></div>`;
+  // Akun baru menunggu persetujuan admin (pembayaran diurus di luar aplikasi)
+  let pollT = null;
+  async function showPending(resolve, user, profile) {
+    const habis = profile && profile.akses_sampai && new Date(profile.akses_sampai) <= new Date();
+    const un = uname(user.email);
+    const wa = String(cfg.waAdmin || "").replace(/\D/g, "").replace(/^0/, "62");
+    const teks = encodeURIComponent(`Halo admin Jalan NIP Academy, saya ingin ${habis ? "memperpanjang" : "mengaktifkan"} akun dengan username: ${un}`);
+    box().innerHTML = `${brand}<div class="pend">${ico("clock")}</div><h1>${habis ? "Masa akses habis" : "Menunggu persetujuan"}</h1>
+      <p>Akun <b>@${h(un)}</b> ${habis ? "sudah melewati masa aktifnya. Hubungi admin untuk memperpanjang akses." : "sudah terdaftar dan sedang menunggu persetujuan admin. Begitu admin menyetujui, halaman ini otomatis terbuka."}</p>
+      ${cfg.infoAktivasi ? `<div class="msg">${h(cfg.infoAktivasi)}</div>` : ""}
+      ${wa ? `<a class="go" href="https://wa.me/${wa}?text=${teks}" target="_blank" rel="noopener">${ico("chat")} Hubungi admin via WhatsApp</a>` : ""}
+      <button class="${wa ? "alt" : "go"}" id="jn-cek">Cek status sekarang</button>
+      <button class="alt" id="jn-out">Keluar dari akun</button><div id="jn-msg"></div>`;
     const msg = (t, err) => { box().querySelector("#jn-msg").innerHTML = `<div class="msg ${err ? "err" : ""}">${h(t)}</div>`; };
-    box().querySelectorAll(".pk").forEach((el) => el.onclick = () => { sel = el.dataset.id; box().querySelectorAll(".pk").forEach((x) => x.classList.toggle("on", x === el)); });
-    box().querySelector("#jn-out").onclick = async () => { await sb.auth.signOut(); showAuth("masuk", resolve); };
-    box().querySelector("#jn-pay").onclick = async (e) => {
-      const btn = e.currentTarget; btn.disabled = true; msg("Menyiapkan pembayaran…");
-      const { data, error } = await sb.functions.invoke("create-payment", { body: { paket_id: sel, voucher: box().querySelector("#jn-v").value } });
-      if (error || data?.error) { msg(data?.error || "Gagal membuat transaksi. Coba lagi.", true); btn.disabled = false; return; }
-      if (data.free) return afterLogin(resolve);
-      await loadSnap();
-      window.snap.pay(data.token, {
-        onSuccess: () => waitActive(resolve, msg),
-        onPending: () => { msg("Menunggu pembayaran. Halaman ini otomatis terbuka begitu pembayaran diterima."); waitActive(resolve, msg, 600); },
-        onError: () => { msg("Pembayaran gagal. Coba lagi.", true); btn.disabled = false; },
-        onClose: () => { btn.disabled = false; },
-      });
+    const cek = async (manual) => {
+      const { profile: p } = await getProfile();
+      if (isActive(p)) { clearInterval(pollT); unmount(); resolve({ user, profile: p }); return; }
+      if (manual) msg("Akunmu belum disetujui. Halaman ini akan terbuka otomatis setelah admin menyetujui.");
     };
+    clearInterval(pollT); pollT = setInterval(() => cek(false), 20000);
+    box().querySelector("#jn-cek").onclick = () => cek(true);
+    box().querySelector("#jn-out").onclick = async () => { clearInterval(pollT); await sb.auth.signOut(); showAuth("masuk", resolve); };
   }
 
   function loadSnap() {
@@ -205,7 +206,7 @@ export function createJNIP(cfg) {
     // akun admin hanya melihat konsol admin
     if (profile?.is_admin && cfg.adminUrl !== false) { location.href = cfg.adminUrl || "admin.html"; return; }
     if (isActive(profile)) { unmount(); resolve({ user, profile }); return; }
-    showPaywall(resolve, user);
+    showPending(resolve, user, profile);
   }
 
   return {
