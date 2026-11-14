@@ -257,6 +257,7 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .apc .av{width:96px;height:96px;border-radius:50%;margin:-52px auto 0;position:relative;border:5px solid var(--card);background:var(--navy);color:#fff;display:grid;place-items:center;font-size:38px;font-weight:800;background-size:cover;background-position:center}
 .apc .av label{position:absolute;right:-4px;bottom:-2px;width:32px;height:32px;border-radius:50%;background:var(--card);color:var(--navy);display:grid;place-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.18)}.apc .av input{display:none}
 .apc .nm{text-align:center;padding:10px 16px 16px}.apc .nm b{display:block;font-size:19px}.apc .nm span{font-size:13.5px;color:var(--muted)}
+.apc .accl{display:inline-flex;flex-direction:column;gap:5px;margin:8px 0 10px;text-align:left}.apc .accl div{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--muted)}.apc .accl svg{flex:none;color:var(--pri,#1d4e7a)}.apc .accl span{color:var(--muted)}
 .apc .bdg{display:inline-flex;align-items:center;gap:7px;margin-top:10px;background:#e9f0fb;color:var(--navy);font-weight:700;font-size:13.5px;border-radius:999px;padding:6px 14px}[data-theme=dark] .apc .bdg{background:#1c2f4d;color:#cfe2ff}
 .apc .rm{font-size:12px;color:var(--muted);background:none;border:0;text-decoration:underline;margin-top:6px}
 .amenu{border-top:1px solid var(--line);padding:10px}.amenu button{display:flex;align-items:center;gap:14px;width:100%;border:0;background:none;color:var(--ink);font-size:15px;font-weight:500;text-align:left;border-radius:12px;padding:12px 14px}
@@ -1582,7 +1583,7 @@ function vAkbar(){
   const res=ok?arenaResults():[];const nas=aggRank(res,1);const ws=weekStart();const wk=aggRank(res.filter(r=>r.start>=ws&&r.start<ws+7*864e5),1);
   const hist=myArenaHistory();const best=hist.reduce((m,x)=>Math.max(m,x.r.total||0),0);const bestRank=hist.reduce((m,x)=>x.rank&&(!m||x.rank<m)?x.rank:m,0);const poin=hist.reduce((a,x)=>a+(+x.r.total||0),0);
   const tabs=[['live','Event','trophy'],['nasional','Ranking Nasional','bars'],['mingguan','Ranking Mingguan','cal'],['hadiah','Hadiah & Pencapaian','gift'],['riwayat','Riwayat Kompetisi','clock']];
-  const needDb=`<div class="card"><p style="margin:0 0 6px">Bagian ini memakai data bersama Arena yang hanya bisa dimuat saat kamu masuk ke akun claude.ai.</p><p class="small muted" style="margin:0">${CLOUD.slow?'Data belum bisa dimuat.':'Memuat…'}</p></div>`;
+  const needDb=`<div class="card"><p style="margin:0 0 6px">Data Arena sedang dimuat dari server.</p><p class="small muted" style="margin:0">${CLOUD.slow?'Data belum bisa dimuat. Periksa koneksi lalu muat ulang halaman.':'Memuat…'}</p></div>`;
   let body='';
   if(ARV.startsWith('ev:')){const e=evById(ARV.slice(3));const b=e?evBoard(e.id).map(x=>({...x,uid:x.id})):[];
     body=e?`<button class="lnk" style="margin-bottom:8px" onclick="ARV='live';render()">${ic('left',16,2.2)} Kembali ke event</button><div class="arsec"><h2>${esc(e.title)}</h2></div>${rankTable(b,'Belum ada peserta.')}`:'';}
@@ -1602,12 +1603,12 @@ function vAkbar(){
   const nextPrize=(live.concat(soon).find(e=>e.prize)||{}).prize;
   const side=`<aside class="arside">
    <div class="card2"><div class="row" style="gap:14px;align-items:center;flex-wrap:nowrap">${ART_LAUREL}<div><h3>Peringkat Nasional</h3><div class="sub">Top 3 peserta terbaik (semua event)</div></div></div>
-    <div style="margin:10px 0 14px">${nas.slice(0,3).map((x,i)=>`<div class="tp"><span class="n r${i+1}">${i+1}</span>${avatar(x.name)}<b>${esc(x.name)}</b><span class="pt">${fmtN(x.poin)} poin</span></div>`).join('')||`<p class="small muted" style="margin:12px 0">${ok?'Belum ada skor Arena. Jadilah yang pertama!':'Masuk ke akun claude.ai untuk melihat peringkat.'}</p>`}
+    <div style="margin:10px 0 14px">${nas.slice(0,3).map((x,i)=>`<div class="tp"><span class="n r${i+1}">${i+1}</span>${avatar(x.name)}<b>${esc(x.name)}</b><span class="pt">${fmtN(x.poin)} poin</span></div>`).join('')||`<p class="small muted" style="margin:12px 0">${ok?'Belum ada skor Arena. Jadilah yang pertama!':'Peringkat sedang dimuat.'}</p>`}
     ${me>2?`<div class="tp me"><span class="n rx">${me+1}</span>${avatar(nas[me].name)}<b>Kamu</b><span class="pt">${fmtN(nas[me].poin)} poin</span></div>`:''}</div>
     <button class="bsoft" onclick="ARV='nasional';render()">Lihat Peringkat Lengkap ${ic('arrow',17,2.2)}</button>
     <div class="small muted" style="margin-top:12px;text-align:center">Nama di papan: <b style="color:var(--ink)">${S.nick?esc(S.nick):'belum diisi'}</b> · <button class="lnk" style="font-size:13px;padding:0" onclick="nickModal()">${S.nick?'Ubah':'Isi nama'}</button></div></div>
    <div class="card2" style="position:relative;overflow:hidden">${ART_GIFT}<div class="row" style="gap:12px;align-items:flex-start;flex-wrap:nowrap;max-width:calc(100% - 96px)"><span style="color:#1e6fd9;flex:none;margin-top:2px">${ic('gift',30,1.9)}</span><div><h3>Hadiah & Pencapaian</h3><div class="sub">Raih peringkat terbaik dan dapatkan hadiah menarik!</div></div></div>
-    <div class="hlist" style="margin:14px 0 16px">${nextPrize?`<div><i>${ic('check',14,3)}</i>${esc(nextPrize)}</div>`:''}<div><i>${ic('check',14,3)}</i>Lencana khusus Arena di profil</div><div><i>${ic('check',14,3)}</i>Nama tampil di papan peringkat</div><div><i>${ic('check',14,3)}</i>Hadiah menarik (setiap periode)</div></div>
+    <div class="hlist" style="margin:14px 0 16px">${nextPrize?`<div><i>${ic('check',14,3)}</i>${esc(nextPrize)}</div>`:''}<div><i>${ic('check',14,3)}</i>Lencana khusus Arena di profil</div><div><i>${ic('check',14,3)}</i>Nama tampil di papan peringkat</div></div>
     <button class="bsoft" onclick="ARV='hadiah';render()">Lihat Detail Hadiah ${ic('arrow',17,2.2)}</button></div>
    ${CLOUD.admin?`<div class="adm-c">${ART_CAL}<h3>Buat Kompetisi Sendiri</h3><p class="small muted" style="margin:8px 0 14px;max-width:190px">Atur jadwal, soal, dan hadiah event Arena.</p><a class="bblue" style="text-decoration:none;padding:11px 20px" href="#admin">${ic('zap',17,2)}Buat Event</a></div>`:''}
   </aside>`;
@@ -2952,7 +2953,6 @@ function vAtur(){atInit();if(ATAB==='aman'||ATAB==='data')ATAB='profil';const A=
   if(ATAB==='profil')body=`<div class="asec"><h2>Profil</h2><div class="sub">Informasi dasar akunmu di JalanNIP Academy.</div>
    <div class="afg"><div><label class="l">Nama lengkap</label>${inp('fullName','Nama sesuai KTP','user','text','maxlength="60"')}</div>
     <div><label class="l">Nama tampilan (Arena)</label>${inp('nick','mis. Pejuang NIP 2026','trophy','text','maxlength="24"')}<div class="ahint">Muncul di papan peringkat. Jangan pakai data pribadi.</div></div>
-    <div><label class="l">Email</label>${inp('email','nama@email.com','mail','email','maxlength="80"')}<div class="ahint">Disimpan di perangkat ini. Di versi berbayar, email dipakai untuk masuk.</div></div>
     <div><label class="l">Nomor HP</label>${inp('hp','08xx xxxx xxxx','phone','tel','maxlength="16"')}</div>
     <div><label class="l">Tahun seleksi</label>${sel('tahun',['CPNS 2026','PPPK 2026'],'cal')}</div>
     <div><label class="l">Jenjang pendidikan terakhir</label>${sel('jenjang',[['','Pilih jenjang'],'SMA/SMK','D3','D4/S1','S2','Profesi'],'cap')}</div>
@@ -2977,8 +2977,8 @@ function vAtur(){atInit();if(ATAB==='aman'||ATAB==='data')ATAB='profil';const A=
   return `<section class="ath"><div class="tx"><h1>Pengaturan Akun</h1><p>Kelola profil, target belajar, dan preferensi untuk pengalaman belajar yang lebih personal.</p></div>${ART_SET}</section>
   <div class="atg"><aside class="apc"><div class="cv">${COVER()}</div>
     <div class="av" style="${S.avatar?`background-image:url(${S.avatar})`:''}">${S.avatar?'':esc(ini)}<label title="Ganti foto">${ic('cam',16,2)}<input type="file" accept="image/*" onchange="atAvatar(this.files[0])"></label></div>
-    <div class="nm"><b>${esc(nm)}</b><span>${esc(S.email||'Email belum diisi')}</span><br><span class="bdg">${ic('users',16,2)}Peserta ${esc(S.tahun||'CPNS 2026')}</span>${S.avatar?`<br><button class="rm" onclick="S.avatar='';save();render()">Hapus foto</button>`:''}</div>
-    <nav class="amenu">${menu.map(([k,t,i])=>`<button class="${ATAB===k?'on':''}" onclick="ATAB='${k}';render()">${ic(i,21,2)}${t}</button>`).join('')}${window.JNIP_ACC&&JNIP_ACC.admin?`<button onclick="location.href='admin.html'">${ic('shield',21,2)}Konsol Admin</button>`:''}${window.JNIP_ACC?`<button onclick="JNIP_ACC.out()">${ic('logout',21,2)}Keluar akun</button>`:''}</nav>${window.JNIP_ACC?`<div class="small muted" style="padding:6px 14px 0">Masuk sebagai <b>${esc(JNIP_ACC.email)}</b>${JNIP_ACC.sampai?`<br>${JNIP_ACC.trial?'Trial':'Akses aktif'} sampai ${esc(JNIP_ACC.sampai)}`:''}</div>`:''}</aside>
+    <div class="nm"><b>${esc(nm)}</b>${window.JNIP_ACC?`<div class="accl"><div>${ic('user',15,2)}<span>${esc(JNIP_ACC.email)}</span></div><div>${ic(JNIP_ACC.admin?'shield':JNIP_ACC.selamanya?'check':'clock',15,2)}<span>${JNIP_ACC.admin?'Admin':JNIP_ACC.selamanya?'Akses penuh selamanya':JNIP_ACC.sampai?`${JNIP_ACC.trial?'Trial':'Akses aktif'} sampai ${esc(JNIP_ACC.sampai)}`:'Akses aktif'}</span></div></div>`:''}<span class="bdg">${ic('users',16,2)}Peserta ${esc(S.tahun||'CPNS 2026')}</span>${S.avatar?`<br><button class="rm" onclick="S.avatar='';save();render()">Hapus foto</button>`:''}</div>
+    <nav class="amenu">${menu.map(([k,t,i])=>`<button class="${ATAB===k?'on':''}" onclick="ATAB='${k}';render()">${ic(i,21,2)}${t}</button>`).join('')}${window.JNIP_ACC&&JNIP_ACC.admin?`<button onclick="location.href='admin.html'">${ic('shield',21,2)}Konsol Admin</button>`:''}${window.JNIP_ACC?`<button onclick="JNIP_ACC.out()">${ic('logout',21,2)}Keluar akun</button>`:''}</nav></aside>
    <div>${body}
     <div class="abar"><span class="dirty" id="atDirty" style="${dirty?'':'display:none'}">● Ada perubahan yang belum disimpan</span><button class="btn line" onclick="atCancel()">Batal</button><button class="bsave" onclick="atSave()">${ic('check',18,2.6)}Simpan Perubahan</button></div></div></div>`;
 }
@@ -3349,6 +3349,8 @@ for (const r of rows) {
   if (validQ(q)) Q.push(q);
 }
 
+// --- data lokal milik akun lain di perangkat yang sama? mulai bersih ---
+if (S._uid !== user.id) { for (const k of Object.keys(S)) delete S[k]; Object.assign(S, JSON.parse(JSON.stringify(DEF))); }
 // --- progres: ambil dari akun bila ada ---
 try {
   const remote = await jnip.loadProgress();
@@ -3359,6 +3361,7 @@ try {
     try { localStorage.setItem('jalannip_v1', JSON.stringify(S)); } catch (e) {}
   }
 } catch (e) { console.warn('progress', e); }
+S._uid = user.id;
 if (!S.email && !/@jalannip\.app$/.test(user.email)) S.email = user.email;
 if (!S.nick) S.nick = uname(user.email);
 
@@ -3371,7 +3374,8 @@ addEventListener('pagehide', () => { if (syncT) { clearTimeout(syncT); jnip.save
 window.JNIP = jnip;
 window.JNIP_ACC = {
   email: '@' + uname(user.email),
-  sampai: profile && profile.akses_sampai ? new Date(profile.akses_sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '',
+  selamanya: !!(profile && profile.akses_sampai && new Date(profile.akses_sampai).getFullYear() >= 2099),
+  sampai: profile && profile.akses_sampai && new Date(profile.akses_sampai).getFullYear() < 2099 ? new Date(profile.akses_sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '',
   trial: !!(profile && profile.is_trial && !profile.is_admin),
   admin: !!(profile && profile.is_admin),
   out: () => { if (confirm('Keluar dari akun ini?')) jnip.signOut(); },
@@ -3464,6 +3468,49 @@ setInterval(async () => {
   try { const { data } = await jnip.sb.from('profiles').select('akses_sampai,is_admin').eq('id', user.id).maybeSingle();
     if (data && !data.is_admin && !(data.akses_sampai && new Date(data.akses_sampai) > new Date())) location.reload(); } catch (e) {}
 }, 300000);
+// --- pengganti layanan artifact (unduhan, data Arena) untuk versi hosting ---
+const sidIdx = new Map(Q.map((q, i) => [q.sid, i]));
+const snapOf = (rows) => ({ metadata: { fromCache: false }, docs: rows.map((o) => ({ id: o.id, exists: true, data: () => o })) });
+const arenaSubs = { akbar: [], scores: [] };
+async function muatArena() {
+  try {
+    const [{ data: ev }, { data: sc }] = await Promise.all([
+      jnip.sb.from('arena_events').select('*').order('mulai'),
+      jnip.sb.from('arena_scores').select('*'),
+    ]);
+    const akbar = (ev || []).map((e) => ({ id: e.id, title: e.judul, start: Date.parse(e.mulai), win: e.akses_jam || 3, prize: e.hadiah || '', created: Date.parse(e.created_at) || 0,
+      qs: (e.soal_ids || []).map((sid) => sidIdx.get(Number(sid))).filter((i) => i != null) }));
+    const by = {};
+    for (const r of sc || []) {
+      const u = by[r.user_id] || (by[r.user_id] = { id: r.user_id, name: r.nama, ev: {} });
+      u.name = r.nama; u.ev[r.event_id] = { total: r.total, twk: r.twk, tiu: r.tiu, tkp: r.tkp, pass: r.lulus_pg, at: Date.parse(r.created_at) || 0 };
+    }
+    arenaSubs.akbar.forEach((cb) => cb(snapOf(akbar)));
+    arenaSubs.scores.forEach((cb) => cb(snapOf(Object.values(by))));
+  } catch (e) { console.warn('arena', e); }
+}
+window.claude = {
+  async use(cap) {
+    if (cap === 'downloads') return { async save({ filename, data }) { const u = URL.createObjectURL(data); const a = document.createElement('a'); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000); } };
+    if (cap === 'user') return { id: async () => user.id, canEdit: async () => false, isOwner: async () => false };
+    if (cap === 'db') return {
+      collection: (name) => ({ onSnapshot(cb) { if (arenaSubs[name]) { arenaSubs[name].push(cb); } return () => {}; } }),
+      doc: () => ({ get: async () => ({ exists: false, data: () => ({}) }), set: async () => {} }),
+    };
+    return null;
+  },
+};
+setTimeout(muatArena, 300);
+setInterval(muatArena, 60000);
+// kirim skor Arena ke tabel arena_scores (satu kali per event)
+window.submitAkbar = async function (eid, res) {
+  S.akbar = S.akbar || {}; S.akbar[eid] = res; save();
+  const { error } = await jnip.sb.from('arena_scores').insert({ event_id: eid, user_id: user.id, nama: (S.nick || uname(user.email) || 'Peserta').slice(0, 24),
+    twk: res.twk | 0, tiu: res.tiu | 0, tkp: res.tkp | 0, total: res.total | 0, lulus_pg: !!res.pass });
+  muatArena();
+  if (!error) return 'ok';
+  return error.code === '23505' ? 'dup' : (error.code || 'err');
+};
 bootEl.remove();
 window.__jnipStart();
 
