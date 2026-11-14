@@ -322,7 +322,8 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 /* ===== Beranda (navy + emas) ===== */
 :root{--navy:#0f2e5c;--navy2:#1a4580;--goldA:#f5b72a;--goldB:#e09b12}
 .hm{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:22px;align-items:start}.hm>*{min-width:0}
-.hmtop{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:18px;align-items:end;margin-bottom:20px}
+.hmtop{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;align-items:end;margin-bottom:20px}
+@media(min-width:901px){.hsc{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);column-gap:32px;align-items:center;grid-template-areas:'sc mini' 'bst mini' 'pr acts'}.hsc .sc{grid-area:sc}.hsc .bst{grid-area:bst}.hsc .pr{grid-area:pr}.hsc .mini{grid-area:mini;align-self:end}.hsc .acts{grid-area:acts;margin-top:0}}
 .hmhi h1{font-size:32px;margin:0;letter-spacing:-.02em;color:var(--navy)}[data-theme=dark] .hmhi h1{color:#fff}.hmhi p{margin:4px 0 14px;color:var(--muted);font-size:15.5px}
 .hsc{background:linear-gradient(140deg,#123a72,#0c2650);color:#fff;border-radius:22px;padding:22px;box-shadow:0 14px 32px rgba(12,38,80,.28);position:relative;overflow:hidden}
 .hsc:after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05)}
@@ -2715,11 +2716,7 @@ function vHome(){
     <div class="pr"><span class="bar"><i style="width:${Math.min(100,best/tgt*100)}%"></i></span><b>${Math.round(Math.min(1,best/tgt)*100)}%</b></div>
     <div class="mini"><div><span class="e">🔥</span><div><span>Streak belajar</span><b>${streak()} hari</b></div></div><button onclick="targetModal()"><span class="e">🎯</span><div><span>Target SKD ✎</span><b>${tgt}</b></div></button></div>
     <div class="acts"><button class="bgold" onclick="go('tryout')">${ic('play',18,2.4)}Mulai Tryout</button><button class="bout" onclick="go('formasi')">${ic('layers',18,2)}Simulasi Formasi</button></div></div></div>
-   <div class="hmart">${ART_HOME()}
-    <div class="hqk"><button onclick="go('belajar')"><span class="ii" style="background:#e6f0fd;color:#1e6fd9">${ic('book',26,2)}</span><b>Belajar</b><span class="d">Materi & ringkasan</span></button>
-     <button onclick="go('tryout')"><span class="ii" style="background:#fde8e8;color:#e5484d">${ic('target',26,2)}</span><b>Tryout</b><span class="d">Simulasi CAT</span></button>
-     <button onclick="go('arena')"><span class="ii" style="background:#fff3d6;color:#e09b12">${ic('swords',26,2)}</span><b>Arena</b><span class="d">Kompetisi SKD</span></button>
-     <button onclick="go('formasi')"><span class="ii" style="background:#e6f0fd;color:#1757b0">${ic('layers',26,2)}</span><b>Formasi</b><span class="d">Info formasi terbaru</span></button></div></div></div>
+   </div>
   ${akbarHomeCard()}
   <div class="hg2">
    <div class="hcard"><div class="hh">${ic('cal',22,2)}<h2>Jadwal Belajar Hari Ini</h2><span class="chip">${ic('cal',14,2)}${esc(dstr)}</span></div>
