@@ -9,6 +9,11 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
 const rupiah = (n) => "Rp" + Number(n).toLocaleString("id-ID");
+const DOMAIN = "jalannip.app";
+// Username → alamat internal Supabase (tidak pernah dipakai untuk mengirim email)
+export const toEmail = (u) => { u = String(u || "").trim().toLowerCase(); return u.includes("@") ? u : `${u}@${DOMAIN}`; };
+export const uname = (e) => String(e || "").endsWith("@" + DOMAIN) ? String(e).slice(0, -DOMAIN.length - 1) : String(e || "");
+const USER_RE = /^[a-z0-9._]{3,20}$/;
 const h = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 export function createJNIP(cfg) {
@@ -19,7 +24,7 @@ export function createJNIP(cfg) {
     if (root) return root;
     root = document.createElement("div");
     root.id = "jnip-gate";
-    root.innerHTML = `<style>
+    root.innerHTML = `<style>#jnip-gate .hint{font-size:12px;color:#5f6b78;margin:-4px 0 6px}
       #jnip-gate{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#1d4e7a,#0f2e4a);display:grid;place-items:center;padding:16px;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
       #jnip-gate .bx{background:#fff;color:#17202b;border-radius:18px;max-width:420px;width:100%;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
       #jnip-gate h1{font-size:22px;margin:0 0 4px}#jnip-gate p{color:#5f6b78;margin:0 0 14px;font-size:14px;line-height:1.5}
@@ -54,7 +59,8 @@ export function createJNIP(cfg) {
     const daftar = mode === "daftar";
     box().innerHTML = `${brand}<h1>${daftar ? "Buat akun" : "Masuk"}</h1><p>${daftar ? "Daftar untuk mulai latihan SKD CPNS." : "Masuk ke akun Jalan NIP Academy-mu."}</p>
       ${daftar ? `<label>Nama</label><input id="jn-nama" autocomplete="name">` : ""}
-      <label>Email</label><input id="jn-email" type="email" autocomplete="email">
+      <label>Username</label><input id="jn-user" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="mis. pejuangnip26">
+      ${daftar ? `<div class="hint">3–20 karakter: huruf kecil, angka, titik, atau garis bawah.</div>` : ""}
       <label>Kata sandi</label><input id="jn-pass" type="password" autocomplete="${daftar ? "new-password" : "current-password"}">
       <button id="jn-go">${daftar ? "Daftar" : "Masuk"}</button>
       <button class="lnk" id="jn-sw">${daftar ? "Sudah punya akun? Masuk" : "Belum punya akun? Daftar"}</button>
@@ -63,35 +69,34 @@ export function createJNIP(cfg) {
     const msg = (t, err) => { box().querySelector("#jn-msg").innerHTML = `<div class="msg ${err ? "err" : ""}">${h(t)}</div>`; };
     box().querySelector("#jn-sw").onclick = () => showAuth(daftar ? "masuk" : "daftar", resolve);
     const lupa = box().querySelector("#jn-lupa");
-    if (lupa) lupa.onclick = async () => {
-      const email = box().querySelector("#jn-email").value.trim();
-      if (!email) return msg("Isi email dulu.", true);
-      const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
-      msg(error ? error.message : "Tautan atur ulang kata sandi sudah dikirim ke email.", !!error);
-    };
-    box().querySelector("#jn-go").onclick = async (e) => {
-      const btn = e.currentTarget; btn.disabled = true;
-      const email = box().querySelector("#jn-email").value.trim(), password = box().querySelector("#jn-pass").value;
+    if (lupa) lupa.onclick = () => msg(cfg.lupaSandi || "Hubungi admin Jalan NIP Academy dan sebutkan username-mu. Admin akan mengatur kata sandi baru untukmu.");
+    const go = async (e) => {
+      const btn = box().querySelector("#jn-go"); btn.disabled = true;
+      const user = box().querySelector("#jn-user").value.trim().toLowerCase(), password = box().querySelector("#jn-pass").value;
       try {
         if (daftar) {
           const nama = box().querySelector("#jn-nama").value.trim();
+          if (!USER_RE.test(user)) throw new Error("Username harus 3–20 karakter: huruf kecil, angka, titik, atau garis bawah.");
           if (password.length < 8) throw new Error("Kata sandi minimal 8 karakter.");
-          const { data, error } = await sb.auth.signUp({ email, password, options: { data: { nama }, emailRedirectTo: location.origin + location.pathname } });
-          if (error) throw error;
-          if (!data.session) { showAuth("masuk", resolve, "Cek email untuk konfirmasi akun, lalu masuk di sini."); return; }
+          const { data, error } = await sb.auth.signUp({ email: toEmail(user), password, options: { data: { nama, username: user } } });
+          if (error) throw new Error(/already|registered|exists/i.test(error.message) ? "Username sudah dipakai. Coba yang lain." : error.message);
+          if (!data.session) { showAuth("masuk", resolve, "Akun dibuat. Silakan masuk."); return; }
         } else {
-          const { error } = await sb.auth.signInWithPassword({ email, password });
-          if (error) throw new Error("Email atau kata sandi salah.");
+          if (!user) throw new Error("Isi username dulu.");
+          const { error } = await sb.auth.signInWithPassword({ email: toEmail(user), password });
+          if (error) throw new Error("Username atau kata sandi salah.");
         }
         await afterLogin(resolve);
       } catch (err) { msg(err.message || "Terjadi kesalahan.", true); btn.disabled = false; }
     };
+    box().querySelector("#jn-go").onclick = go;
+    box().querySelector("#jn-pass").onkeydown = (e) => { if (e.key === "Enter") go(); };
   }
 
   async function showPaywall(resolve, user) {
     const { data: paket } = await sb.from("paket").select("*").eq("aktif", true).order("urutan");
     let sel = paket?.[0]?.id;
-    box().innerHTML = `${brand}<h1>Aktifkan akses</h1><p>Akun <b>${h(user.email)}</b> belum memiliki akses aktif. Pilih paket lalu bayar dengan QRIS, transfer bank (VA), atau e-wallet.</p>
+    box().innerHTML = `${brand}<h1>Aktifkan akses</h1><p>Akun <b>${h(uname(user.email))}</b> belum memiliki akses aktif. Pilih paket lalu bayar dengan QRIS, transfer bank (VA), atau e-wallet.</p>
       <div id="jn-pk">${(paket || []).map((p) => `<div class="pk ${p.id === sel ? "on" : ""}" data-id="${h(p.id)}"><b>${h(p.nama)}</b><span class="hr">${rupiah(p.harga)}</span><br><small>Berlaku ${p.durasi_hari} hari</small></div>`).join("")}</div>
       <label>Kode voucher (opsional)</label><input id="jn-v" style="text-transform:uppercase">
       <button id="jn-pay">Bayar sekarang</button><button class="lnk" id="jn-out">Keluar dari akun</button><div id="jn-msg"></div>`;
