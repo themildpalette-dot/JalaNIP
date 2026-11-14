@@ -2278,6 +2278,7 @@ function shellHTML(active,body,wide){
   <aside class="side"><a class="sbrand" href="#beranda"><img class="blogo" src="${LOGO_SRC}" alt=""><span class="bname">JalanNIP<small>Jalani prosesnya, raih NIP-nya.</small></span></a>
    <nav class="snav">${SIDE.map(([k,t,i])=>`<a href="#${k}" class="${active===k?'on':''}">${ic(i,20)}<span>${t}</span></a>`).join('')}
     ${CLOUD.admin?`<a href="#admin" class="${active==='admin'?'on':''}">${ic('shield',20)}<span>Admin</span></a>`:''}
+    ${window.JNIP_ACC&&JNIP_ACC.admin?`<a href="admin.html">${ic('shield',20)}<span>Konsol Admin</span></a>`:''}
     <a href="#atur" class="${active==='atur'?'on':''}">${ic('gear',20)}<span>Pengaturan</span></a></nav>
    <div class="sgrow"></div>
   </aside>
@@ -2977,7 +2978,7 @@ function vAtur(){atInit();if(ATAB==='aman'||ATAB==='data')ATAB='profil';const A=
   <div class="atg"><aside class="apc"><div class="cv">${COVER()}</div>
     <div class="av" style="${S.avatar?`background-image:url(${S.avatar})`:''}">${S.avatar?'':esc(ini)}<label title="Ganti foto">${ic('cam',16,2)}<input type="file" accept="image/*" onchange="atAvatar(this.files[0])"></label></div>
     <div class="nm"><b>${esc(nm)}</b><span>${esc(S.email||'Email belum diisi')}</span><br><span class="bdg">${ic('users',16,2)}Peserta ${esc(S.tahun||'CPNS 2026')}</span>${S.avatar?`<br><button class="rm" onclick="S.avatar='';save();render()">Hapus foto</button>`:''}</div>
-    <nav class="amenu">${menu.map(([k,t,i])=>`<button class="${ATAB===k?'on':''}" onclick="ATAB='${k}';render()">${ic(i,21,2)}${t}</button>`).join('')}${window.JNIP_ACC?`<button onclick="JNIP_ACC.out()">${ic('logout',21,2)}Keluar akun</button>`:''}</nav>${window.JNIP_ACC?`<div class="small muted" style="padding:6px 14px 0">Masuk sebagai <b>${esc(JNIP_ACC.email)}</b>${JNIP_ACC.sampai?`<br>${JNIP_ACC.trial?'Trial':'Akses aktif'} sampai ${esc(JNIP_ACC.sampai)}`:''}</div>`:''}</aside>
+    <nav class="amenu">${menu.map(([k,t,i])=>`<button class="${ATAB===k?'on':''}" onclick="ATAB='${k}';render()">${ic(i,21,2)}${t}</button>`).join('')}${window.JNIP_ACC&&JNIP_ACC.admin?`<button onclick="location.href='admin.html'">${ic('shield',21,2)}Konsol Admin</button>`:''}${window.JNIP_ACC?`<button onclick="JNIP_ACC.out()">${ic('logout',21,2)}Keluar akun</button>`:''}</nav>${window.JNIP_ACC?`<div class="small muted" style="padding:6px 14px 0">Masuk sebagai <b>${esc(JNIP_ACC.email)}</b>${JNIP_ACC.sampai?`<br>${JNIP_ACC.trial?'Trial':'Akses aktif'} sampai ${esc(JNIP_ACC.sampai)}`:''}</div>`:''}</aside>
    <div>${body}
     <div class="abar"><span class="dirty" id="atDirty" style="${dirty?'':'display:none'}">● Ada perubahan yang belum disimpan</span><button class="btn line" onclick="atCancel()">Batal</button><button class="bsave" onclick="atSave()">${ic('check',18,2.6)}Simpan Perubahan</button></div></div></div>`;
 }
@@ -3371,7 +3372,8 @@ window.JNIP = jnip;
 window.JNIP_ACC = {
   email: '@' + uname(user.email),
   sampai: profile && profile.akses_sampai ? new Date(profile.akses_sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '',
-  trial: !!(profile && profile.is_trial),
+  trial: !!(profile && profile.is_trial && !profile.is_admin),
+  admin: !!(profile && profile.is_admin),
   out: () => { if (confirm('Keluar dari akun ini?')) jnip.signOut(); },
 };
 // --- pengumuman dari admin (tabel berita, hanya yang terbit) ---

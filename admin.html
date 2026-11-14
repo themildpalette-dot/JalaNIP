@@ -98,7 +98,8 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const CONFIG = {
   supabaseUrl: "https://ksdykoybpunvvnfewxmc.supabase.co",
   supabaseAnonKey: "sb_publishable_g_DiYNQn7zwSAnyymtCzKQ_62a428YO",
-  appUrl: "./?app=1",           // alamat aplikasi Jalan NIP Academy untuk pengguna
+  appUrl: "./?app=1",   // pratinjau aplikasi peserta (opsional)
+  loginUrl: "./",       // halaman login bersama           // alamat aplikasi Jalan NIP Academy untuk pengguna
 };
 // ===================================================================
 
@@ -173,9 +174,9 @@ function loginView(note) {
 }
 async function boot() {
   const { data: { user } } = await sb.auth.getUser();
-  if (!user) return loginView();
+  if (!user) return location.replace(CONFIG.loginUrl);
   const { data: p } = await sb.from("profiles").select("*").eq("id", user.id).maybeSingle();
-  if (!p?.is_admin) { await sb.auth.signOut(); return loginView("Akun ini bukan admin."); }
+  if (!p?.is_admin) return location.replace(CONFIG.loginUrl);  // peserta biasa kembali ke aplikasi
   ME = { user, p };
   window.addEventListener("hashchange", route);
   route();
@@ -210,7 +211,7 @@ function shell(body, loading, extra = "") {
 }
 A.theme = () => { const d = document.documentElement; d.dataset.theme = d.dataset.theme === "dark" ? "" : "dark"; try { localStorage.setItem("jna_admin_theme", d.dataset.theme); } catch (e) {} route(); };
 A.menu = () => { const m = $("#menu"); if (m.innerHTML) return (m.innerHTML = ""); m.innerHTML = `<div class="menu"><div>${h(UN(ME.user.email))}<br><b style="color:var(--ink)">Admin</b></div><a href="${h(CONFIG.appUrl)}" target="_blank">${ic("ext")}Buka aplikasi</a><button onclick="window.A.logout()">${ic("out")}Keluar</button></div>`; };
-A.logout = async () => { await sb.auth.signOut(); location.hash = ""; loginView(); };
+A.logout = async () => { await sb.auth.signOut(); location.replace(CONFIG.loginUrl); };
 async function route() {
   const hs = location.hash.slice(1) || "dash"; const i = hs.indexOf("-");
   VIEW = i < 0 ? hs : hs.slice(0, i); SUB = i < 0 ? "" : hs.slice(i + 1);
