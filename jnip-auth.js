@@ -205,7 +205,7 @@ export function createJNIP(cfg) {
     const { user, profile } = await getProfile();
     if (!user) return showAuth("masuk", resolve);
     // akun admin hanya melihat konsol admin
-    if (profile?.is_admin && cfg.adminUrl !== false) { location.href = cfg.adminUrl || "admin.html"; return; }
+    if (profile?.is_admin && cfg.adminUrl !== false && !new URLSearchParams(location.search).has("app")) { location.href = cfg.adminUrl || "admin.html"; return; }
     if (isActive(profile)) { unmount(); resolve({ user, profile }); return; }
     showPending(resolve, user, profile);
   }

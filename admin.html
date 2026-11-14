@@ -98,7 +98,7 @@ import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 const CONFIG = {
   supabaseUrl: "https://ksdykoybpunvvnfewxmc.supabase.co",
   supabaseAnonKey: "sb_publishable_g_DiYNQn7zwSAnyymtCzKQ_62a428YO",
-  appUrl: "./",           // alamat aplikasi Jalan NIP Academy untuk pengguna
+  appUrl: "./?app=1",           // alamat aplikasi Jalan NIP Academy untuk pengguna
 };
 // ===================================================================
 
@@ -183,7 +183,7 @@ async function boot() {
 
 // ---------------- Kerangka ----------------
 const NAV = [
-  ["Konsol", [["dash", "Dasbor", "dash"], ["users", "Pengguna", "users"]]],
+  ["Konsol", [["dash", "Dasbor", "dash"], ["users", "Pengguna", "users"], ["pengumuman", "Pengumuman", "mega"]]],
 ];
 const VIEWS = NAV.flatMap(([, l]) => l.map(([k]) => k));
 let PENDING = 0;
@@ -194,7 +194,7 @@ function shell(body, loading, extra = "") {
    <a class="logo" href="#dash">${LOGO}<div><b>JalanNIP</b><span>Jalani prosesnya, raih NIP-nya.</span></div></a>
    ${NAV.map(([g, l]) => `<div class="grp">${g}</div><nav class="nav">${l.map(([k, t, i]) => `<a href="#${k}" class="${VIEW === k ? "on" : ""}">${ic(i)}${t}</a>`).join("")}</nav>`).join("")}
    <div class="sp"></div>
-   <div class="promo"><b>Jalan NIP Academy</b><p>Setujui akun dan atur masa akses.</p><a href="${h(CONFIG.appUrl)}" target="_blank">Buka aplikasi ↗</a>
+   <div class="promo"><b>Jalan NIP Academy</b><p>Setujui akun, atur akses, dan kirim pengumuman.</p><a href="${h(CONFIG.appUrl)}" target="_blank">Buka aplikasi ↗</a>
     <svg viewBox="0 0 84 64"><rect x="14" y="6" width="56" height="38" rx="4" fill="#1e6fd9"/><rect x="19" y="11" width="46" height="28" rx="2" fill="#dbe9fb"/><path d="M25 18h26M25 24h34M25 30h20" stroke="#1e6fd9" stroke-width="3" stroke-linecap="round"/><path d="M6 48h72l-6 8H12z" fill="#7fb0ee"/><path d="M74 6l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" fill="#f2b632"/></svg></div>
   </aside>
   <div class="col"><header class="top"><button class="ib mob" onclick="document.getElementById('side').classList.toggle('open')">${ic("menu")}</button>
@@ -434,7 +434,7 @@ async function pengumuman() {
   PG = null;
   const { data, error } = await sb.from("berita").select("*").order("tanggal", { ascending: false }).order("id", { ascending: false }); if (error) throw error;
   const n = { terbit: 0, draft: 0 }; (data || []).forEach((b) => n[b.status === "draft" ? "draft" : "terbit"]++);
-  shell(`<div class="row" style="align-items:flex-end;margin-bottom:16px"><div class="grow"><h1>Pengumuman</h1><p class="muted" style="margin:0">Tampil di Beranda semua peserta. ${n.terbit} terbit · ${n.draft} draf.</p></div><a class="btn" href="#pengumuman-baru">${ic("mega")}Buat Pengumuman</a></div>
+  shell(`<div class="row" style="align-items:flex-end;margin-bottom:16px"><div class="grow"><h1>Pengumuman</h1><p class="muted" style="margin:0">Dikirim ke semua peserta: muncul sebagai pop-up saat aplikasi dibuka dan tersimpan di Beranda. ${n.terbit} terbit · ${n.draft} draf.</p></div><a class="btn" href="#pengumuman-baru">${ic("mega")}Buat Pengumuman</a></div>
   <div class="card tw" style="padding:4px"><table><tr><th>Tanggal</th><th>Pengumuman</th><th>Lampiran</th><th>Status</th><th></th></tr>${(data || []).map((b) => `<tr><td class="small">${tgl(b.tanggal)}</td><td><span class="pill pri">${h(b.label)}</span> <b>${h(b.judul)}</b><div class="small muted">${h(b.ringkasan || "")}</div></td>
    <td class="small">${b.file_url ? `<a href="${h(b.file_url)}" target="_blank">${h(b.file_nama || "Lampiran")}</a><div class="muted">${b.file_kb ? kbStr(b.file_kb) : ""}</div>` : '<span class="muted">—</span>'}</td>
    <td>${b.status === "draft" ? '<span class="pill warn">Draf</span>' : '<span class="pill ok">Terbit</span>'}</td>
