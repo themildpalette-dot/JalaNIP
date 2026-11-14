@@ -175,9 +175,7 @@ async function boot() {
 
 // ---------------- Kerangka ----------------
 const NAV = [
-  ["Ringkasan", [["dash", "Dasbor", "dash"]]],
-  ["Admin", [["pengumuman", "Pengumuman", "mega"], ["soal", "Bank Soal", "book"], ["formasi", "Formasi", "layers"], ["arena", "Arena", "trophy"]]],
-  ["Peserta & bisnis", [["users", "Pengguna", "users"], ["pay", "Pembayaran", "card"], ["paket", "Paket & Voucher", "tag"]]],
+  ["Konsol", [["dash", "Dasbor", "dash"], ["users", "Pengguna", "users"]]],
 ];
 const VIEWS = NAV.flatMap(([, l]) => l.map(([k]) => k));
 let PENDING = 0;
@@ -188,14 +186,14 @@ function shell(body, loading, extra = "") {
    <a class="logo" href="#dash">${LOGO}<div><b>JalanNIP</b><span>Jalani prosesnya, raih NIP-nya.</span></div></a>
    ${NAV.map(([g, l]) => `<div class="grp">${g}</div><nav class="nav">${l.map(([k, t, i]) => `<a href="#${k}" class="${VIEW === k ? "on" : ""}">${ic(i)}${t}</a>`).join("")}</nav>`).join("")}
    <div class="sp"></div>
-   <div class="promo"><b>Jalan NIP Academy</b><p>Kelola konten, peserta, dan pembelajaran di satu tempat.</p><a href="${h(CONFIG.appUrl)}" target="_blank">Buka aplikasi ↗</a>
+   <div class="promo"><b>Jalan NIP Academy</b><p>Setujui akun dan atur masa akses.</p><a href="${h(CONFIG.appUrl)}" target="_blank">Buka aplikasi ↗</a>
     <svg viewBox="0 0 84 64"><rect x="14" y="6" width="56" height="38" rx="4" fill="#1e6fd9"/><rect x="19" y="11" width="46" height="28" rx="2" fill="#dbe9fb"/><path d="M25 18h26M25 24h34M25 30h20" stroke="#1e6fd9" stroke-width="3" stroke-linecap="round"/><path d="M6 48h72l-6 8H12z" fill="#7fb0ee"/><path d="M74 6l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" fill="#f2b632"/></svg></div>
   </aside>
   <div class="col"><header class="top"><button class="ib mob" onclick="document.getElementById('side').classList.toggle('open')">${ic("menu")}</button>
     <div class="ttl">Jalan NIP Academy — Konsol Admin</div>
     <label class="srch">${ic("search")}<input id="gq" placeholder="Cari pengguna lewat username atau nama…"></label>
     <button class="ib" title="Mode gelap" onclick="window.A.theme()">${ic(dark ? "sun" : "moon")}</button>
-    <button class="ib" title="Pembayaran menunggu" onclick="location.hash='pay';window.A.pFilter('pending')">${ic("bell")}${PENDING ? '<span class="dot"></span>' : ""}</button>
+    <button class="ib" title="Akun menunggu persetujuan" onclick="window.A.goTunggu()">${ic("bell")}${PENDING ? '<span class="dot"></span>' : ""}</button>
     <button class="av" onclick="window.A.menu()">${h(ini)}</button></header>
    <div id="menu"></div>
    <main><div id="msg">${MSG}</div>${body}</main>${extra}</div></div>`;
@@ -209,7 +207,7 @@ async function route() {
   const hs = location.hash.slice(1) || "dash"; const i = hs.indexOf("-");
   VIEW = i < 0 ? hs : hs.slice(0, i); SUB = i < 0 ? "" : hs.slice(i + 1);
   if (!VIEWS.includes(VIEW)) VIEW = "dash";
-  sb.from("payments").select("order_id", { count: "exact", head: true }).eq("status", "pending").then((r) => { PENDING = r.count || 0; });
+  sb.from("profiles").select("id", { count: "exact", head: true }).is("akses_sampai", null).eq("is_admin", false).then((r) => { PENDING = r.count || 0; });
   shell(`<p class="muted">Memuat…</p>`, true);
   try { await ({ dash, users, pay, paket, soal, pengumuman, formasi, arena })[VIEW](); }
   catch (e) { console.error(e); shell(`<div class="msg err">Gagal memuat: ${h(e.message || e)}</div>`); }
@@ -217,23 +215,27 @@ async function route() {
 
 // ---------------- Dasbor ----------------
 async function dash() {
-  const { data: s, error } = await sb.rpc("admin_stats"); if (error) throw error;
-  const { data: last } = await sb.from("payments").select("order_id,gross_amount,status,created_at,user_id").order("created_at", { ascending: false }).limit(8);
-  const em = await emails((last || []).map((x) => x.user_id));
-  const mx = Math.max(1, ...s.harian.map((d) => d.pendapatan));
-  const { count: tunggu } = await sb.from("profiles").select("id", { count: "exact", head: true }).is("akses_sampai", null).eq("is_admin", false);
-  shell(`<h1>Dasbor</h1><p class="muted">Ringkasan Jalan NIP Academy.</p>
-  ${tunggu ? `<div class="card row" style="justify-content:space-between;border:1.5px solid #f2c94c;background:#fff8e1"><div><b>${tunggu} akun menunggu persetujuan</b><div class="small muted">Setujui setelah pembayaran diterima.</div></div><button class="btn" onclick="window.A.goTunggu()">Lihat & setujui</button></div>` : ""}
+  const now = new Date().toISOString(), s7 = new Date(Date.now() + 7 * 864e5).toISOString();
+  const cnt = async (f) => { const r = await f(sb.from("profiles").select("id", { count: "exact", head: true }).eq("is_admin", false)); return r.count || 0; };
+  const [total, tunggu, aktif, segera] = await Promise.all([
+    cnt((q) => q), cnt((q) => q.is("akses_sampai", null)), cnt((q) => q.gt("akses_sampai", now)), cnt((q) => q.gt("akses_sampai", now).lte("akses_sampai", s7)),
+  ]);
+  const habis = Math.max(0, total - tunggu - aktif);
+  const { data: baru } = await sb.from("profiles").select("*").is("akses_sampai", null).eq("is_admin", false).order("created_at", { ascending: false }).limit(10);
+  const { data: hampir } = await sb.from("profiles").select("*").gt("akses_sampai", now).lte("akses_sampai", s7).eq("is_admin", false).order("akses_sampai").limit(10);
+  const row = (u, btn) => `<tr><td><b>${h(u.nama || u.nick || "—")}</b><div class="small muted">@${h(UN(u.email))}</div></td><td class="small">${tgl(btn ? u.created_at : u.akses_sampai)}</td><td><button class="btn sm" onclick="window.A.uSetujui('${u.id}')">${btn}</button></td></tr>`;
+  shell(`<h1>Dasbor</h1><p class="muted">Persetujuan akun dan masa akses peserta Jalan NIP Academy.</p>
   <div class="stats">
-   <div class="stat"><div class="ic">${ic("users")}</div><div><div class="k">Pengguna terdaftar</div><div class="v">${s.pengguna}</div><div class="s">+${s.pengguna_7hari} dalam 7 hari</div></div></div>
-   <div class="stat"><div class="ic">${ic("check")}</div><div><div class="k">Akses aktif</div><div class="v">${s.akses_aktif}</div><div class="s">${s.pengguna ? Math.round(s.akses_aktif / s.pengguna * 100) : 0}% dari pengguna</div></div></div>
-   <div class="stat"><div class="ic">${ic("money")}</div><div><div class="k">Pendapatan total</div><div class="v">${rp(s.pendapatan)}</div><div class="s">${s.transaksi_paid} transaksi lunas</div></div></div>
-   <div class="stat"><div class="ic">${ic("card")}</div><div><div class="k">Pendapatan 30 hari</div><div class="v">${rp(s.pendapatan_30)}</div><div class="s">${s.transaksi_pending} menunggu bayar</div></div></div>
-   <div class="stat"><div class="ic">${ic("book")}</div><div><div class="k">Soal aktif</div><div class="v">${s.soal_aktif}</div><div class="s">${s.event_arena} event Arena</div></div></div>
+   <div class="stat"><div class="ic">${ic("users")}</div><div><div class="k">Peserta terdaftar</div><div class="v">${total}</div></div></div>
+   <div class="stat" style="cursor:pointer" onclick="window.A.goTunggu()"><div class="ic">${ic("bell")}</div><div><div class="k">Menunggu persetujuan</div><div class="v">${tunggu}</div></div></div>
+   <div class="stat"><div class="ic">${ic("check")}</div><div><div class="k">Akses aktif</div><div class="v">${aktif}</div><div class="s">${segera} habis dalam 7 hari</div></div></div>
+   <div class="stat"><div class="ic">${ic("card")}</div><div><div class="k">Akses habis</div><div class="v">${habis}</div></div></div>
   </div>
-  <div class="card"><h2>Pendapatan 14 hari terakhir</h2><div class="chart" style="margin-bottom:24px">${s.harian.map((d) => `<div title="${tgl(d.hari)}: ${rp(d.pendapatan)} · ${d.daftar} daftar" style="height:${Math.max(2, d.pendapatan / mx * 140)}px"><span>${new Date(d.hari).getDate()}</span></div>`).join("")}</div></div>
-  <div class="card"><h2>Transaksi terbaru</h2><div class="tw"><table><tr><th>Waktu</th><th>Pengguna</th><th>Nominal</th><th>Status</th></tr>
-  ${(last || []).map((x) => `<tr><td>${tgl(x.created_at, 1)}</td><td>${h(UN(em[x.user_id]) || "—")}</td><td>${rp(x.gross_amount)}</td><td>${stPill(x.status)}</td></tr>`).join("") || `<tr><td colspan="4" class="muted">Belum ada transaksi.</td></tr>`}</table></div></div>`);
+  <div class="card"><h2>Menunggu persetujuan</h2><p class="small muted" style="margin-top:0">Setujui setelah pembayaran peserta kamu terima.</p><div class="tw"><table><tr><th>Peserta</th><th>Daftar</th><th></th></tr>
+  ${(baru || []).map((u) => row(u, "Setujui")).join("") || `<tr><td colspan="3" class="muted">Tidak ada akun yang menunggu.</td></tr>`}</table></div>
+  ${tunggu > 10 ? `<button class="btn line" style="margin-top:10px" onclick="window.A.goTunggu()">Lihat semua (${tunggu})</button>` : ""}</div>
+  <div class="card"><h2>Akses habis dalam 7 hari</h2><div class="tw"><table><tr><th>Peserta</th><th>Akses sampai</th><th></th></tr>
+  ${(hampir || []).map((u) => row(u, "Perpanjang")).join("") || `<tr><td colspan="3" class="muted">Tidak ada.</td></tr>`}</table></div></div>`);
 }
 const stPill = (s) => `<span class="pill ${s === "paid" ? "ok" : s === "pending" ? "warn" : "bad"}">${s === "paid" ? "Lunas" : s === "pending" ? "Menunggu" : "Gagal"}</span>`;
 async function emails(ids) { ids = [...new Set(ids.filter(Boolean))]; if (!ids.length) return {}; const { data } = await sb.from("profiles").select("id,email").in("id", ids); return Object.fromEntries((data || []).map((x) => [x.id, x.email])); }
@@ -261,7 +263,7 @@ A.uSearch = () => { UQ = $("#uq").value.trim().replace(/[,()%]/g, ""); UF = $("#
 A.uSetujui = async (id) => {
   const { data: pk } = await sb.from("paket").select("durasi_hari").eq("aktif", true).order("urutan").limit(1);
   const hari = pk?.[0]?.durasi_hari || 180;
-  if (!confirm(`Setujui akun ini dan buka akses selama ${hari} hari?`)) return;
+  if (!confirm(`Buka atau perpanjang akses akun ini selama ${hari} hari?`)) return;
   await A.uAkses(id, hari);
 };
 A.uSandi = async (id, un) => {
