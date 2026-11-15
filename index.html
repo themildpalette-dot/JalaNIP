@@ -523,6 +523,7 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 @keyframes vfade{from{opacity:0;transform:translateY(1.2cqw) scale(.985)}to{opacity:1;transform:none}}
 @keyframes vpop{from{opacity:0;transform:translateY(1.5cqw)}to{opacity:1;transform:none}}
 .vcap{position:absolute;left:5cqw;right:5cqw;bottom:2.6cqw;font-size:1.75cqw;line-height:1.4;text-align:center;background:rgba(0,0,0,.45);padding:.8cqw 1.6cqw;border-radius:1cqw;color:#f3f6fb;max-height:6.5cqw;overflow:hidden}
+.vload{position:absolute;top:1.6cqw;left:2cqw;display:none;align-items:center;gap:.8cqw;font-size:1.3cqw;background:rgba(0,0,0,.4);padding:.5cqw 1.2cqw;border-radius:99px}.vload i{width:1.3cqw;height:1.3cqw;border-radius:50%;border:.25cqw solid rgba(255,255,255,.3);border-top-color:#ffd166;animation:vspin .8s linear infinite}@keyframes vspin{to{transform:rotate(360deg)}}
 .vwm{position:absolute;top:1.6cqw;right:2cqw;font-size:1.3cqw;font-weight:800;opacity:.45;letter-spacing:.05em}
 .vlogo{display:flex;align-items:center;gap:1cqw;font-weight:800;font-size:1.7cqw;opacity:.95}.vlogo img{width:4cqw!important;height:auto!important;filter:drop-shadow(0 0 .6cqw rgba(255,210,90,.5))}
 .vintro{align-items:center;justify-content:center;text-align:center}.vintro h2{font-size:5.2cqw;margin:1cqw 0 2cqw;line-height:1.1;animation:vpop .7s .25s both}
@@ -3438,7 +3439,7 @@ function vidScene(q,s,i,all){const L='ABCDE';
 let VD=null;
 function vidOpen(qi){const q=Q[qi];if(!q)return;vidClose(true);VD={qi,q,sc:vidScenes(q),i:0,play:true,rate:S.vrate||1,mute:!!S.vmute,tm:null,tok:0};
   const el=document.createElement('div');el.id='vid';el.innerHTML=`<div class="vwrap"><div class="vtop"><b style="flex:1">Video pembahasan</b><button onclick="vidClose()" title="Tutup">${vi('x',20)}</button></div>
-  <div class="vstage" id="vstage"><div id="vscene"></div><div class="vcap" id="vcap"></div><div class="vwm">JalanNIP</div></div>
+  <div class="vstage" id="vstage"><div id="vscene"></div><div class="vcap" id="vcap"></div><div class="vload" id="vload"><i></i>Menyiapkan suara…</div><div class="vwm">JalanNIP</div></div>
   <div class="vctl"><button onclick="vidStep(-1)" title="Sebelumnya">${vi('prev')}</button><button id="vpp" onclick="vidToggle()" title="Putar/jeda"></button><button onclick="vidStep(1)" title="Berikutnya">${vi('next')}</button>
    <div class="vseg" id="vseg"></div><span class="vtime" id="vtime"></span>
    <button class="vrate" onclick="vidRate()" id="vrate"></button><button onclick="vidMute()" id="vmu" title="Suara"></button><button onclick="vidFull()" title="Layar penuh">${vi('full')}</button><button class="vx2" onclick="vidClose()" title="Tutup">${vi('x')}</button></div>
@@ -3446,20 +3447,32 @@ function vidOpen(qi){const q=Q[qi];if(!q)return;vidClose(true);VD={qi,q,sc:vidSc
   document.body.appendChild(el);document.body.style.overflow='hidden';
   document.addEventListener('keydown',vidKey);vidShow()}
 function vidKey(e){if(!VD)return;if(e.key==='Escape')vidClose();else if(e.key===' '){e.preventDefault();vidToggle()}else if(e.key==='ArrowRight')vidStep(1);else if(e.key==='ArrowLeft')vidStep(-1)}
-function vidClose(silent){try{speechSynthesis.cancel()}catch(e){}if(VD)clearTimeout(VD.tm);VD=null;const el=document.getElementById('vid');if(el)el.remove();document.body.style.overflow='';document.removeEventListener('keydown',vidKey);try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
+function vidClose(silent){vidStopAudio();try{speechSynthesis.cancel()}catch(e){}if(VD)clearTimeout(VD.tm);VD=null;const el=document.getElementById('vid');if(el)el.remove();document.body.style.overflow='';document.removeEventListener('keydown',vidKey);try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
 function vidVoice(){try{const v=speechSynthesis.getVoices();return v.find(x=>/^id/i.test(x.lang))||null}catch(e){return null}}
-function vidShow(){if(!VD)return;const s=VD.sc[VD.i];clearTimeout(VD.tm);try{speechSynthesis.cancel()}catch(e){}
+function vidShow(){if(!VD)return;const s=VD.sc[VD.i];clearTimeout(VD.tm);vidStopAudio();try{speechSynthesis.cancel()}catch(e){}
   document.getElementById('vscene').innerHTML=vidScene(VD.q,s,VD.i,VD.sc);document.getElementById('vcap').textContent=s.say;
   document.getElementById('vseg').innerHTML=VD.sc.map((x,k)=>`<i class="${k<VD.i?'d':k===VD.i?'c':''}" onclick="VD.i=${k};vidShow()" title="${x.k}"></i>`).join('');
   document.getElementById('vtime').textContent=`${VD.i+1}/${VD.sc.length}`;
   document.getElementById('vpp').innerHTML=vi(VD.play?'pause':'play',22);document.getElementById('vmu').innerHTML=vi(VD.mute?'mute':'vol');document.getElementById('vrate').textContent=VD.rate+'×';
   if(VD.play)vidSpeak(s)}
-function vidSpeak(s){const tok=++VD.tok;const next=()=>{if(!VD||tok!==VD.tok||!VD.play)return;if(VD.i<VD.sc.length-1){VD.i++;vidShow()}else{VD.play=false;document.getElementById('vpp').innerHTML=vi('play',22)}};
+const VAUD={};let VTTS_FAIL=0;
+function vidAudio(t){if(!window.JNIP_TTS||VTTS_FAIL>=2)return null;const k=vSay(t);if(!VAUD[k])VAUD[k]=Promise.resolve().then(()=>window.JNIP_TTS(k)).catch(e=>{delete VAUD[k];VTTS_FAIL++;throw e});return VAUD[k]}
+function vidStopAudio(){if(VD&&VD.audio){try{VD.audio.pause()}catch(e){}VD.audio.onended=null}}
+function vidSpeak(s){const tok=++VD.tok;vidStopAudio();const next=()=>{if(!VD||tok!==VD.tok||!VD.play)return;if(VD.i<VD.sc.length-1){VD.i++;vidShow()}else{VD.play=false;document.getElementById('vpp').innerHTML=vi('play',22)}};
   const words=vSay(s.say).split(/\s+/).length,est=Math.max(2600,(words*400+900)/VD.rate);
-  const v=!VD.mute&&window.speechSynthesis&&vidVoice();
-  if(v){try{const u=new SpeechSynthesisUtterance(vSay(s.say));u.voice=v;u.lang=v.lang;u.rate=Math.min(2,.95*VD.rate);u.onend=()=>{VD&&(VD.tm=setTimeout(next,700))};u.onerror=()=>{VD&&(VD.tm=setTimeout(next,est))};speechSynthesis.speak(u);VD.tm=setTimeout(next,est*2.5+4000);return}catch(e){}}
-  VD.tm=setTimeout(next,est)}
-function vidToggle(){if(!VD)return;VD.play=!VD.play;if(!VD.play){clearTimeout(VD.tm);VD.tok++;try{speechSynthesis.cancel()}catch(e){}document.getElementById('vpp').innerHTML=vi('play',22)}else{if(VD.i>=VD.sc.length-1)VD.i=0;vidShow()}}
+  const browserVoice=()=>{const v=!VD.mute&&window.speechSynthesis&&vidVoice();
+    if(v){try{const u=new SpeechSynthesisUtterance(vSay(s.say));u.voice=v;u.lang=v.lang;u.rate=Math.min(2,.95*VD.rate);u.onend=()=>{VD&&(VD.tm=setTimeout(next,700))};u.onerror=()=>{VD&&(VD.tm=setTimeout(next,est))};speechSynthesis.speak(u);VD.tm=setTimeout(next,est*2.5+4000);return}catch(e){}}
+    VD.tm=setTimeout(next,est)};
+  const pa=!VD.mute&&vidAudio(s.say);
+  const nx=VD.sc[VD.i+1];if(nx&&!VD.mute)try{const p2=vidAudio(nx.say);p2&&p2.catch(()=>{})}catch(e){}
+  if(!pa)return browserVoice();
+  const ld=document.getElementById('vload');if(ld)ld.style.display='flex';
+  const guard=setTimeout(()=>{if(VD&&tok===VD.tok){VTTS_FAIL++;if(ld)ld.style.display='none';browserVoice()}},9000);
+  pa.then(url=>{clearTimeout(guard);if(!VD||tok!==VD.tok)return;if(ld)ld.style.display='none';
+    const a=VD.audio||(VD.audio=new Audio());a.src=url;a.playbackRate=VD.rate;a.onended=()=>{VD&&(VD.tm=setTimeout(next,600))};
+    a.play().catch(()=>browserVoice())}).catch(()=>{clearTimeout(guard);if(!VD||tok!==VD.tok)return;if(ld)ld.style.display='none';browserVoice()})}
+
+function vidToggle(){if(!VD)return;VD.play=!VD.play;if(!VD.play){clearTimeout(VD.tm);VD.tok++;vidStopAudio();try{speechSynthesis.cancel()}catch(e){}document.getElementById('vpp').innerHTML=vi('play',22)}else{if(VD.i>=VD.sc.length-1)VD.i=0;vidShow()}}
 function vidStep(d){if(!VD)return;VD.i=Math.max(0,Math.min(VD.sc.length-1,VD.i+d));vidShow()}
 function vidRate(){if(!VD)return;const r=[1,1.25,1.5,.75];VD.rate=r[(r.indexOf(VD.rate)+1)%r.length];S.vrate=VD.rate;save();vidShow()}
 function vidMute(){if(!VD)return;VD.mute=!VD.mute;S.vmute=VD.mute;save();vidShow()}
@@ -4414,6 +4427,13 @@ for (const r of rows) {
   if (r.figur_json) { const f = typeof r.figur_json === 'string' ? JSON.parse(r.figur_json) : r.figur_json; q.fk = f.tipe; q.fig = f.soal; q.of = f.opsi; }
   if (validQ(q)) Q.push(q);
 }
+
+// --- suara narasi video pembahasan (ElevenLabs lewat Edge Function "tts"; bila belum dipasang, otomatis memakai suara perangkat) ---
+window.JNIP_TTS = async (text) => {
+  const { data, error } = await jnip.sb.functions.invoke('tts', { body: { text } });
+  if (error || !data || !data.url) throw (error || new Error('tts'));
+  return data.url;
+};
 
 // --- materi buku dari Supabase (bila tabel materi sudah diisi) ---
 say('Memuat materi…');
