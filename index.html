@@ -500,6 +500,11 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .bside h3{margin:0;font-size:18px}.tgt .cdg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.tgt .cdg div{text-align:center;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px 0}
 .tgt .cdg b{display:block;font-size:28px;color:#1757b0;font-variant-numeric:tabular-nums;line-height:1.1}[data-theme=dark] .tgt .cdg b{color:#8fbfff}.tgt .cdg span{font-size:12.5px;color:var(--muted)}
 .ibtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;color:var(--ink);flex:none}
+.trw{margin-top:10px}.tree{display:block;width:100%;height:auto;border-radius:16px}
+.tsw{transform-origin:150px 142px;animation:tsway 3.2s ease-in-out infinite}.tsw2{transform-origin:150px 142px;animation:tsway 5s ease-in-out infinite}@keyframes tsway{50%{transform:rotate(1.6deg)}}
+.trtx{margin-top:10px}.trst{font-size:17px;color:#2f7d32}.trpc{font-weight:800;color:#2f7d32;font-size:17px}
+.trsteps{display:flex;gap:5px;margin:8px 0}.trsteps i{flex:1;height:7px;border-radius:99px;background:var(--line)}.trsteps i.on{background:linear-gradient(90deg,#8fd36b,#3f9a3a)}
+[data-theme=dark] .tree rect:first-of-type{opacity:.85}[data-theme=dark] .trst,[data-theme=dark] .trpc{color:#8fd36b}
 .prg{display:flex;align-items:center;gap:18px;margin-top:10px}.prg .tx b{font-size:15px}.prg .dl{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#e3f5ea;color:#17824a;border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700}.prg .dl.dn{background:#fde8e8;color:#c03a3a}
 [data-theme=dark] .prg .dl{background:#173326;color:#7be0a4}
 .jt{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-top:0;color:var(--ink);text-align:left;font-size:14.5px}.jt:last-child{border-bottom:0}
@@ -1497,6 +1502,33 @@ const ART_STUDY=`<svg class="art" viewBox="0 0 360 210" aria-hidden="true"><elli
 <g transform="translate(66 104)"><rect width="44" height="54" rx="8" fill="#4a8fef"/><rect x="8" y="-22" width="7" height="34" rx="3" fill="#f2b632" transform="rotate(-10 11 -5)"/><rect x="20" y="-28" width="7" height="40" rx="3" fill="#e5484d" transform="rotate(6 23 -8)"/><rect x="30" y="-18" width="6" height="30" rx="3" fill="#22a05b" transform="rotate(14 33 -3)"/><rect width="44" height="10" rx="5" fill="#6aa7f5"/></g>
 <g transform="translate(252 128)"><rect width="86" height="20" rx="5" fill="#1e6fd9"/><rect x="4" y="4" width="78" height="12" rx="3" fill="#fff"/><rect x="-4" y="20" width="92" height="20" rx="5" fill="#f2a417"/><rect x="0" y="24" width="84" height="12" rx="3" fill="#fff7e0"/><rect x="2" y="40" width="88" height="18" rx="5" fill="#2f6fd0"/></g>
 <path d="M330 40l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#f5bf2a"/><circle cx="96" cy="60" r="4" fill="#9cc1f2"/></svg>`;
+
+const TREE_ST=[[0,'Benih','Baru ditanam. Mulai baca satu bab hari ini.'],[.1,'Bertunas','Tunas pertama muncul. Pertahankan kebiasaan belajarmu.'],[.25,'Tunas muda','Daunnya makin banyak. Tambah latihan soal.'],[.45,'Pohon muda','Batangnya mulai kokoh. Perkuat topik yang masih lemah.'],[.65,'Pohon tumbuh','Cabangnya menyebar. Kamu sudah di jalur yang benar.'],[.85,'Pohon rindang','Rindang dan berbuah. Jaga terus sampai hari ujian.']];
+function treeStage(p){let k=0;TREE_ST.forEach((t,i)=>{if(p>=t[0])k=i});return k}
+function treeArt(p){const k=treeStage(p);const lo=TREE_ST[k][0],hi=(TREE_ST[k+1]||[1])[0];const f=Math.min(1,(p-lo)/Math.max(.01,hi-lo));const sc=(.86+.14*f).toFixed(3);
+  const leaf=(x,y,r,c)=>`<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.55}" fill="${c}" transform="rotate(${x<150?-35:35} ${x} ${y})"/>`;
+  let plant='';
+  if(k===0)plant=`<ellipse cx="150" cy="138" rx="15" ry="9" fill="#8a5a2b"/><ellipse cx="146" cy="134" rx="5" ry="2.5" fill="#b07a42" opacity=".7"/><path d="M144 136q6-7 12-1" stroke="#b07a42" stroke-width="2" fill="none"/><g fill="#7b5534" opacity=".55"><circle cx="128" cy="146" r="2"/><circle cx="170" cy="147" r="2.4"/><circle cx="160" cy="151" r="1.6"/></g>`;
+  else if(k===1)plant=`<g class="tsw"><path d="M150 142v-22" stroke="#4f9a3a" stroke-width="4" stroke-linecap="round"/>${leaf(141,118,10,'#6cc04a')}${leaf(159,116,10,'#5cb33c')}</g><ellipse cx="150" cy="143" rx="9" ry="4" fill="#8a5a2b"/>`;
+  else if(k===2)plant=`<g class="tsw"><path d="M150 142c0-14 2-30 0-48" stroke="#4f9a3a" stroke-width="5" stroke-linecap="round" fill="none"/>${leaf(139,122,12,'#5cb33c')}${leaf(162,112,12,'#6cc04a')}${leaf(140,100,11,'#6cc04a')}${leaf(160,90,10,'#7fd35a')}<circle cx="150" cy="90" r="5" fill="#7fd35a"/></g>`;
+  else{const big=k-3;const tw=[8,12,15][big],th=[52,64,72][big];const ty=142-th;
+    const can=[[[150,ty-6,30],[128,ty+8,20],[172,ty+8,20]],[[150,ty-14,38],[120,ty+4,27],[180,ty+4,27],[136,ty-28,22],[166,ty-28,22]],[[150,ty-20,44],[112,ty,32],[188,ty,32],[128,ty-34,28],[172,ty-34,28],[150,ty-48,26],[96,ty+20,20],[204,ty+20,20]]][big];
+    const cols=['#3f9a3a','#4fae42','#62c04f'];
+    plant=`<path d="M${150-tw/2} 142 L${150-tw/3} ${ty+14} L${150+tw/3} ${ty+14} L${150+tw/2} 142 Z" fill="#8b5a2b"/>${big>0?`<path d="M150 ${ty+30} l-22 -14 M150 ${ty+24} l20 -16" stroke="#8b5a2b" stroke-width="${big+3}" stroke-linecap="round"/>`:''}
+    <g class="tsw2">${can.map((c,i)=>`<circle cx="${c[0]}" cy="${c[1]}" r="${c[2]}" fill="${cols[i%3]}"/>`).join('')}${can.slice(0,3).map(c=>`<circle cx="${c[0]-c[2]*.35}" cy="${c[1]-c[2]*.35}" r="${c[2]*.35}" fill="#fff" opacity=".12"/>`).join('')}
+    ${big===2?[[130,ty-10],[170,ty-4],[150,ty-36],[112,ty+10],[190,ty+12],[140,ty+16],[165,ty-30]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" fill="#ef5b5b"/><circle cx="${x-1.5}" cy="${y-1.5}" r="1.4" fill="#fff" opacity=".6"/>`).join(''):''}</g>
+    ${big>=1?`<path d="M${150+tw/2} 142q10 2 16 -2M${150-tw/2} 142q-10 2 -16 -2" stroke="#8b5a2b" stroke-width="3" fill="none" stroke-linecap="round"/>`:''}`}
+  const sun=k>=1?`<circle cx="262" cy="34" r="${12+k*2}" fill="#ffd166"/><circle cx="262" cy="34" r="${20+k*2}" fill="#ffd166" opacity=".25"/>`:`<circle cx="262" cy="34" r="12" fill="#ffe7a3"/>`;
+  const birds=k>=4?`<path d="M64 40q5-5 10 0q5-5 10 0M90 26q4-4 8 0q4-4 8 0" stroke="#5a6b80" stroke-width="2" fill="none" stroke-linecap="round"/>`:'';
+  const cloud=`<g fill="#fff" opacity=".9"><ellipse cx="60" cy="58" rx="22" ry="9"/><ellipse cx="74" cy="52" rx="14" ry="9"/></g>`;
+  const flowers=k>=3?`<g><circle cx="70" cy="146" r="3" fill="#f2b632"/><circle cx="236" cy="148" r="3" fill="#ef7fb0"/><circle cx="214" cy="144" r="2.5" fill="#fff"/></g>`:'';
+  return `<svg class="tree" viewBox="0 0 300 170" aria-label="Tahap ${TREE_ST[k][1]}"><defs><linearGradient id="tsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff0ff"/><stop offset="1" stop-color="#f4fbff"/></linearGradient></defs><rect width="300" height="170" rx="16" fill="url(#tsky)"/>${sun}${cloud}${birds}
+  <path d="M0 140 Q75 128 150 138 T300 136 V170 H0Z" fill="#8fd36b"/><path d="M0 150 Q90 142 170 150 T300 148 V170 H0Z" fill="#74c257"/>${flowers}
+  <g transform="translate(150 142) scale(${sc}) translate(-150 -142)">${plant}</g></svg>`}
+function treeCard(p){const k=treeStage(p);const nx=TREE_ST[k+1];
+  return `<div class="trw">${treeArt(p)}<div class="trtx"><div class="row" style="align-items:baseline"><b class="grow trst">${TREE_ST[k][1]}</b><span class="trpc">${Math.round(p*100)}%</span></div>
+  <div class="trsteps">${TREE_ST.map((t,i)=>`<i class="${i<=k?'on':''}" title="${t[1]}"></i>`).join('')}</div>
+  <div class="small muted">${TREE_ST[k][2]}${nx?` Capai ${Math.round(nx[0]*100)}% untuk menjadi <b>${nx[1].toLowerCase()}</b>.`:''}</div></div></div>`}
 function donut(p){const r=38,C=2*Math.PI*r;return `<svg viewBox="0 0 100 100" width="104" height="104"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--line)" stroke-width="11"/><circle cx="50" cy="50" r="${r}" fill="none" stroke="#1e6fd9" stroke-width="11" stroke-linecap="round" stroke-dasharray="${C*p} ${C}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="20" font-weight="800" fill="currentColor" font-family="Plus Jakarta Sans,system-ui,sans-serif">${Math.round(p*100)}%</text></svg>`}
 
 const ART_PRAC=`<svg class="art" viewBox="0 0 360 210" aria-hidden="true"><ellipse cx="190" cy="120" rx="150" ry="82" fill="#fde9e9"/><circle cx="215" cy="98" r="76" fill="#fbd9d9"/><ellipse cx="190" cy="196" rx="120" ry="8" fill="#f3cfcf" opacity=".6"/><rect x="128" y="34" width="124" height="156" rx="14" fill="#fff" stroke="#f0c4c4" stroke-width="2"/><rect x="160" y="24" width="60" height="22" rx="8" fill="#d64545"/><circle cx="190" cy="35" r="5" fill="#fff"/>
@@ -1584,7 +1616,7 @@ function vBelajar(){
   <aside class="bside">
    <div class="card2 tgt"><div class="row" style="gap:12px;flex-wrap:nowrap;align-items:center"><span style="color:#f2a417">${ic('target',34,2)}</span><div class="grow"><h3>Target SKD Kamu</h3><div class="small muted">${skdT?new Date(skdT).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'})+(p.phase?` · fase ${p.phase}`:''):'Perkiraan: Januari – Maret 2027'}</div></div><button class="ibtn" title="Ubah target" onclick="planModal()">${ic('edit',17,2)}</button></div>
     ${skdT&&skdT>Date.now()?`<div class="cdg" data-cdx="${skdT}">${['Hari','Jam','Menit','Detik'].map((l,i)=>`<div><b>${cp[i]}</b><span>${l}</span></div>`).join('')}</div>`:skdT?`<p class="small muted" style="margin:12px 0 0">Tanggal SKD sudah lewat. Perbarui target bila ada jadwal baru.</p>`:`<button class="bsoft" style="margin-top:14px" onclick="planModal()">${ic('cal',17,2)}Atur tanggal SKD</button>`}</div>
-   <div class="card2"><h3>Progres Belajar</h3><div class="prg">${donut(prog)}<div class="tx"><b>${doneN} / ${subs.length}</b> materi dikuasai<div class="small muted">Gabungan bab dibaca, soal dilatih, dan akurasi</div>${dlt!=null&&Math.abs(dlt)>=.005?`<div class="dl ${dlt<0?'dn':''}">${dlt>=0?'▲':'▼'} ${Math.abs(Math.round(dlt*100))}% dari minggu lalu</div>`:''}</div></div></div>
+   <div class="card2"><h3>Progres Belajar</h3>${treeCard(prog)}<div class="prg"><div class="tx"><b>${doneN} / ${subs.length}</b> materi dikuasai<div class="small muted">Gabungan bab dibaca, soal dilatih, dan akurasi</div>${dlt!=null&&Math.abs(dlt)>=.005?`<div class="dl ${dlt<0?'dn':''}">${dlt>=0?'▲':'▼'} ${Math.abs(Math.round(dlt*100))}% dari minggu lalu</div>`:''}</div></div></div>
    <div class="card2"><div class="row" style="align-items:center"><span style="color:#1e6fd9">${ic('cal',22,2)}</span><h3 class="grow">Jadwal Hari Ini</h3><button class="lnk" onclick="planModal()">Ubah Jadwal</button></div>
     <div style="margin-top:6px">${p.tasks.map(t=>{const d=t.v>=t.n;return `<button class="jt ${d?'done':''}" onclick="${t.act}"><span class="cb">${d?ic('check',14,3.2):''}</span><span class="grow">${esc(t.t)}<div class="small muted">${esc(t.d)}</div></span><span class="ct">${Math.min(t.v,t.n)}/${t.n}</span></button>`}).join('')}</div></div>
    <div class="card2"><h3>Fitur Pendukung</h3><div class="sup"><button onclick="ringkasModal()">${ic('book2',24,1.9)}Ringkasan Materi</button><button onclick="pdfMateriModal()">${ic('dl',24,1.9)}Unduh Materi (PDF)</button><button onclick="favMModal()">${ic('star',24,1.9)}Materi Favorit (${(S.favM||[]).length})</button></div></div>
@@ -1707,7 +1739,7 @@ function evCard(e){const st=evStatus(e),me=myEv(e.id),b=evBoard(e.id);const myRa
   const end=e.start+(e.win||3)*3600e3;const tgt=st==='soon'?e.start:end;const p=cdParts(tgt-Date.now());
   const dt=new Date(e.start);
   const cd=st==='done'?'':`<div class="evcd"><span class="lb">${st==='soon'?'Mulai dalam':'Ditutup dalam'}</span><div class="row" style="gap:10px;flex:1;flex-wrap:nowrap" data-cdx="${tgt}">${['Hari','Jam','Menit','Detik'].map((l,i)=>`<div class="bx"><b>${p[i]}</b><span>${l}</span></div>`).join('')}</div>
-    <div class="act">${st==='soon'?`<button class="bblue" onclick="remindEv('${e.id}')">${ic('bell',19,2)}Ingatkan Saya</button>`:me?`<button class="bblue" onclick="ARV='ev:${e.id}';render()">${ic('bars',19,2)}Lihat Peringkat</button>`:`<button class="bblue" onclick="joinAkbar('${e.id}')">${ic('play',19,2)}Ikut Sekarang</button>`}</div></div>`;
+    <div class="act">${st==='soon'?`<button class="bblue" disabled style="opacity:.85;cursor:default">${ic('cal',19,2)}Dibuka ${new Date(e.start).toLocaleString('id-ID',{weekday:'long',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})}</button>`:me?`<button class="bblue" onclick="ARV='ev:${e.id}';render()">${ic('bars',19,2)}Lihat Peringkat</button>`:`<button class="bblue" onclick="joinAkbar('${e.id}')">${ic('play',19,2)}Ikut Sekarang</button>`}</div></div>`;
   return `<div class="evc ${st==='live'?'live':st==='done'?'done':''}">${ART_CLIP}
     <span class="evst ${st}">${ic(st==='live'?'zap':st==='soon'?'clock':'check',17,2.2)}${st==='live'?'Sedang Berlangsung':st==='soon'?'Akan Datang':'Selesai'}</span>
     <h3>${esc(e.title)}</h3>
@@ -3849,7 +3881,7 @@ function vAtur(){atInit();if(ATAB==='aman'||ATAB==='data')ATAB='profil';const A=
    ${tog('fNotif','Formasi resmi diperbarui','Beri tahu saat admin menambah atau mengubah formasi resmi, termasuk formasi favoritmu.')}
    ${tog('nArena','Event Arena','Tandai lonceng saat ada event Arena yang akan datang atau sedang berlangsung.')}
    ${tog('nInfo','Info & pengumuman CPNS','Tandai lonceng saat ada pengumuman baru dari admin.')}
-   <div class="ainfo" style="margin:14px 0 0">${ic('info',18,2)}<span>Ingin pengingat di luar aplikasi? Gunakan tombol <b>Ingatkan Saya</b> di Arena atau <b>Ingatkan Rilis Formasi</b> di Formasi untuk menyimpan pengingat ke kalender HP atau laptopmu.</span></div></div>`;
+</div>`;
   const dirty=atDirty();
   return `<section class="ath"><div class="tx"><h1>Pengaturan Akun</h1><p>Kelola profil, target belajar, dan preferensi untuk pengalaman belajar yang lebih personal.</p></div>${ART_SET}</section>
   <div class="atg"><aside class="apc"><div class="cv">${COVER()}</div>
@@ -4041,7 +4073,7 @@ function vFormasi(){
      <label title="${S.myJur?'':'Isi jurusanmu dulu lewat Detail formasi'}"><input type="checkbox" ${D.myj?'checked':''} ${S.myJur?'':'disabled'} onchange="fD().myj=this.checked">Cocok dengan jurusanku${S.myJur?` (${esc(S.myJur)})`:''}</label></div>
     <button class="fapply" onclick="fApply()">${ic('search',19,2.2)}Terapkan Filter${dirty?' •':''}</button>
     <div class="fmini"><button onclick="addFModal()">+ Formasi sendiri</button><button onclick="importModal()">Impor data SSCASN</button></div></div>
-   <div class="finfo">${ART_BELL}<h3>Info Resmi CPNS &amp; PPPK</h3><p>Pasang pengingat tanggal perkiraan rilis formasi di kalendermu.</p><button class="bblue" style="padding:11px 16px;font-size:14px" onclick="remindRilis()">${ic('bell',18,2)}Ingatkan Rilis Formasi</button></div>
+   <div class="finfo">${ART_BELL}<h3>Info Resmi CPNS &amp; PPPK</h3><p>Pengumuman formasi dan jadwal seleksi resmi hanya dirilis lewat situs SSCASN BKN.</p><a class="bblue" style="padding:11px 16px;font-size:14px;text-decoration:none;display:inline-flex" href="https://sscasn.bkn.go.id" target="_blank" rel="noopener">${ic('arrow',18,2)}Buka SSCASN</a></div>
   </div>
   <div class="flist"><div class="ftop"><span class="cnt"><b>${fmt(L.length)}</b> formasi ditemukan</span><span class="small muted">Urutkan:</span><select onchange="F.sort=this.value;F.n=10;fRefresh()">${[['rel','Paling Relevan'],['rasio','Persaingan terendah'],['kuota','Kuota terbanyak'],['peserta','Peserta tersedikit'],['az','Nama jabatan A–Z']].map(([k,t])=>`<option value="${k}" ${F.sort===k?'selected':''}>${t}</option>`).join('')}</select></div>
    <div id="flist">${fListHTML()}</div>
