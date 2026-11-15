@@ -22,7 +22,7 @@ button{cursor:pointer}
 .brand{font-weight:800;letter-spacing:-.02em;font-size:18px;display:flex;align-items:center;gap:8px}
 .brand .dot{width:26px;height:26px;border-radius:8px;background:var(--gold);display:grid;place-items:center;color:var(--pri);font-size:14px;font-weight:800}
 .top .sp{flex:1}
-.top .gear{background:rgba(255,255,255,.12);border:0;color:#fff;border-radius:10px;padding:6px 10px;font-size:13px;font-weight:600}
+.top .gear,.exam-top .gear{background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:10px;padding:8px 14px;font-size:13.5px;font-weight:700;cursor:pointer}.exam-top .gear:hover{background:rgba(255,255,255,.24)}
 h1{font-size:22px;letter-spacing:-.02em;margin:4px 0 4px}
 h2{font-size:17px;margin:0 0 10px;letter-spacing:-.01em}
 h3{font-size:15px;margin:0 0 8px}
@@ -123,8 +123,31 @@ table.cmp th{color:var(--muted);font-weight:600;border-top:0}
 .cdbox{margin-top:8px;background:var(--bg);border-radius:10px;padding:8px 12px;font-size:14px}.cdbox b{font-variant-numeric:tabular-nums}
 .bigbtn{display:flex;flex-direction:column;gap:2px;text-align:left;margin-bottom:0;cursor:pointer}
 .ta{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;resize:vertical}
-.fcard{perspective:1200px;cursor:pointer}.fcard .fin{position:relative;min-height:300px;transition:transform .45s;transform-style:preserve-3d}
-.fcard.flip .fin{transform:rotateY(180deg)}
+.flcard{perspective:1200px;cursor:pointer;display:block}.flcard .ff,.flcard .fb{overflow:hidden}
+.flcard{--c1:#1d4e7a;--c2:#3b82c4;--cs:#e6f0fb}
+.flcard[data-g="1"]{--c1:#b4232f;--c2:#f0626b;--cs:#fde8ea}
+.flcard[data-g="2"]{--c1:#a1640d;--c2:#f2b705;--cs:#fff4d6}
+.flcard[data-g="3"]{--c1:#4c2f94;--c2:#8b6cd9;--cs:#efe9fc}
+.flcard[data-g="4"]{--c1:#0b6e60;--c2:#22b39a;--cs:#e0f6f1}
+.flcard .ff{background:linear-gradient(140deg,var(--c1),var(--c2))!important;border:0!important;color:#fff!important;box-shadow:0 14px 30px -10px var(--c1)}
+.flcard .ff::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.16) 1.6px,transparent 1.8px);background-size:18px 18px;z-index:0}
+.flcard .ff::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;right:-120px;bottom:-150px;background:rgba(255,255,255,.12);box-shadow:-420px -260px 0 -40px rgba(255,255,255,.1);z-index:0}
+.flcard .ff>*,.flcard .fb>*{position:relative;z-index:1}
+.flcard .fdeco{position:absolute!important;inset:0;width:100%;height:100%;pointer-events:none;z-index:0!important}
+.flcard .fart{width:150px;height:150px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 8px rgba(255,255,255,.25),0 0 0 18px rgba(255,255,255,.12),0 16px 30px rgba(0,0,0,.18);margin-bottom:10px;animation:fbob 3s ease-in-out infinite}
+@keyframes fbob{50%{transform:translateY(-6px)}}
+.flcard .ff .pill{background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.flcard .ff .fct{font-size:30px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.18)}
+.flcard .ff .muted{color:rgba(255,255,255,.85)!important;background:rgba(0,0,0,.14);padding:6px 14px;border-radius:99px}
+.flcard .fq{position:absolute!important;top:18px;right:20px;width:42px;height:42px;border-radius:13px;background:#fff;color:var(--c1);font-style:normal;font-weight:900;font-size:22px;display:grid;place-items:center;transform:rotate(10deg);box-shadow:0 6px 14px rgba(0,0,0,.18)}
+.flcard .fb{background:linear-gradient(180deg,var(--cs),#fff)!important;border:2px solid var(--cs)!important;overflow:hidden}
+.flcard .fb::before{content:'';position:absolute;left:0;right:0;top:0;height:10px;background:linear-gradient(90deg,var(--c1),var(--c2));z-index:1}
+.flcard .fb::after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;right:-80px;top:-90px;background:var(--cs);z-index:0}
+.flcard .fbulb{width:84px;height:84px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 7px var(--cs),0 10px 20px rgba(0,0,0,.08)}
+.flcard .fb .pill{background:var(--c1);color:#fff}
+.flcard .fb .fans{background:#fff;border-radius:14px;padding:14px 18px;box-shadow:0 6px 16px rgba(0,0,0,.06);border-left:5px solid var(--c2);max-width:560px;color:var(--ink)}
+.flcard .fin{position:relative;min-height:400px;transition:transform .45s;transform-style:preserve-3d}
+.flcard.flip .fin{transform:rotateY(180deg)}
 .ff,.fb{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px}
 .fb{transform:rotateY(180deg);background:var(--pri-soft)}.fct{font-size:24px;font-weight:800;letter-spacing:-.01em}
 .opt:disabled{cursor:default;opacity:1;color:inherit}
@@ -908,11 +931,23 @@ function fcIv(c,g){const st=(S.fc||{})[c.id];const b0=st?st.b:0;const b=g===0?1:
 function fcAnswer(ok){const c=FS.list[FS.i];S.fc=S.fc||{};const st=S.fc[c.id];if(!st)bump('fcnew');
   const b=ok?Math.min(6,(st?st.b:0)+1):1;S.fc[c.id]={b,due:dayAdd(today(),ok?FC_INT[b]:1)};bump('fc');if(ok)FS.ok++;save();
   if(FS.i>=FS.list.length-1){FS.done=true}else{FS.i++;FS.flip=false}renderFlash()}
+
+/* ilustrasi kartu flashcard per kelompok */
+const FCART={
+ 'Pasal UUD':`<svg viewBox="0 0 120 96" width="118" height="94"><ellipse cx="60" cy="88" rx="44" ry="5" fill="#dbe7f7"/><rect x="26" y="12" width="68" height="72" rx="8" fill="#fff" stroke="#c9d9ef" stroke-width="2"/><rect x="20" y="8" width="80" height="12" rx="6" fill="#1d4e7a"/><rect x="20" y="76" width="80" height="12" rx="6" fill="#1d4e7a"/><g stroke="#9db8dc" stroke-width="3" stroke-linecap="round"><path d="M38 34h44M38 44h44M38 54h30"/></g><circle cx="80" cy="64" r="9" fill="#e5484d"/><path d="M76 72l-3 10 7-4 7 4-3-10" fill="#e5484d"/><text x="60" y="30" text-anchor="middle" font-size="9" font-weight="800" fill="#1d4e7a">UUD</text></svg>`,
+ 'Tanggal sejarah':`<svg viewBox="0 0 120 96" width="118" height="94"><ellipse cx="60" cy="88" rx="44" ry="5" fill="#dbe7f7"/><rect x="24" y="18" width="62" height="64" rx="10" fill="#fff" stroke="#c9d9ef" stroke-width="2"/><path d="M24 28a10 10 0 0 1 10-10h42a10 10 0 0 1 10 10v8H24z" fill="#e5484d"/><rect x="36" y="10" width="6" height="16" rx="3" fill="#1d4e7a"/><rect x="68" y="10" width="6" height="16" rx="3" fill="#1d4e7a"/><g fill="#c9d9ef"><rect x="34" y="46" width="10" height="9" rx="2"/><rect x="50" y="46" width="10" height="9" rx="2"/><rect x="34" y="62" width="10" height="9" rx="2"/><rect x="66" y="62" width="10" height="9" rx="2"/></g><rect x="66" y="46" width="10" height="9" rx="2" fill="#1d4e7a"/><path d="M92 22v62" stroke="#7a8aa0" stroke-width="3" stroke-linecap="round"/><path d="M93 24h20v9H93z" fill="#e5484d"/><path d="M93 33h20v9H93z" fill="#fff" stroke="#e6e9ee"/></svg>`,
+ 'Undang-undang':`<svg viewBox="0 0 120 96" width="118" height="94"><ellipse cx="60" cy="88" rx="44" ry="5" fill="#dbe7f7"/><rect x="22" y="14" width="52" height="68" rx="7" fill="#fff" stroke="#c9d9ef" stroke-width="2"/><g stroke="#9db8dc" stroke-width="3" stroke-linecap="round"><path d="M32 30h32M32 40h32M32 50h22"/></g><rect x="70" y="40" width="34" height="13" rx="4" transform="rotate(-35 87 46)" fill="#a5703a"/><rect x="84" y="50" width="6" height="30" rx="3" transform="rotate(-35 87 65)" fill="#c9934f"/><rect x="66" y="78" width="40" height="8" rx="3" fill="#7a5426"/></svg>`,
+ 'Nilai ASN':`<svg viewBox="0 0 120 96" width="118" height="94"><ellipse cx="60" cy="88" rx="40" ry="5" fill="#dbe7f7"/><path d="M60 8l36 12v24c0 22-16 34-36 40-20-6-36-18-36-40V20z" fill="#1d4e7a"/><path d="M60 18l26 9v17c0 16-11 25-26 30-15-5-26-14-26-30V27z" fill="#2c6cb5"/><path d="M60 30l5 10 11 2-8 8 2 11-10-5-10 5 2-11-8-8 11-2z" fill="#f2b705"/></svg>`,
+};
+const FC_DECO=`<svg class="fdeco" viewBox="0 0 400 300" preserveAspectRatio="none"><g fill="#fff"><path d="M40 50l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" opacity=".75"/><path d="M350 230l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" opacity=".7"/><path d="M330 70l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" opacity=".6"/><path d="M70 240l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" opacity=".6"/></g><g opacity=".85"><rect x="90" y="30" width="10" height="4" rx="2" fill="#ffd84d" transform="rotate(30 95 32)"/><rect x="300" y="120" width="10" height="4" rx="2" fill="#ffd84d" transform="rotate(-25 305 122)"/><rect x="40" y="160" width="9" height="4" rx="2" fill="#fff" transform="rotate(60 44 162)"/><circle cx="280" cy="40" r="4" fill="#ffd84d"/><circle cx="120" cy="270" r="3.5" fill="#fff"/><circle cx="370" cy="160" r="3" fill="#fff"/><circle cx="20" cy="110" r="3" fill="#ffd84d"/></g></svg>`;
+const FC_GI={'Pasal UUD':0,'Tanggal sejarah':1,'Lambang negara':2,'Undang-undang':3,'Nilai ASN':4};
+function fcArt(g){return g==='Lambang negara'?`<div class="fart">${garuda(112)}</div>`:`<div class="fart">${FCART[g]||FCART['Pasal UUD']}</div>`}
+const FC_BULB=`<svg viewBox="0 0 64 64" width="54" height="54"><circle cx="32" cy="28" r="18" fill="#fff4c2"/><path d="M32 12a14 14 0 0 0-8 25.5V44h16v-6.5A14 14 0 0 0 32 12z" fill="#f2b705"/><rect x="25" y="46" width="14" height="5" rx="2" fill="#7a8aa0"/><rect x="27" y="52" width="10" height="4" rx="2" fill="#7a8aa0"/><path d="M32 4v3M12 12l2 2M52 12l-2 2M6 28h3M55 28h3" stroke="#f2b705" stroke-width="2.5" stroke-linecap="round"/></svg>`;
 function renderFlash(){
   if(FS.done){if(!FS.logged){FS.logged=1;logAct({k:'fc',n:FS.list.length,ok:FS.ok})}$('#shell').innerHTML=`<div class="exam-top"><div style="font-weight:800">Flashcard TWK</div><div style="flex:1"></div></div><main><div class="card hero"><div class="muted small">Sesi selesai</div><div class="row" style="margin-top:6px"><div class="big">${FS.ok}</div><div class="muted">/ ${FS.list.length} sudah hafal</div></div><p class="muted small" style="margin:8px 0 0">Kartu yang lupa diulang lagi di sesi yang sama lalu besok. Kartu yang ragu tetap di tingkatnya. Kartu yang hafal naik tingkat dan muncul dengan jarak makin panjang: 1, 2, 4, 7, 15, lalu 30 hari.</p></div><button class="btn block" onclick="FS=null;go('belajar')">Kembali ke Belajar</button></main>`;return}
   const c=FS.list[FS.i],st=(S.fc||{})[c.id];
   $('#shell').innerHTML=`<div class="exam-top"><div><div style="font-weight:800">Flashcard TWK</div><div class="small" style="opacity:.75">Kartu ${FS.i+1} / ${FS.list.length}${st?' · kotak '+st.b:' · kartu baru'}</div></div><div style="flex:1"></div><button class="gear" onclick="FS=null;render()">Keluar</button></div>
-  <main><div class="fcard ${FS.flip?'flip':''}" onclick="FS.flip=!FS.flip;renderFlash()"><div class="fin"><div class="ff"><span class="pill pri">${esc(c.g)}</span><div class="fct">${esc(c.f)}</div><div class="small muted">Ketuk untuk melihat jawaban</div></div><div class="fb"><span class="pill ok">${esc(c.g)}</span><div class="small muted" style="margin-top:6px">${esc(c.f)}</div><div class="fct" style="font-size:20px">${esc(c.b)}</div></div></div></div>
+  <main><div class="flcard ${FS.flip?'flip':''}" data-g="${FC_GI[c.g]||0}" onclick="FS.flip=!FS.flip;renderFlash()"><div class="fin"><div class="ff">${FC_DECO}<i class="fq">?</i>${fcArt(c.g)}<span class="pill pri">${esc(c.g)}</span><div class="fct">${esc(c.f)}</div><div class="small muted">Ketuk untuk melihat jawaban</div></div><div class="fb"><div class="fbulb">${FC_BULB}</div><span class="pill">${esc(c.g)}</span><div class="small muted">${esc(c.f)}</div><div class="fct fans" style="font-size:20px">${esc(c.b)}</div></div></div></div>
   ${FS.flip?`<p class="small muted" style="text-align:center;margin:12px 0 0">Seberapa ingat kamu? Kartu akan muncul lagi sesuai jawabanmu.</p><div class="fsr"><button style="background:#e5484d" onclick="fcGrade(0)">Lupa<small>${fcIv(c,0)}</small></button><button style="background:#d9822b" onclick="fcGrade(1)">Ragu<small>${fcIv(c,1)}</small></button><button style="background:#22a05b" onclick="fcGrade(2)">Hafal<small>${fcIv(c,2)}</small></button></div>`:`<button class="btn ghost block" style="margin-top:12px" onclick="FS.flip=true;renderFlash()">Lihat jawaban</button>`}</main>`;
 }
 
