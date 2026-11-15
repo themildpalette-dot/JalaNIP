@@ -86,6 +86,10 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;p
 .mob{display:none}
 @media(max-width:1180px){.wrap{grid-template-columns:1fr}.types{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:860px){.side{position:fixed;left:-280px;z-index:40;transition:.2s;box-shadow:0 0 40px rgba(0,0,0,.15)}.side.open{left:0}.mob{display:grid}.top{padding:0 12px;gap:6px}.top .ttl{display:none}.srch{max-width:none}main{padding:18px 14px 120px}.grid2,.grid3{grid-template-columns:1fr}.types{grid-template-columns:1fr 1fr}.hero svg.art{display:none}.wrap{padding:10px;border-radius:16px}.step{padding:14px}.foot{left:0;padding:10px 12px;gap:8px}.foot .btn{min-width:0;flex:1;padding:11px 8px;font-size:14px}.foot .cancel{flex:0 0 auto}.hm{display:none}.foot .btn{white-space:nowrap;padding:11px 10px;gap:6px;font-size:13.5px}.foot .grow{display:none}.fchip{flex-wrap:wrap}.fchip>div:nth-child(2){flex:1;min-width:0}.fchip .st{order:5;margin-left:56px;width:100%}h1{font-size:24px}}
+
+@media(max-width:700px){.card.tw table,.card .tw table,.card.tw tbody,.card .tw tbody{display:block}.card.tw tr:first-child,.card .tw tr:first-child{display:none}
+.card.tw tr,.card .tw tr{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:12px 10px;border-bottom:1px solid var(--line)}
+.card.tw td,.card .tw td{border:0;padding:0;font-size:13.5px}.card.tw td:first-child,.card .tw td:first-child{flex:1 0 100%}.card.tw td:last-child,.card .tw td:last-child{flex:1 0 100%}.card.tw td:last-child:empty,.card .tw td:last-child:empty{display:none}}
 </style>
 </head>
 <body>
@@ -596,7 +600,7 @@ async function arena() {
   <div class="card"><h2>Buat event</h2><div class="grid3"><div><label class="f">Judul</label><input id="a_j" value="Arena #${(ev || []).length + 1}"></div><div><label class="f">Mulai (WIB)</label><input type="datetime-local" id="a_m" value="${def}"></div><div><label class="f">Akses dibuka (jam)</label><input type="number" id="a_a" value="3" min="1" max="72"></div></div>
    <label class="f">Hadiah (opsional)</label><input id="a_h" maxlength="160" placeholder="mis. Juara 1–3: voucher akses 1 tahun + e-sertifikat">
    <p class="small muted">Sistem memilih 30 TWK, 35 TIU, dan 45 TKP secara acak dari soal aktif. Semua peserta mendapat soal yang sama.</p><button class="btn gold" onclick="window.A.aAdd()">Jadwalkan</button></div>
-  <div class="card tw" style="padding:4px"><table><tr><th>Event</th><th>Mulai</th><th>Status</th><th>Peserta</th><th></th></tr>${(ev || []).map((e) => { const [t, c] = st(e); return `<tr><td><b>${h(e.judul)}</b><div class="small muted">${h(e.hadiah || "")}</div></td><td class="small">${tgl(e.mulai, 1)} · ${e.akses_jam} jam</td><td><span class="pill ${c}">${t}</span></td><td>${n[e.id] || 0}</td><td class="row" style="gap:4px"><button class="btn sm line" onclick="window.A.aScores('${e.id}')">Peringkat</button><button class="btn sm danger" onclick="window.A.aDel('${e.id}')">Hapus</button></td></tr>`; }).join("") || `<tr><td colspan="5" class="muted">Belum ada event.</td></tr>`}</table></div>`);
+  <div class="card tw" style="padding:4px"><table><tr><th>Event</th><th>Mulai</th><th>Status</th><th>Peserta</th><th></th></tr>${(ev || []).map((e) => { const [t, c] = st(e); return `<tr><td><b>${h(e.judul)}</b><div class="small muted">${h(e.hadiah || "")}</div></td><td class="small">${tgl(e.mulai, 1)} · ${e.akses_jam} jam</td><td><span class="pill ${c}">${t}</span></td><td>${n[e.id] || 0} peserta</td><td class="row" style="gap:4px"><button class="btn sm line" onclick="window.A.aScores('${e.id}')">Peringkat</button><button class="btn sm danger" onclick="window.A.aDel('${e.id}')">Hapus</button></td></tr>`; }).join("") || `<tr><td colspan="5" class="muted">Belum ada event.</td></tr>`}</table></div>`);
 }
 A.aAdd = async () => {
   const judul = $("#a_j").value.trim(), m = $("#a_m").value; if (!judul || !m) return flash("Judul dan waktu mulai wajib diisi.", false);
