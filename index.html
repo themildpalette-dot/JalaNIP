@@ -523,7 +523,7 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 @keyframes vfade{from{opacity:0;transform:translateY(1.2cqw) scale(.985)}to{opacity:1;transform:none}}
 @keyframes vpop{from{opacity:0;transform:translateY(1.5cqw)}to{opacity:1;transform:none}}
 .vcap{position:absolute;left:5cqw;right:5cqw;bottom:2.6cqw;font-size:1.75cqw;line-height:1.4;text-align:center;background:rgba(0,0,0,.45);padding:.8cqw 1.6cqw;border-radius:1cqw;color:#f3f6fb;max-height:6.5cqw;overflow:hidden}
-.vload{position:absolute;top:1.6cqw;left:2cqw;display:none;align-items:center;gap:.8cqw;font-size:1.3cqw;background:rgba(0,0,0,.4);padding:.5cqw 1.2cqw;border-radius:99px}.vload i{width:1.3cqw;height:1.3cqw;border-radius:50%;border:.25cqw solid rgba(255,255,255,.3);border-top-color:#ffd166;animation:vspin .8s linear infinite}@keyframes vspin{to{transform:rotate(360deg)}}
+.vload{position:absolute;top:1.6cqw;left:2cqw;display:none;align-items:center;gap:.8cqw;font-size:1.3cqw;background:rgba(0,0,0,.4);padding:.5cqw 1.2cqw;border-radius:99px}.vload.err{background:#b4232f;max-width:70cqw}.vload i{width:1.3cqw;height:1.3cqw;border-radius:50%;border:.25cqw solid rgba(255,255,255,.3);border-top-color:#ffd166;animation:vspin .8s linear infinite}@keyframes vspin{to{transform:rotate(360deg)}}
 .vwm{position:absolute;top:1.6cqw;right:2cqw;font-size:1.3cqw;font-weight:800;opacity:.45;letter-spacing:.05em}
 .vlogo{display:flex;align-items:center;gap:1cqw;font-weight:800;font-size:1.7cqw;opacity:.95}.vlogo img{width:4cqw!important;height:auto!important;filter:drop-shadow(0 0 .6cqw rgba(255,210,90,.5))}
 .vintro{align-items:center;justify-content:center;text-align:center}.vintro h2{font-size:5.2cqw;margin:1cqw 0 2cqw;line-height:1.1;animation:vpop .7s .25s both}
@@ -3467,10 +3467,11 @@ function vidSpeak(s){const tok=++VD.tok;vidStopAudio();const next=()=>{if(!VD||t
   const nx=VD.sc[VD.i+1];if(nx&&!VD.mute)try{const p2=vidAudio(nx.say);p2&&p2.catch(()=>{})}catch(e){}
   if(!pa)return browserVoice();
   const ld=document.getElementById('vload');if(ld)ld.style.display='flex';
-  const guard=setTimeout(()=>{if(VD&&tok===VD.tok){VTTS_FAIL++;if(ld)ld.style.display='none';browserVoice()}},9000);
+  const showErr=()=>{const m=window.JNIP_TTS_ERR;if(!m||!ld)return;ld.innerHTML='Suara ElevenLabs gagal: '+esc(String(m).slice(0,140));ld.style.display='flex';ld.classList.add('err');setTimeout(()=>{ld.style.display='none';ld.classList.remove('err');ld.innerHTML='<i></i>Menyiapkan suara…'},7000)};
+  const guard=setTimeout(()=>{if(VD&&tok===VD.tok){VTTS_FAIL++;window.JNIP_TTS_ERR=window.JNIP_TTS_ERR||'Tidak ada balasan dari fungsi tts (lebih dari 9 detik)';if(ld)ld.style.display='none';showErr();browserVoice()}},9000);
   pa.then(url=>{clearTimeout(guard);if(!VD||tok!==VD.tok)return;if(ld)ld.style.display='none';
     const a=VD.audio||(VD.audio=new Audio());a.src=url;a.playbackRate=VD.rate;a.onended=()=>{VD&&(VD.tm=setTimeout(next,600))};
-    a.play().catch(()=>browserVoice())}).catch(()=>{clearTimeout(guard);if(!VD||tok!==VD.tok)return;if(ld)ld.style.display='none';browserVoice()})}
+    a.play().catch(()=>browserVoice())}).catch(()=>{clearTimeout(guard);if(!VD||tok!==VD.tok)return;if(ld)ld.style.display='none';showErr();browserVoice()})}
 
 function vidToggle(){if(!VD)return;VD.play=!VD.play;if(!VD.play){clearTimeout(VD.tm);VD.tok++;vidStopAudio();try{speechSynthesis.cancel()}catch(e){}document.getElementById('vpp').innerHTML=vi('play',22)}else{if(VD.i>=VD.sc.length-1)VD.i=0;vidShow()}}
 function vidStep(d){if(!VD)return;VD.i=Math.max(0,Math.min(VD.sc.length-1,VD.i+d));vidShow()}
@@ -4431,7 +4432,12 @@ for (const r of rows) {
 // --- suara narasi video pembahasan (ElevenLabs lewat Edge Function "tts"; bila belum dipasang, otomatis memakai suara perangkat) ---
 window.JNIP_TTS = async (text) => {
   const { data, error } = await jnip.sb.functions.invoke('tts', { body: { text } });
-  if (error || !data || !data.url) throw (error || new Error('tts'));
+  if (error) {
+    let msg = error.message || 'gagal';
+    try { const j = await error.context.json(); msg = (j.error || msg) + (j.detail ? ' (' + j.detail + ')' : ''); } catch (e) {}
+    window.JNIP_TTS_ERR = msg; throw new Error(msg);
+  }
+  if (!data || !data.url) { window.JNIP_TTS_ERR = 'Fungsi tts tidak mengembalikan audio'; throw new Error(window.JNIP_TTS_ERR); }
   return data.url;
 };
 
