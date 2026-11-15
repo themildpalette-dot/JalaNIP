@@ -511,6 +511,48 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .lvh{margin-top:10px;display:grid;gap:6px}.lvh>div{display:grid;grid-template-columns:44px 1fr 74px;gap:8px;align-items:center;font-size:12.5px}.lvh i{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.lvh i b{display:block;height:100%;background:#d9822b;border-radius:99px}.lvh em{font-style:normal;font-weight:700;text-align:right}
 .lvro{height:42px;display:flex;align-items:center;padding:0 12px;border-radius:10px;font-weight:800;border:1px solid var(--line)}
 .lv0.lvro,.fp.lvc.lv0{background:#e3f5ea;color:#17824a}.lv1.lvro,.fp.lvc.lv1{background:#e6f0fd;color:#1e6fd9}.lv2.lvro,.fp.lvc.lv2{background:#fff1dc;color:#b86a0c}.lv3.lvro,.fp.lvc.lv3{background:#fde8e8;color:#c93b3b}
+
+.vbtn{display:inline-flex;align-items:center;gap:8px;margin:8px 8px 0 0;padding:8px 14px 8px 8px;border-radius:999px;border:0;background:linear-gradient(135deg,#0b3f91,#1e6fd9);color:#fff;font:inherit;font-weight:700;font-size:13.5px;cursor:pointer;box-shadow:0 6px 14px -6px rgba(30,111,217,.6)}.vbtn span{width:26px;height:26px;border-radius:50%;background:#fff;color:#1e6fd9;display:grid;place-items:center}
+#vid{position:fixed;inset:0;z-index:9999;background:#060e1c;display:flex;align-items:center;justify-content:center;padding:14px}
+.vwrap{width:min(100%,calc((100vh - 130px)*16/9),1180px)}
+.vtop{display:flex;align-items:center;color:#fff;margin-bottom:8px;font-size:14px}.vtop button{background:rgba(255,255,255,.12);border:0;color:#fff;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;cursor:pointer}
+.vstage{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;container-type:inline-size;background:radial-gradient(120% 90% at 0% 0%,#1d4f9a 0,#0c2a5c 45%,#081b3d 100%);color:#fff;font-family:"Plus Jakarta Sans",sans-serif;box-shadow:0 30px 60px -20px rgba(0,0,0,.6)}
+.vstage::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:4cqw 4cqw}
+#vscene{position:absolute;inset:0}
+.vs{position:absolute;inset:0;padding:4.5cqw 5cqw 11cqw;display:flex;flex-direction:column;animation:vfade .55s ease both}
+@keyframes vfade{from{opacity:0;transform:translateY(1.2cqw) scale(.985)}to{opacity:1;transform:none}}
+@keyframes vpop{from{opacity:0;transform:translateY(1.5cqw)}to{opacity:1;transform:none}}
+.vcap{position:absolute;left:5cqw;right:5cqw;bottom:2.6cqw;font-size:1.75cqw;line-height:1.4;text-align:center;background:rgba(0,0,0,.45);padding:.8cqw 1.6cqw;border-radius:1cqw;color:#f3f6fb;max-height:6.5cqw;overflow:hidden}
+.vwm{position:absolute;top:1.6cqw;right:2cqw;font-size:1.3cqw;font-weight:800;opacity:.45;letter-spacing:.05em}
+.vlogo{display:flex;align-items:center;gap:1cqw;font-weight:800;font-size:1.7cqw;opacity:.95}.vlogo img{width:4cqw!important;height:auto!important;filter:drop-shadow(0 0 .6cqw rgba(255,210,90,.5))}
+.vintro{align-items:center;justify-content:center;text-align:center}.vintro h2{font-size:5.2cqw;margin:1cqw 0 2cqw;line-height:1.1;animation:vpop .7s .25s both}
+.vkick{font-size:1.5cqw;letter-spacing:.25em;text-transform:uppercase;color:#ffd166;font-weight:800;margin-top:2cqw}
+.vchips{display:flex;gap:1cqw;animation:vpop .6s .6s both}.vchips span{background:rgba(255,255,255,.14);padding:.6cqw 1.6cqw;border-radius:99px;font-size:1.5cqw;font-weight:700}
+.vhead{display:flex;align-items:center;gap:1.2cqw;font-size:1.7cqw;font-weight:700;opacity:.92;margin-bottom:2cqw}
+.vtag{background:#1e6fd9;padding:.5cqw 1.4cqw;border-radius:99px;font-size:1.4cqw;letter-spacing:.06em;text-transform:uppercase}.vtag.y{background:#e09b12}.vtag.g{background:#22a05b}
+.vqgrid{display:grid;grid-template-columns:1.25fr 1fr;gap:3cqw;flex:1;min-height:0}
+.vq{background:#fff;color:#16243a;border-radius:1.4cqw;padding:2.2cqw 2.6cqw;font-size:2cqw;line-height:1.45;overflow:hidden;box-shadow:0 1.5cqw 3cqw -1.5cqw rgba(0,0,0,.5)}
+.vfig{margin-top:1.2cqw}.vfig svg{width:7cqw!important;height:7cqw!important}.vfig .fgrid3 svg{width:6cqw!important;height:6cqw!important}.vo svg{width:4.6cqw!important;height:4.6cqw!important}.vbig svg{width:8cqw!important;height:8cqw!important}.vfig .frow,.vfig .fgrid3{gap:.8cqw}
+.vopts{display:flex;flex-direction:column;gap:1cqw;justify-content:center}.vopts .vo span{display:flex;align-items:center}
+.vo{display:flex;align-items:center;gap:1.2cqw;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:1.1cqw;padding:1cqw 1.4cqw;font-size:1.8cqw;animation:vpop .5s both}.vo b{width:3cqw;height:3cqw;border-radius:.8cqw;background:rgba(255,255,255,.18);display:grid;place-items:center;flex:none}
+.vbul{display:flex;flex-direction:column;gap:2cqw;justify-content:center;flex:1}.vbul>div{display:flex;align-items:center;gap:2cqw;font-size:2.7cqw;font-weight:600;animation:vpop .6s both}.vbul i{font-style:normal;width:5cqw;height:5cqw;border-radius:50%;background:#ffd166;color:#13294b;display:grid;place-items:center;font-weight:900;flex:none}
+.vsgrid{display:grid;grid-template-columns:6cqw 1fr;gap:3cqw;flex:1;min-height:0;align-items:center}
+.vtrack{display:flex;flex-direction:column;gap:1.2cqw;align-items:center}.vtrack span{width:4cqw;height:4cqw;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.6cqw;background:rgba(255,255,255,.12)}.vtrack span.d{background:#22a05b}.vtrack span.c{background:#ffd166;color:#13294b;box-shadow:0 0 0 .6cqw rgba(255,209,102,.25)}
+.vboard{background:#123a2c;border:.5cqw solid #8a6a3f;border-radius:1.2cqw;padding:3cqw 3.5cqw;font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-size:3cqw;line-height:1.5;color:#f4f1e6;box-shadow:inset 0 0 3cqw rgba(0,0,0,.35)}.vboard>div{animation:vpop .55s both}.vboard .vn{color:#ffd166}
+.vcard{background:#fff;color:#16243a;border-radius:1.4cqw;padding:3cqw 3.5cqw;font-size:2.7cqw;line-height:1.5;font-weight:500;box-shadow:0 1.5cqw 3cqw -1.5cqw rgba(0,0,0,.5);border-left:1cqw solid #22a05b}.vcard .vn{color:#1e6fd9}
+.vans,.vtip,.vend{align-items:center;justify-content:center;text-align:center}
+.vcheck svg{width:9cqw;height:9cqw}.vcheck circle{fill:#22a05b;animation:vpop .4s both}.vcheck path{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;animation:vdraw .6s .35s forwards}@keyframes vdraw{to{stroke-dashoffset:0}}
+.vbig{margin-top:1.5cqw;display:flex;align-items:center;gap:2cqw;background:#fff;color:#16243a;padding:2cqw 3.5cqw;border-radius:1.6cqw;font-size:3.2cqw;font-weight:800;animation:vpop .6s .5s both;max-width:80cqw}.vbig b{width:6cqw;height:6cqw;border-radius:1.2cqw;background:#22a05b;color:#fff;display:grid;place-items:center;flex:none}
+.vbulb{font-size:7cqw;animation:vpop .5s both}.vtip p{font-size:3.2cqw;font-weight:700;max-width:72cqw;line-height:1.4;margin:1.5cqw 0 0;animation:vpop .6s .3s both}
+.vend h2{font-size:5cqw;margin:2cqw 0 1cqw}.vend p{font-size:2.2cqw;opacity:.85;margin:0}
+.vctl{display:flex;align-items:center;gap:8px;margin-top:10px;color:#fff}.vctl button{background:rgba(255,255,255,.12);border:0;color:#fff;height:38px;min-width:38px;border-radius:10px;display:grid;place-items:center;cursor:pointer;font:inherit;font-weight:800;font-size:13px;padding:0 8px}
+#vpp{background:#1e6fd9;min-width:46px}
+.vseg{flex:1;display:flex;gap:4px;align-items:center;padding:0 6px}.vseg i{flex:1;height:6px;border-radius:99px;background:rgba(255,255,255,.2);cursor:pointer}.vseg i.d{background:#7fb2f5}.vseg i.c{background:#ffd166}
+.vtime{font-size:12.5px;opacity:.8;min-width:36px;text-align:center}
+.vx2{display:none!important}@media(max-height:520px){.vtop{display:none}.vx2{display:grid!important}#vid{padding:8px}.vwrap{width:min(100%,calc((100vh - 64px)*16/9))}.vctl{margin-top:6px}}
+.vrot{display:none;color:#cfd8e6;font-size:12.5px;text-align:center;margin-top:10px}
+@media(orientation:portrait) and (max-width:700px){.vrot{display:block}.vwrap{width:100%}.vctl{gap:5px}.vctl button{height:34px;min-width:34px}.vrate{display:none!important}}
+#vid:fullscreen{padding:0}#vid:fullscreen .vwrap{width:min(100vw,calc((100vh - 60px)*16/9))}#vid:fullscreen .vtop,#vid:fullscreen .vrot{display:none}
 .prg{display:flex;align-items:center;gap:18px;margin-top:10px}.prg .tx b{font-size:15px}.prg .dl{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#e3f5ea;color:#17824a;border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700}.prg .dl.dn{background:#fde8e8;color:#c03a3a}
 [data-theme=dark] .prg .dl{background:#173326;color:#7be0a4}
 .jt{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-top:0;color:var(--ink);text-align:left;font-size:14.5px}.jt:last-child{border-bottom:0}
@@ -1010,7 +1052,7 @@ function renderLearn(){
   const qi=L_.qs[L_.i],q=Q[qi],p=L_.pick;
   const fb=p==null?'':(()=>{const good=isGood(q,p);const pts=q.cat==='tkp'?q.w[p]:(good?5:0);
     return `<div class="note" style="margin-top:4px;background:${good?'var(--ok-soft)':'var(--bad-soft)'};border-color:transparent;color:${good?'var(--ok-ink)':'var(--bad-ink)'}"><b>${q.cat==='tkp'?(pts===5?'Jawaban terbaik! ':pts>=4?'Cukup baik. ':'Kurang tepat. ')+pts+' poin':(good?'Benar! +5':'Kurang tepat. Jawaban benar: '+L[q.a])}</b></div>
-    <div class="exp">${esc(q.e)}</div>${aiBtn(qi,p)}
+    <div class="exp">${esc(q.e)}</div>${vidBtn(qi)}${aiBtn(qi,p)}
     ${MATERI[q.sub]?`<button class="btn line" style="margin-top:8px;padding:8px 12px" onclick="openMateri('${esc(q.sub)}')">📘 Materi ${esc(q.sub)}</button>`:''}`})();
   $('#shell').innerHTML=`<div class="exam-top"><div><div style="font-weight:800">${esc(L_.label)}</div><div class="small" style="opacity:.75">Soal ${L_.i+1} / ${L_.qs.length} · tanpa timer</div></div><div style="flex:1"></div><button class="gear" onclick="exitLearn()">Keluar</button></div>
   <main><div class="card"><span class="qcat">${CAT[q.cat].name} · ${esc(q.sub)}</span><div class="qtext">${esc(q.q)}</div>${qFig(q)}
@@ -3344,6 +3386,85 @@ function vPencapaian(){const n=BADGES.filter(b=>(S.badges||{})[b.id]).length;
 /* ===================== TANYA AI ===================== */
 let SAMPLE=null,AI=null;
 (async()=>{try{if(typeof claude!=='undefined'&&claude.use){SAMPLE=await claude.use('sample');if(SAMPLE&&!EX&&!LS&&!FS)render()}}catch(e){SAMPLE=null}})();
+
+/* ===================== VIDEO PEMBAHASAN (pemutar animasi 16:9) ===================== */
+const VSTRAT={
+ 'Numerik – Deret':['Tulis selisih antarsuku terlebih dahulu.','Kalau selisihnya tidak tetap, periksa rasio, pola berselang, atau selisih tingkat dua.'],
+ 'Numerik – Perbandingan Kuantitas':['Hitung nilai x dan y masing-masing sampai tuntas.','Waspadai pangkat genap dan akar, karena bisa menghasilkan dua kemungkinan nilai.'],
+ 'Numerik – Soal Cerita':['Ubah kalimat cerita menjadi persamaan matematika.','Tentukan dulu besaran yang ditanyakan, lalu cari satu per satu.'],
+ 'Numerik – Hitungan':['Sederhanakan bentuk desimal atau persen menjadi pecahan.','Hitung bagian demi bagian, lalu gabungkan.'],
+ 'Numerik – Tabel':['Temukan baris dan kolom yang ditanyakan.','Ambil angkanya, lalu hitung sesuai perintah soal.'],
+ 'Numerik – Kecepatan, Jarak & Waktu':['Ingat rumus dasar: jarak sama dengan kecepatan kali waktu.','Samakan satuan waktu dan jarak sebelum menghitung.'],
+ 'Numerik – Geometri':['Tentukan rumus bangun yang dipakai.','Masukkan ukuran yang diketahui ke dalam rumus.'],
+ 'Numerik – Aritmetika Sosial':['Tentukan harga beli sebagai patokan seratus persen.','Untung atau rugi selalu dihitung dari harga beli.'],
+ 'Numerik – Rata-rata & Statistik':['Ubah rata-rata menjadi jumlah total.','Total sama dengan rata-rata dikali banyak data.'],
+ 'Numerik – Pecahan & Desimal':['Ubah semua bilangan ke bentuk yang sama.','Pecahan biasa sering paling mudah dihitung.'],
+ 'Numerik – Perbandingan Senilai & Berbalik Nilai':['Tentukan jenis perbandingannya.','Senilai: perbandingan tetap. Berbalik nilai: hasil kali tetap.'],
+ 'Verbal – Analogi':['Rumuskan hubungan pasangan pertama dalam satu kalimat.','Uji kalimat itu pada setiap pilihan jawaban.'],
+ 'Verbal – Sinonim':['Cari kata yang maknanya paling dekat.','Waspadai kata yang bunyinya mirip tetapi maknanya berbeda.'],
+ 'Verbal – Antonim':['Pahami dulu makna kata soal.','Cari lawan katanya, dan coret pilihan yang justru bersinonim.'],
+ 'Verbal – Silogisme':['Tuliskan premis dalam bentuk sederhana.','Tarik kesimpulan hanya dari yang pasti, bukan yang mungkin.'],
+ 'Verbal – Pola Kalimat':['Temukan predikat terlebih dahulu.','Subjek di depan predikat; objek, pelengkap, dan keterangan di belakangnya.'],
+ 'Analitis':['Susun informasi yang pasti terlebih dahulu.','Gunakan petunjuk lain untuk mengeliminasi kemungkinan.'],
+ 'Figural':['Perhatikan satu unsur gambar yang berubah.','Lacak perubahannya: arah putar, jumlah, warna, atau posisi.'],
+};
+const VTIP={'Numerik – Deret':'Deret naik-turun hampir selalu berupa dua deret yang berselang.','Numerik – Perbandingan Kuantitas':'a persen dari b selalu sama dengan b persen dari a.','Numerik – Kecepatan, Jarak & Waktu':'Berpapasan: jumlahkan kecepatan. Menyusul: kurangkan kecepatan.','Numerik – Aritmetika Sosial':'Diskon bertingkat dikalikan berurutan, bukan dijumlahkan.','Numerik – Rata-rata & Statistik':'Data baru sama dengan total baru dikurangi total lama.','Verbal – Analogi':'Periksa urutan hubungan. Pasangan yang terbalik adalah pengecoh paling umum.','Verbal – Silogisme':'Menegaskan bagian "maka" tidak membuktikan bagian "jika".','Figural':'Fokus pada satu ciri kecil yang asimetris, lalu lacak perpindahannya.'};
+const VICO={play:'<path d="M8 5v14l11-7z"/>',pause:'<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>',prev:'<path d="M6 5h2v14H6zM20 5v14L9 12z"/>',next:'<path d="M16 5h2v14h-2zM4 5v14l11-7z"/>',vol:'<path d="M4 9v6h4l5 4V5L8 9zM16 8a5 5 0 0 1 0 8M18.5 5.5a9 9 0 0 1 0 13" fill="none" stroke="currentColor" stroke-width="2"/>',mute:'<path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6" stroke="currentColor" stroke-width="2"/>',full:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2"/>',x:'<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4"/>'};
+const vi=(k,sz=20)=>`<svg viewBox="0 0 24 24" width="${sz}" height="${sz}" fill="currentColor">${VICO[k]}</svg>`;
+function vidBtn(qi){const q=Q[qi];return q&&q.cat==='tiu'?`<button class="vbtn" onclick="vidOpen(${qi})"><span>${vi('play',14)}</span>Video pembahasan</button>`:''}
+function vSay(t){return String(t).replace(/Rp\s?([\d.]+)/g,'$1 rupiah').replace(/(\d)\.(\d{3})/g,'$1$2').replace(/(\d),(\d)/g,'$1 koma $2').replace(/×/g,' kali ').replace(/÷/g,' dibagi ').replace(/=/g,' sama dengan ').replace(/→/g,', menjadi ').replace(/(\d)\s*[−-]\s*(\d)/g,'$1 kurang $2').replace(/\+/g,' tambah ').replace(/²/g,' kuadrat').replace(/³/g,' pangkat tiga').replace(/√/g,'akar ').replace(/∛/g,'akar pangkat tiga ').replace(/(\d)\s*:\s*(\d)/g,'$1 banding $2').replace(/(\d)\s*\/\s*(\d)/g,'$1 per $2').replace(/%/g,' persen').replace(/…/g,'').replace(/\s+/g,' ').trim()}
+function vMark(t){return esc(t).replace(/(Rp\s?[\d.]+|\d[\d.,]*%?)/g,'<b class="vn">$1</b>')}
+function vidScenes(q){const L='ABCDE';const sc=[];
+  sc.push({k:'intro',say:`Video pembahasan. ${q.sub.replace('–',',')}.`});
+  const qs=q.q.replace(/\s+/g,' ').trim();
+  sc.push({k:'soal',say:'Perhatikan soal berikut. '+(qs.length>260?qs.slice(0,260).replace(/\s+\S*$/,'')+'.':qs)});
+  const st=VSTRAT[q.sub]||['Baca soal dengan teliti.','Tentukan informasi yang diketahui dan yang ditanyakan.'];
+  sc.push({k:'strat',t:st,say:'Strategi. '+st.join(' ')});
+  const parts=String(q.e||'').split(/\n+|(?<=[.!?])\s+(?=[A-Z0-9(√∛"'])/).map(x=>x.trim()).filter(Boolean);
+  parts.forEach((x,i)=>{const math=/[=×÷→]|\d\s*[+−\-:/]\s*\d/.test(x);sc.push({k:'step',n:i+1,of:parts.length,t:x,math,say:x})});
+  if(q.a!=null)sc.push({k:'ans',say:`Jadi, jawaban yang benar adalah ${L[q.a]}.${q.of?'':' '+q.o[q.a]+'.'}`});
+  const tip=VTIP[q.sub];if(tip)sc.push({k:'tip',t:tip,say:'Trik cepat. '+tip});
+  sc.push({k:'end',say:'Selesai. Lanjutkan latihanmu.'});return sc}
+function vidScene(q,s,i,all){const L='ABCDE';
+  if(s.k==='intro')return `<div class="vs vintro"><div class="vlogo">${garuda(44)}<span>Jalan NIP Academy</span></div><div class="vkick">Video Pembahasan</div><h2>${esc(q.sub)}</h2><div class="vchips"><span>TIU</span><span>${all.filter(x=>x.k==='step').length} langkah</span></div></div>`;
+  if(s.k==='soal')return `<div class="vs vsoal"><div class="vhead"><span class="vtag">Soal</span>${esc(q.sub)}</div><div class="vqgrid"><div class="vq">${esc(q.q).replace(/\n/g,'<br>')}${q.fig?`<div class="vfig">${qFig(q)}</div>`:''}</div><div class="vopts">${q.o.map((o,k)=>`<div class="vo" style="animation-delay:${.15+k*.12}s"><b>${L[k]}</b><span>${q.of?cellSVG(q.of[k],58):esc(o)}</span></div>`).join('')}</div></div></div>`;
+  if(s.k==='strat')return `<div class="vs vstrat"><div class="vhead"><span class="vtag y">Strategi</span>Cara berpikir</div><div class="vbul">${s.t.map((x,k)=>`<div style="animation-delay:${.2+k*.5}s"><i>${k+1}</i><span>${esc(x)}</span></div>`).join('')}</div></div>`;
+  if(s.k==='step'){const steps=all.filter(x=>x.k==='step');
+    return `<div class="vs vstep"><div class="vhead"><span class="vtag g">Langkah ${s.n}</span>dari ${s.of}</div><div class="vsgrid"><div class="vtrack">${steps.map(x=>`<span class="${x.n<s.n?'d':x.n===s.n?'c':''}">${x.n}</span>`).join('')}</div>
+    ${s.math?`<div class="vboard">${s.t.split(/(?=\s=\s)/).map((x,k)=>`<div style="animation-delay:${.2+k*.7}s">${vMark(x)}</div>`).join('')}</div>`:`<div class="vcard">${vMark(s.t)}</div>`}</div></div>`}
+  if(s.k==='ans')return `<div class="vs vans"><div class="vcheck"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M14 27l8 8 16-17"/></svg></div><div class="vkick">Jawaban yang benar</div><div class="vbig"><b>${L[q.a]}</b>${q.of?cellSVG(q.of[q.a],90):esc(q.o[q.a])}</div></div>`;
+  if(s.k==='tip')return `<div class="vs vtip"><div class="vbulb">💡</div><div class="vkick">Trik cepat</div><p>${esc(s.t)}</p></div>`;
+  return `<div class="vs vend"><div class="vlogo">${garuda(40)}<span>Jalan NIP Academy</span></div><h2>Selesai!</h2><p>Ulangi videonya bila perlu, lalu coba soal berikutnya.</p></div>`}
+let VD=null;
+function vidOpen(qi){const q=Q[qi];if(!q)return;vidClose(true);VD={qi,q,sc:vidScenes(q),i:0,play:true,rate:S.vrate||1,mute:!!S.vmute,tm:null,tok:0};
+  const el=document.createElement('div');el.id='vid';el.innerHTML=`<div class="vwrap"><div class="vtop"><b style="flex:1">Video pembahasan</b><button onclick="vidClose()" title="Tutup">${vi('x',20)}</button></div>
+  <div class="vstage" id="vstage"><div id="vscene"></div><div class="vcap" id="vcap"></div><div class="vwm">JalanNIP</div></div>
+  <div class="vctl"><button onclick="vidStep(-1)" title="Sebelumnya">${vi('prev')}</button><button id="vpp" onclick="vidToggle()" title="Putar/jeda"></button><button onclick="vidStep(1)" title="Berikutnya">${vi('next')}</button>
+   <div class="vseg" id="vseg"></div><span class="vtime" id="vtime"></span>
+   <button class="vrate" onclick="vidRate()" id="vrate"></button><button onclick="vidMute()" id="vmu" title="Suara"></button><button onclick="vidFull()" title="Layar penuh">${vi('full')}</button><button class="vx2" onclick="vidClose()" title="Tutup">${vi('x')}</button></div>
+  <div class="vrot">Putar HP ke posisi mendatar (landscape) untuk tampilan lebih besar.</div></div>`;
+  document.body.appendChild(el);document.body.style.overflow='hidden';
+  document.addEventListener('keydown',vidKey);vidShow()}
+function vidKey(e){if(!VD)return;if(e.key==='Escape')vidClose();else if(e.key===' '){e.preventDefault();vidToggle()}else if(e.key==='ArrowRight')vidStep(1);else if(e.key==='ArrowLeft')vidStep(-1)}
+function vidClose(silent){try{speechSynthesis.cancel()}catch(e){}if(VD)clearTimeout(VD.tm);VD=null;const el=document.getElementById('vid');if(el)el.remove();document.body.style.overflow='';document.removeEventListener('keydown',vidKey);try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}}
+function vidVoice(){try{const v=speechSynthesis.getVoices();return v.find(x=>/^id/i.test(x.lang))||null}catch(e){return null}}
+function vidShow(){if(!VD)return;const s=VD.sc[VD.i];clearTimeout(VD.tm);try{speechSynthesis.cancel()}catch(e){}
+  document.getElementById('vscene').innerHTML=vidScene(VD.q,s,VD.i,VD.sc);document.getElementById('vcap').textContent=s.say;
+  document.getElementById('vseg').innerHTML=VD.sc.map((x,k)=>`<i class="${k<VD.i?'d':k===VD.i?'c':''}" onclick="VD.i=${k};vidShow()" title="${x.k}"></i>`).join('');
+  document.getElementById('vtime').textContent=`${VD.i+1}/${VD.sc.length}`;
+  document.getElementById('vpp').innerHTML=vi(VD.play?'pause':'play',22);document.getElementById('vmu').innerHTML=vi(VD.mute?'mute':'vol');document.getElementById('vrate').textContent=VD.rate+'×';
+  if(VD.play)vidSpeak(s)}
+function vidSpeak(s){const tok=++VD.tok;const next=()=>{if(!VD||tok!==VD.tok||!VD.play)return;if(VD.i<VD.sc.length-1){VD.i++;vidShow()}else{VD.play=false;document.getElementById('vpp').innerHTML=vi('play',22)}};
+  const words=vSay(s.say).split(/\s+/).length,est=Math.max(2600,(words*400+900)/VD.rate);
+  const v=!VD.mute&&window.speechSynthesis&&vidVoice();
+  if(v){try{const u=new SpeechSynthesisUtterance(vSay(s.say));u.voice=v;u.lang=v.lang;u.rate=Math.min(2,.95*VD.rate);u.onend=()=>{VD&&(VD.tm=setTimeout(next,700))};u.onerror=()=>{VD&&(VD.tm=setTimeout(next,est))};speechSynthesis.speak(u);VD.tm=setTimeout(next,est*2.5+4000);return}catch(e){}}
+  VD.tm=setTimeout(next,est)}
+function vidToggle(){if(!VD)return;VD.play=!VD.play;if(!VD.play){clearTimeout(VD.tm);VD.tok++;try{speechSynthesis.cancel()}catch(e){}document.getElementById('vpp').innerHTML=vi('play',22)}else{if(VD.i>=VD.sc.length-1)VD.i=0;vidShow()}}
+function vidStep(d){if(!VD)return;VD.i=Math.max(0,Math.min(VD.sc.length-1,VD.i+d));vidShow()}
+function vidRate(){if(!VD)return;const r=[1,1.25,1.5,.75];VD.rate=r[(r.indexOf(VD.rate)+1)%r.length];S.vrate=VD.rate;save();vidShow()}
+function vidMute(){if(!VD)return;VD.mute=!VD.mute;S.vmute=VD.mute;save();vidShow()}
+function vidFull(){const el=document.getElementById('vid');try{if(document.fullscreenElement)document.exitFullscreen();else el.requestFullscreen().then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})}catch(e){}}
+try{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
 function aiBtn(qi,a){return SAMPLE&&Q[qi]?`<button class="btn ai" onclick="openAI(${qi},${a==null?'null':a})">${ic('brain',16,2)} Tanya AI</button>`:''}
 function aiContext(qi,a){const q=Q[qi];
   const opts=q.of?`(Soal bergambar/figural tipe "${q.fk}". Opsi berupa gambar A–E yang tidak dapat kamu lihat; jelaskan berdasarkan pembahasan.)`:q.o.map((o,k)=>`${L[k]}. ${o}${q.cat==='tkp'?` [bobot ${q.w[k]}]`:''}`).join('\n');
@@ -3809,7 +3930,7 @@ function reviewItem(h,qi,i){
    <div style="padding-left:36px;margin-top:8px"><div class="qtext" style="font-size:14px;margin:0 0 8px">${esc(q.q)}</div>${qFig(q)}
    ${q.o.map((o,k)=>{let cls='';if(q.cat==='tkp'){cls=q.w[k]===5?'right':(k===a&&q.w[k]<5?'wrong':'')}else{cls=k===q.a?'right':(k===a?'wrong':'')}
      return `<div class="o ${cls}">${L[k]}. ${optLabel(q,k)}${q.cat==='tkp'?` <b style="float:right">${q.w[k]}</b>`:''}${k===a?' ← jawabanmu':''}</div>`}).join('')}
-   <div class="exp">${esc(q.e)}</div>${aiBtn(qi,a)}<div class="small muted" style="margin-top:6px">Waktu: ${h.t[i]} detik</div></div></details>`;
+   <div class="exp">${esc(q.e)}</div>${vidBtn(qi)}${aiBtn(qi,a)}<div class="small muted" style="margin-top:6px">Waktu: ${h.t[i]} detik</div></div></details>`;
 }
 
 /* ===================== RIWAYAT ===================== */
