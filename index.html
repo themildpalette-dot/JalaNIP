@@ -540,7 +540,7 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .vsgrid{display:grid;grid-template-columns:6cqw 1fr;gap:3cqw;flex:1;min-height:0;align-items:center}
 .vtrack{display:flex;flex-direction:column;gap:1.2cqw;align-items:center}.vtrack span{width:4cqw;height:4cqw;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.6cqw;background:rgba(255,255,255,.12)}.vtrack span.d{background:#22a05b}.vtrack span.c{background:#ffd166;color:#13294b;box-shadow:0 0 0 .6cqw rgba(255,209,102,.25)}
 .vboard{background:#123a2c;border:.5cqw solid #8a6a3f;border-radius:1.2cqw;padding:3cqw 3.5cqw;font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-size:3cqw;line-height:1.5;color:#f4f1e6;box-shadow:inset 0 0 3cqw rgba(0,0,0,.35)}.vboard>div{animation:vpop .55s both}.vboard .vn{color:#ffd166}
-.vcard{background:#fff;color:#16243a;border-radius:1.4cqw;padding:3cqw 3.5cqw;font-size:2.7cqw;line-height:1.5;font-weight:500;box-shadow:0 1.5cqw 3cqw -1.5cqw rgba(0,0,0,.5);border-left:1cqw solid #22a05b}.vcard .vn{color:#1e6fd9}
+.vcard{background:#fff;color:#16243a;border-radius:1.4cqw;padding:3cqw 3.5cqw;font-size:2.7cqw;line-height:1.5;font-weight:500;box-shadow:0 1.5cqw 3cqw -1.5cqw rgba(0,0,0,.5);border-left:1cqw solid #22a05b}.vcard .vn{color:#1e6fd9}.vcard.visi{animation:vpop .5s both;font-size:2.4cqw}
 .vans,.vtip,.vend{align-items:center;justify-content:center;text-align:center}
 .vcheck svg{width:9cqw;height:9cqw}.vcheck circle{fill:#22a05b;animation:vpop .4s both}.vcheck path{fill:none;stroke:#fff;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;animation:vdraw .6s .35s forwards}@keyframes vdraw{to{stroke-dashoffset:0}}
 .vbig{margin-top:1.5cqw;display:flex;align-items:center;gap:2cqw;background:#fff;color:#16243a;padding:2cqw 3.5cqw;border-radius:1.6cqw;font-size:3.2cqw;font-weight:800;animation:vpop .6s .5s both;max-width:80cqw}.vbig b{width:6cqw;height:6cqw;border-radius:1.2cqw;background:#22a05b;color:#fff;display:grid;place-items:center;flex:none}
@@ -3472,6 +3472,219 @@ function vSay(t){let s=' '+String(t)+' ';
   s=s.replace(/\bke-(\w)/g,'ke $1').replace(/\s+([,.])/g,'$1').replace(/\s+/g,' ').trim();
   return s}
 function vMark(t){return esc(t).replace(/(Rp\s?[\d.]+|\d[\d.,]*%?)/g,'<b class="vn">$1</b>')}
+/* ===== Naskah guru otomatis: dipakai bila soal belum punya naskah tulisan tangan ===== */
+const VG={
+ 'Numerik – Deret':{ko:'Menemukan aturan perubahan pada deret',
+  an:[['🧩','Seperti mencari resep: setiap angka diolah dengan langkah yang sama untuk menghasilkan angka berikutnya.'],['👣','Seperti jejak kaki: kalau jarak langkahnya teratur, kita bisa menebak di mana kaki berikutnya mendarat.']],
+  pt:'Lihat cara angkanya berubah. Naik pelan biasanya penjumlahan, naik cepat biasanya perkalian, naik-turun biasanya dua pola yang berselang.',
+  kw:['perubahan antarsuku','pola tetap'],
+  sj:'Tulis selisih antarsuku, lalu uji rasio', sa:'Aturan deret selalu tetap. Begitu selisih atau rasionya terlihat konsisten, aturannya ketemu.',
+  why:['Kita perlu aturan yang berlaku untuk semua angka.','Aturan yang sama dipakai lagi untuk angka berikutnya.'],
+  ck:'Uji aturannya pada semua angka di deret, bukan hanya dua angka pertama.',
+  tips:['Naik pelan → coba selisih. Naik cepat → coba perkalian.','Naik-turun → pisahkan suku ganjil dan suku genap.'], si:'Deret: temukan aturannya, uji ke semua angka, lalu pakai sekali lagi.', el:'tidak sesuai pola'},
+ 'Numerik – Perbandingan Kuantitas':{ko:'Menghitung dua nilai lalu membandingkannya',
+  an:[['⚖️','Seperti menimbang dua kantong belanja: hitung isi masing-masing dulu, baru bandingkan mana yang lebih berat.']],
+  pt:'Soal ini memberi dua nilai, x dan y. Bentuknya bisa berbeda, tapi yang dibandingkan adalah angka akhirnya.',
+  kw:['nilai x','nilai y','bandingkan'],
+  sj:'Hitung x dan y sampai tuntas', sa:'Bentuk pecahan, desimal, atau pangkat sering menipu mata. Angka akhirlah yang jujur.',
+  why:['Kita butuh angka pasti untuk x.','Kita butuh angka pasti untuk y.','Setelah keduanya jelas, baru bisa dibandingkan.'],
+  ck:'Pastikan tanda hubungan yang dipilih sesuai dengan dua angka yang sudah dihitung.',
+  tips:['Ubah desimal dan persen ke pecahan agar mudah dihitung.','Kalau ada pangkat genap atau akar, cek apakah nilainya bisa positif dan negatif.'], si:'Jangan menebak dari bentuk; hitung kedua nilai, lalu bandingkan.', el:'tidak sesuai hasil hitung'},
+ 'Numerik – Soal Cerita':{ko:'Mengubah cerita menjadi hitungan',
+  an:[['📖','Seperti menerjemahkan bahasa: kalimat cerita kita ubah menjadi kalimat matematika.']],
+  pt:'Cari angka-angka penting di cerita dan kata yang menunjukkan operasi hitungnya.',
+  kw:['angka di cerita','yang ditanyakan'],
+  sj:'Terjemahkan cerita menjadi persamaan', sa:'Cerita yang panjang jadi sederhana setelah diubah menjadi hitungan.',
+  why:['Kita mulai dari informasi yang pasti di soal.','Hasil langkah sebelumnya dipakai untuk langkah ini.','Inilah besaran yang ditanyakan soal.'],
+  ck:'Masukkan kembali jawaban ke cerita. Kalau semua syarat cerita terpenuhi, jawabannya benar.',
+  tips:['Garis bawahi angka dan kata kerja hitung di cerita.','Tentukan dulu apa yang ditanya sebelum mulai menghitung.'], si:'Cerita = hitungan yang menyamar. Terjemahkan dulu, baru hitung.', el:'tidak sesuai hasil hitung'},
+ 'Numerik – Hitungan':{ko:'Berhitung cepat dan teliti',
+  an:[['🧱','Seperti menyusun balok: kerjakan satu bagian dulu, lalu tumpuk hasilnya.']],
+  pt:'Perhatikan urutan operasinya. Kurung dikerjakan dulu, lalu kali dan bagi, baru tambah dan kurang.',
+  kw:['urutan operasi','sederhanakan'],
+  sj:'Sederhanakan, lalu hitung bertahap', sa:'Angka yang disederhanakan dulu membuat hitungan lebih ringan dan jarang salah.',
+  why:['Bagian ini dikerjakan lebih dulu sesuai urutan operasi.','Hasil sebelumnya kita lanjutkan.','Ini hasil akhir yang diminta.'],
+  ck:'Perkirakan kasar besarnya hasil. Kalau jawaban kita masuk akal, hitungannya aman.',
+  tips:['Ubah persen dan desimal ke pecahan bila memudahkan.','Gunakan perkiraan kasar untuk mencoret pilihan yang terlalu jauh.'], si:'Hitungan panjang = beberapa hitungan pendek yang dikerjakan berurutan.', el:'tidak sesuai hasil hitung'},
+ 'Numerik – Tabel':{ko:'Membaca data tabel lalu menghitung',
+  an:[['🗂️','Seperti mencari nomor di buku telepon: temukan baris dan kolom yang tepat, baru ambil angkanya.']],
+  pt:'Tentukan baris, kolom, atau tahun mana yang ditanyakan. Angka lain di tabel hanya pengalih perhatian.',
+  kw:['baris yang tepat','kolom yang tepat'],
+  sj:'Ambil angka yang relevan, lalu hitung', sa:'Tabel berisi banyak angka; fokus pada yang ditanya supaya tidak salah ambil.',
+  why:['Kita ambil hanya angka yang ditanyakan.','Angka itu diolah sesuai perintah soal.','Inilah nilai yang diminta.'],
+  ck:'Cocokkan lagi angka yang diambil dengan baris dan kolom yang ditanyakan.',
+  tips:['Persentase kenaikan = selisih ÷ nilai awal × 100%.','Tandai baris dan kolom yang diminta sebelum menghitung.'], si:'Tabel: pilih angka yang tepat dulu, baru hitung.', el:'tidak sesuai data tabel'},
+ 'Numerik – Kecepatan, Jarak & Waktu':{ko:'Hubungan kecepatan, jarak, dan waktu',
+  an:[['🚗','Seperti perjalanan mudik: makin cepat mobil melaju, makin singkat waktu yang dibutuhkan untuk jarak yang sama.']],
+  pt:'Rumus utamanya: jarak sama dengan kecepatan kali waktu. Pastikan satuannya sama, misalnya kilometer dan jam.',
+  kw:['kecepatan','jarak','waktu'],
+  sj:'Gunakan jarak = kecepatan × waktu', sa:'Ketiga besaran ini selalu terhubung; dua diketahui, yang ketiga bisa dicari.',
+  why:['Satuan harus sama sebelum dihitung.','Rumus jarak, kecepatan, dan waktu dipakai di sini.','Ini besaran yang ditanyakan.'],
+  ck:'Kalikan kecepatan dengan waktu yang didapat. Hasilnya harus kembali ke jarak di soal.',
+  tips:['Ubah menit ke jam: bagi dengan 60.','Berpapasan: jumlahkan kecepatan. Menyusul: kurangkan kecepatan.'], si:'Jarak = kecepatan × waktu; satuan disamakan dulu.', el:'tidak sesuai hasil hitung'},
+ 'Numerik – Geometri':{ko:'Rumus bangun datar dan bangun ruang',
+  an:[['📐','Seperti tukang yang mengukur ruangan: pilih alat ukur yang tepat, lalu masukkan ukurannya.']],
+  pt:'Kenali bangunnya dan apa yang diminta: keliling, luas, volume, atau sudut.',
+  kw:['jenis bangun','ukuran yang diketahui'],
+  sj:'Pilih rumus yang sesuai, lalu masukkan angka', sa:'Setiap bangun punya rumus sendiri; salah rumus pasti salah jawaban.',
+  why:['Rumus ini cocok dengan bangun di soal.','Ukuran yang diketahui dimasukkan ke rumus.','Ini nilai yang diminta.'],
+  ck:'Periksa satuannya: keliling dalam satuan panjang, luas dalam satuan persegi, volume dalam satuan kubik.',
+  tips:['Jumlah sudut segitiga selalu 180°.','Luas memakai satuan persegi, volume memakai satuan kubik.'], si:'Geometri: kenali bangunnya, pilih rumusnya, masukkan angkanya.', el:'tidak sesuai hasil hitung'},
+ 'Numerik – Aritmetika Sosial':{ko:'Harga, diskon, untung, dan rugi',
+  an:[['🏪','Seperti pedagang di pasar: semua hitungan untung, rugi, dan potongan harga berangkat dari satu harga patokan.']],
+  pt:'Tentukan patokan seratus persennya. Untung dan rugi dihitung dari harga beli, diskon dihitung dari harga sebelum diskon.',
+  kw:['harga patokan','persen'],
+  sj:'Tentukan patokan 100%, lalu hitung persennya', sa:'Persen selalu "persen dari sesuatu". Salah patokan, salah hasil.',
+  why:['Kita tentukan dulu nilai patokannya.','Persen dihitung dari patokan itu.','Inilah nilai yang ditanyakan.'],
+  ck:'Hitung balik dari jawaban. Kalau kembali ke angka di soal, jawabannya benar.',
+  tips:['Diskon bertingkat dikalikan berurutan, bukan dijumlahkan.','Untung atau rugi selalu dihitung dari harga beli.'], si:'Aritmetika sosial: patokan 100% dulu, baru hitung persennya.', el:'tidak sesuai hasil hitung'},
+ 'Numerik – Rata-rata & Statistik':{ko:'Rata-rata, median, dan modus',
+  an:[['🍬','Rata-rata itu seperti membagi permen secara adil: semua permen dikumpulkan, lalu dibagi rata ke semua anak.']],
+  pt:'Rata-rata bisa diubah menjadi jumlah total: rata-rata dikali banyak data.',
+  kw:['rata-rata','jumlah total'],
+  sj:'Ubah rata-rata menjadi jumlah total', sa:'Jumlah total lebih mudah ditambah dan dikurangi daripada rata-rata.',
+  why:['Jumlah total mempermudah hitungan.','Hasil sebelumnya dipakai di langkah ini.','Inilah nilai yang ditanyakan.'],
+  ck:'Masukkan jawaban ke data, lalu hitung ulang rata-ratanya. Hasilnya harus sesuai soal.',
+  tips:['Total = rata-rata × banyak data.','Median: urutkan data dulu, lalu ambil nilai tengahnya.'], si:'Statistik dasar: ubah rata-rata menjadi total, hitung, lalu kembalikan.', el:'tidak sesuai hasil hitung'},
+ 'Numerik – Pecahan & Desimal':{ko:'Mengolah pecahan, desimal, dan persen',
+  an:[['🍰','Seperti kue yang dipotong-potong: setengah, seperempat, atau 50% sebenarnya bisa ditulis dengan bentuk yang sama.']],
+  pt:'Ada beberapa bentuk bilangan di soal. Samakan dulu bentuknya supaya mudah dihitung.',
+  kw:['pecahan','desimal','persen'],
+  sj:'Samakan bentuk bilangan', sa:'Bilangan dengan bentuk yang sama bisa langsung dijumlah, dikurang, atau dibandingkan.',
+  why:['Bentuk bilangan disamakan dulu.','Setelah sama bentuknya, hitungan jadi sederhana.','Ini hasil akhirnya.'],
+  ck:'Ubah jawaban ke bentuk lain, misalnya desimal, lalu cek apakah tetap masuk akal.',
+  tips:['Hafalkan: 0,125 = 1/8, 0,25 = 1/4, 0,5 = 1/2, 0,75 = 3/4.','Pecahan biasa sering paling mudah dihitung.'], si:'Pecahan dan desimal: samakan bentuknya dulu, baru hitung.', el:'tidak sesuai hasil hitung'},
+ 'Numerik – Perbandingan Senilai & Berbalik Nilai':{ko:'Perbandingan senilai dan berbalik nilai',
+  an:[['👷','Pekerja dan waktu itu berbalik: makin banyak tukang, makin cepat rumah selesai. Sedangkan beli barang itu senilai: makin banyak beli, makin mahal.']],
+  pt:'Tentukan dulu jenisnya. Senilai: keduanya naik bersama. Berbalik nilai: yang satu naik, yang lain turun.',
+  kw:['senilai atau berbalik?'],
+  sj:'Tentukan jenis perbandingannya', sa:'Senilai memakai perbandingan tetap, berbalik nilai memakai hasil kali tetap. Salah jenis, salah rumus.',
+  why:['Jenis perbandingan menentukan rumusnya.','Angka dimasukkan sesuai jenis perbandingan.','Ini nilai yang ditanyakan.'],
+  ck:'Cek arah jawabannya: kalau berbalik nilai, menambah satu besaran harus mengurangi besaran lainnya.',
+  tips:['Senilai: a₁/b₁ = a₂/b₂.','Berbalik nilai: a₁ × b₁ = a₂ × b₂.'], si:'Tentukan jenisnya dulu, rumusnya ikut dengan sendirinya.', el:'tidak sesuai hasil hitung'},
+ 'Verbal – Analogi':{ko:'Menemukan hubungan antara dua kata',
+  an:[['🔗','Seperti pasangan kunci dan gembok: yang dicari adalah pasangan lain dengan hubungan yang sama persis.']],
+  pt:'Rumuskan hubungan pasangan kata pertama dalam satu kalimat pendek, lalu uji kalimat itu ke setiap pilihan.',
+  kw:['hubungan kata','urutan pasangan'],
+  sj:'Buat kalimat hubungan, lalu uji ke pilihan', sa:'Kalimat hubungan membuat kita bisa menguji setiap pilihan dengan cara yang sama.',
+  why:['Hubungan ini yang harus ditiru pilihan jawaban.','Kita uji hubungan itu pada pilihan jawaban.'],
+  ck:'Baca ulang kalimat hubungannya dengan kata-kata pada jawaban. Urutannya pun harus sama.',
+  tips:['Hubungan yang sering keluar: lawan kata, bagian-keseluruhan, alat-fungsi, sebab-akibat.','Periksa urutan; pasangan terbalik adalah pengecoh paling umum.'], si:'Analogi: rumuskan hubungannya, lalu cari pasangan dengan hubungan yang sama persis.', el:'hubungannya berbeda'},
+ 'Verbal – Sinonim':{ko:'Mencari kata dengan makna paling dekat',
+  an:[['👯','Sinonim itu seperti saudara kembar: penampilannya beda, tapi maknanya sama.']],
+  pt:'Pahami dulu makna kata soal, lalu cari pilihan yang bisa menggantikannya dalam kalimat.',
+  kw:['makna kata','persamaan arti'],
+  sj:'Pahami makna, lalu uji dalam kalimat', sa:'Kata yang bisa saling menggantikan dalam kalimat tanpa mengubah makna adalah sinonim.',
+  why:['Makna kata soal harus jelas dulu.','Pilihan yang tepat bisa menggantikan kata soal.'],
+  ck:'Masukkan jawaban ke kalimat contoh. Kalau maknanya tetap sama, jawabannya tepat.',
+  tips:['Waspadai kata yang bunyinya mirip tetapi maknanya berbeda.','Buat kalimat contoh, lalu tukar katanya.'], si:'Sinonim: makna sama, bisa saling menggantikan dalam kalimat.', el:'maknanya berbeda'},
+ 'Verbal – Antonim':{ko:'Mencari kata dengan makna berlawanan',
+  an:[['🌗','Antonim itu seperti siang dan malam: dua ujung yang saling berlawanan.']],
+  pt:'Pahami dulu makna kata soal. Setelah itu cari kata yang maknanya bertolak belakang.',
+  kw:['makna kata','lawan kata'],
+  sj:'Pahami makna, lalu cari kebalikannya', sa:'Kita tidak bisa mencari lawan kata kalau makna kata aslinya belum jelas.',
+  why:['Makna kata soal harus jelas dulu.','Kebalikannya yang kita cari di pilihan.'],
+  ck:'Pastikan jawaban benar-benar berlawanan, bukan justru bersinonim dengan kata soal.',
+  tips:['Coret dulu pilihan yang justru bersinonim; itu pengecoh paling umum.','Awalan seperti de-, non-, atau tidak sering membentuk lawan kata.'], si:'Antonim: pahami maknanya, lalu ambil kebalikannya.', el:'bukan lawan kata'},
+ 'Verbal – Silogisme':{ko:'Menarik kesimpulan logis dari premis',
+  an:[['🧭','Seperti detektif: kita hanya boleh menyimpulkan dari bukti yang ada, bukan dari dugaan.']],
+  pt:'Perhatikan kata kuncinya: semua, sebagian, tidak ada, jika-maka. Kata-kata inilah yang menentukan kesimpulan.',
+  kw:['semua','sebagian','jika … maka'],
+  sj:'Sederhanakan premis, lalu tarik yang pasti', sa:'Kesimpulan yang benar harus pasti berlaku, bukan sekadar mungkin.',
+  why:['Premis harus dipahami dalam bentuk sederhana.','Kesimpulan diambil hanya dari yang pasti.'],
+  ck:'Uji jawaban: apakah kesimpulan ini selalu benar kalau semua premis benar? Kalau ya, jawabannya tepat.',
+  tips:['Menegaskan bagian "maka" tidak membuktikan bagian "jika".','Ingkaran "semua" adalah "ada yang tidak".'], si:'Silogisme: simpulkan hanya yang pasti dari premis.', el:'tidak pasti dari premis'},
+ 'Verbal – Pola Kalimat':{ko:'Mengenali unsur dan pola kalimat',
+  an:[['🏗️','Kalimat itu seperti bangunan: predikat adalah tiang utamanya, unsur lain menempel di sekitarnya.']],
+  pt:'Temukan predikatnya dulu. Subjek di depan predikat; objek, pelengkap, dan keterangan di belakangnya.',
+  kw:['predikat','unsur kalimat'],
+  sj:'Cari predikat, lalu tentukan unsur lain', sa:'Predikat adalah pusat kalimat; unsur lain ditentukan dari posisinya terhadap predikat.',
+  why:['Predikat adalah patokan kalimat.','Unsur lain ditentukan dari posisinya terhadap predikat.'],
+  ck:'Coba ubah kalimat menjadi pasif. Objek bisa menjadi subjek, pelengkap tidak bisa.',
+  tips:['Objek bisa menjadi subjek kalimat pasif; pelengkap tidak bisa.','Keterangan biasanya bisa dipindah posisinya.'], si:'Pola kalimat: temukan predikat, sisanya mengikuti.', el:'tidak sesuai pola'},
+ 'Analitis':{ko:'Penalaran analitis dari beberapa syarat',
+  an:[['🧩','Seperti mengisi jadwal piket: kunci dulu yang sudah pasti, lalu isi sisanya sesuai syarat.']],
+  pt:'Cari syarat yang paling pasti, misalnya "tepat", "pada hari", atau "pasti". Syarat itu menjadi titik awal.',
+  kw:['syarat pasti','posisi'],
+  sj:'Kunci yang pasti, lalu eliminasi', sa:'Syarat yang pasti mengurangi kemungkinan, sehingga sisanya lebih mudah ditentukan.',
+  why:['Syarat yang pasti kita kunci lebih dulu.','Syarat lain dipakai untuk menutup kemungkinan.'],
+  ck:'Periksa jawaban terhadap semua syarat di soal. Tidak boleh ada satu pun yang dilanggar.',
+  tips:['Buat tabel atau garis urutan untuk menyusun informasi.','Bedakan "pasti" dan "mungkin" saat membaca pertanyaan.'], si:'Analitis: kunci yang pasti, eliminasi yang tidak mungkin.', el:'tidak memenuhi syarat'},
+ 'Figural':{ko:'Menemukan pola perubahan gambar',
+  an:[['🔍','Seperti mencari perbedaan pada dua gambar: fokus pada satu bagian kecil, lalu lihat bagaimana bagian itu berubah.']],
+  pt:'Perhatikan unsur yang berubah: arah putar, jumlah, warna, atau posisi.',
+  kw:['arah putar','jumlah','posisi'],
+  sj:'Lacak satu unsur yang berubah', sa:'Kalau kita mengikuti satu unsur saja, pola gambarnya jauh lebih mudah terlihat.',
+  why:['Unsur ini yang berubah secara teratur.','Pola yang sama diterapkan ke kotak berikutnya.'],
+  ck:'Terapkan pola pada semua gambar. Jawaban harus melanjutkan pola tanpa pengecualian.',
+  tips:['Fokus pada satu ciri kecil yang asimetris, lalu lacak perpindahannya.','Cek arah putar: searah atau berlawanan jarum jam.'], si:'Figural: ikuti satu unsur, temukan polanya, lalu terapkan.', el:'tidak sesuai pola'},
+};
+const VKW=[[/modal/i,'bagi hasil sebanding modal','Laba dibagi sesuai perbandingan modal.',['🤝','Seperti patungan usaha: yang menyetor modal lebih besar, menerima bagian laba lebih besar.'],['Ubah modal menjadi perbandingan bagian','Laba dibagi sebanding modal, jadi cukup hitung berapa bagian milik tiap orang dari total bagian.']],[/diskon/i,'diskon','Diskon dihitung dari harga sebelum diskon.',['🛍️','Seperti belanja saat promo di mal: harga coret, diskon, lalu harga yang benar-benar dibayar.']],[/untung|laba/i,'untung','Untung dihitung dari harga beli.'],[/rugi/i,'rugi','Rugi dihitung dari harga beli.'],[/istirahat|berhenti/i,'waktu istirahat','Waktu istirahat tidak ikut dihitung sebagai waktu berjalan.',['🚗','Saat mampir ke rest area, mobil diam. Jarak tidak bertambah selama istirahat.']],[/berpapasan/i,'berpapasan','Kalau berpapasan, kecepatannya dijumlahkan.',['🚌','Dua bus dari arah berlawanan saling mendekat, jadi jarak di antara mereka habis lebih cepat.']],[/menyusul/i,'menyusul','Kalau menyusul, kecepatannya dikurangkan.',['🏃','Seperti mengejar teman yang berangkat duluan: yang menentukan adalah selisih kecepatan kalian.']],[/skala/i,'skala','Skala menunjukkan berapa kali ukuran asli diperkecil.',['🗺️','Peta adalah gambar kecil dari jarak sebenarnya; skala memberi tahu seberapa kecil.']],[/median/i,'median','Median adalah nilai tengah setelah data diurutkan.'],[/modus/i,'modus','Modus adalah data yang paling sering muncul.'],[/rata-rata/i,'rata-rata','Rata-rata bisa diubah menjadi jumlah total.'],[/keliling/i,'keliling',''],[/luas/i,'luas',''],[/volume/i,'volume',''],[/sudut/i,'sudut',''],[/(^|[^\d.])\d{1,2}\s*:\s*\d{1,2}(?![\d.])/,'perbandingan','Perbandingan menunjukkan bagian-bagian yang sama besar.',['🍕','Bayangkan pizza yang dipotong sama besar; perbandingan memberi tahu berapa potong milik masing-masing.']],[/%|persen/i,'persen',''],[/\d\/\d+\s+dari\b/,'"dari" = dikali','Kata "dari" pada pecahan atau persen berarti perkalian.'],[/ingkaran/i,'ingkaran','Ingkaran membalik nilai kebenaran pernyataan.'],[/\bjika\b/i,'jika … maka',''],[/\bsemua\b/i,'"semua"',''],[/\bsebagian\b|\bbeberapa\b/i,'"sebagian"',''],[/tidak ada\b/i,'"tidak ada"',''],[/\btepat\s+(sehari|di|setelah|sebelum|pada|dua|satu)/i,'"tepat"','Kata "tepat" memberi posisi yang pasti.'],[/\bpasti\b/i,'"pasti"','Yang ditanya adalah yang pasti, bukan yang mungkin.'],[/sebelum|sesudah|setelah/i,'urutan',''],[/pekerja|orang .* hari|hari .* orang/i,'pekerja & waktu','Makin banyak pekerja, makin singkat waktunya.',['👷','Makin banyak tukang yang bekerja, makin cepat rumah selesai dibangun.']],[/kenaikan|naik\b/i,'kenaikan','Kenaikan dihitung dari nilai awal.',['📈','Seperti harga cabai yang naik: kenaikannya dibandingkan dengan harga sebelumnya.']],[/√|akar|pangkat|²|³/,'akar & pangkat','']];
+const vgClip=(s,n)=>{s=String(s).replace(/\s+/g,' ').trim();return s.length>n?s.slice(0,n).replace(/\s+\S*$/,'')+'…':s};
+const vgNum=s=>{const m=String(s).replace(/Rp\s?/,'').match(/^[−-]?\d{1,3}(?:\.\d{3})+(?:,\d+)?|^[−-]?\d+(?:,\d+)?/);return m?parseFloat(m[0].replace(/−/,'-').replace(/\.(?=\d{3})/g,'').replace(',','.')):null};
+const vgFmt=n=>Number.isInteger(n)?String(n):String(+n.toFixed(4)).replace('.',',');
+function vgDeret(q){/* hanya untuk deret angka dengan ? di akhir */
+  const raw=q.q.split('\n')[0].replace(/[…?]|\.{3}/g,' ? ').split(/[,;]\s*/).map(x=>x.trim()).filter(Boolean);
+  if(raw.length<4||raw[raw.length-1]!=='?'||raw.slice(0,-1).some(x=>!/^[−-]?\d+(,\d+)?$/.test(x)))return null;
+  const a=raw.slice(0,-1).map(vgNum),ans=vgNum(q.o[q.a]);if(ans==null)return null;const n=a.length;const sg=d=>d<0?'−'+vgFmt(-d):'+'+vgFmt(d);
+  const d=a.slice(1).map((x,i)=>x-a[i]);const all=(v,f)=>v.every(f);
+  let op=null,nxt=null,nm='';
+  if(all(d,x=>x===d[0])){op=d.map(sg);nxt=a[n-1]+d[0];nm='selisih tetap '+sg(d[0])}
+  if(nxt!==ans&&all(a,x=>x!==0)){const r=a.slice(1).map((x,i)=>x/a[i]);if(all(r,x=>Math.abs(x-r[0])<1e-9)&&Number.isInteger(r[0]*100)){op=r.map(()=>(r[0]>=1?'×'+vgFmt(r[0]):'÷'+vgFmt(1/r[0])));nxt=a[n-1]*r[0];nm='dikali '+(r[0]>=1?vgFmt(r[0]):'1/'+vgFmt(1/r[0]))+' setiap langkah'}}
+  if(Math.abs(nxt-ans)>1e-9)for(const k of[2,3,4,5,-2,-1]){const c=a.slice(1).map((x,i)=>x-k*a[i]);if(all(c,x=>x===c[0])&&c[0]!==0){op=c.map(()=>'×'+(k<0?'('+k+')':k)+(c[0]<0?'−'+(-c[0]):'+'+c[0]));nxt=k*a[n-1]+c[0];nm='kali lalu tambah';if(nxt===ans)break}}
+  if(Math.abs(nxt-ans)>1e-9&&n>=4){const dd=d.slice(1).map((x,i)=>x-d[i]);if(all(dd,x=>x===dd[0])&&dd[0]!==0){op=d.map(sg);nxt=a[n-1]+d[d.length-1]+dd[0];nm='selisihnya berubah tetap '+sg(dd[0])}}
+  if(Math.abs(nxt-ans)>1e-9&&n>=5){const ev=a.filter((x,i)=>i%2===0),od=a.filter((x,i)=>i%2===1);const de=ev.slice(1).map((x,i)=>x-ev[i]),dn=od.slice(1).map((x,i)=>x-od[i]);
+    if(de.length&&dn.length&&all(de,x=>x===de[0])&&all(dn,x=>x===dn[0])){op=d.map(sg);const pre=n%2===0?ev:od,dl=n%2===0?de[0]:dn[0];nxt=pre[pre.length-1]+dl;nm='dua deret berselang'}}
+  if(nxt==null||Math.abs(nxt-ans)>1e-9)return{seq:[...raw.slice(0,-1),'?'],op:d.map(sg),ans:q.o[q.a],ok:false};
+  return{seq:[...raw.slice(0,-1),'?'],op,ans:q.o[q.a],ok:true,nm,last:a[n-1],opl:op[op.length-1]}}
+function vgSplitQ(q){const sub=q.sub;
+  if(/Analogi/.test(sub)){const m=q.q.match(/^([^=\n]+)=/);return{tahu:[m?'Pasangan soal: '+m[1].trim():vgClip(q.q,80)],tanya:'Pasangan lain dengan hubungan yang sama'}}
+  if(/Sinonim|Antonim/.test(sub)){const m=q.q.match(/\b([A-Z][A-Z\-]+(?:\s[A-Z][A-Z\-]+)*)\b/);const w=m?m[1]:vgClip(q.q,40);return{tahu:['Kata soal: '+w],tanya:/Sinonim/.test(sub)?'Kata yang maknanya paling dekat':'Kata yang maknanya berlawanan',w}}
+  if(/Figural/.test(sub))return{tahu:['Rangkaian gambar dengan pola tertentu'],tanya:'Gambar yang tepat untuk melanjutkan pola'};
+  if(/Deret/.test(sub)&&/^[\d\s,.…?−-]+$/.test(q.q.split('\n')[0]))return{tahu:['Deret: '+q.q.split('\n')[0].replace(/[,\s]*(…|\.{3}|\?)\s*$/,'')],tanya:'Angka berikutnya'};
+  let parts=q.q.split(/\n+/).flatMap(l=>l.includes('|')?l.split('|'):l.split(/(?<!\b(?:mis|dll|dsb|dst|No)\.)(?<=[.!?])\s+(?=[A-Z"“])/)).map(x=>x.trim()).filter(Boolean);
+  let last=parts.pop()||'';const jm=last.match(/^((?:Jika|Bila|Apabila|Kalau)\s[^,]{4,}),\s*(.+)$/);if(jm){parts.push(jm[1]);last=jm[2]}let tanya=last.replace(/\s*(adalah|ialah|yaitu|sebesar|sama dengan)?\s*(…|\.{3}|\?)\s*$/,'').replace(/[:.]$/,'').trim();
+  if(!parts.length&&!/Numerik/.test(sub)){const m0=tanya.match(/^([A-Za-z][A-Za-z\s]{2,30}?) dari (".+")$/);if(m0)return{tahu:['Pernyataan: '+m0[2]],tanya:m0[1]+' dari pernyataan itu'};return{tahu:['Lima pilihan, hanya satu yang memenuhi syarat soal'],tanya:tanya.charAt(0).toUpperCase()+tanya.slice(1)}}
+  if(!parts.length){const m0=tanya.match(/^([A-Za-z][A-Za-z\s]{2,30}?) dari (".+")$/);if(m0)return{tahu:['Pernyataan: '+m0[2]],tanya:m0[1]+' dari pernyataan itu'};const m=tanya.match(/^(.*?)(?:,\s*)?(?:maka|nilai|berapa)\s+(.*)$/i);if(m&&m[1].length>6){parts=[m[1]];tanya=m[2]}else{parts=[tanya];tanya='Hasil dari bentuk tersebut'}}
+  tanya=tanya.charAt(0).toUpperCase()+tanya.slice(1);
+  return{tahu:parts.slice(0,/Analitis|Silogisme/.test(sub)?6:4).map(x=>vgClip(x,110).replace(/[.:]$/,'')),tanya:vgClip(tanya,110)}}
+function vgSteps(q,G){
+  let parts=String(q.e||'').split(/\n+|(?<!\b(?:mis|dll|dsb|dst|No|Rp|misal)\.)(?<=[.!?])\s+(?=[A-Z0-9(√∛"'“])/).map(x=>x.trim()).filter(Boolean);
+  if(parts.length>5)parts=[...parts.slice(0,4),parts.slice(4).join(' ')];
+  const isM=x=>/[=×÷→]|\d\s*[+−\-:/]\s*\d/.test(x);
+  return parts.map((p,i)=>{const L=parts.length;const why=G.why[Math.min(i,G.why.length-1)]||'';const kenapa=i===L-1&&L>1?G.why[G.why.length-1]:why;
+    if(!isM(p))return{k:'langkah',isi:p.replace(/\.$/,'')+'.',kenapa:L>1?kenapa:'',vo:p+(L>1&&kenapa?' '+kenapa:'')};
+    let apa='';const c=p.match(/^([A-Za-zÀ-ɏ][^=:]{2,40}?)\s*[:=]/);if(c&&/[a-z]{3}/.test(c[1])&&!/\d\s*$/.test(c[1]))apa=/^(Hitung|Urutkan|Ubah|Cari|Tentukan|Jumlah|Selisih)/i.test(c[1])?c[1].trim():'Hitung '+c[1].trim().replace(/^[A-Z](?=[a-z])/,x=>x.toLowerCase());
+    if(!apa&&/[<>]/.test(p))apa='Bandingkan kedua nilai';
+    if(!apa)apa=i===0?'Ubah informasi soal menjadi hitungan':i===L-1?'Hitung nilai yang ditanyakan':'Lanjutkan dari hasil sebelumnya';
+    const papan=p.replace(/\.$/,'').split(/;\s*|,\s*(?=(?:sehingga|maka|jadi|lalu|kemudian)\s)/).map(x=>x.replace(/^(sehingga|maka|jadi|lalu|kemudian)\s+/i,'').trim()).filter(Boolean);
+    const pl=papan[papan.length-1];const lm=/\sdan\s|[<>]/.test(pl)?null:pl.match(/=\s*([^=]+)$/);const arti=lm?'hasilnya '+lm[1].trim():'';
+    return{k:'langkah',apa,kenapa,papan,arti,vo:apa+'. '+papan.join('. ')+'.'+(kenapa?' '+kenapa:'')+(arti?' Artinya, '+arti+'.':'')}})}
+function vidGuru(q){const G=VG[q.sub];if(!G||q.a==null||q.a<0)return null;const Lt='ABCDE'[q.a];const fig=!!q.of;const key=q.o[q.a];const keyT=String(key).replace(/[.\s]+$/,'');
+  const h=[...String(q.sid||q.q)].reduce((s,c)=>s+c.charCodeAt(0),0);let an=G.an[h%G.an.length];
+  const sp=vgSplitQ(q);const kws=[];let kt='',ka=null,ks=null;if(!/Figural|Analogi|Sinonim|Antonim/.test(q.sub))VKW.forEach(([re,l,t,a,st])=>{if(kws.length<3&&re.test(q.q)&&!kws.includes(l)){kws.push(l);if(!kt&&t)kt=t;if(!ka&&a)ka=a;if(!ks&&st)ks=st}});if(ka&&/Numerik/.test(q.sub))an=ka;
+  const lc=s=>/^[A-Z][a-z]/.test(s)?s[0].toLowerCase()+s.slice(1):s;
+  const qs=q.q.replace(/\s+/g,' ').trim();const num=/Numerik/.test(q.sub);
+  const sc=[];
+  sc.push({k:'paham',vo:`Sebelum ${/Numerik/.test(q.sub)?'menghitung':'menjawab'}, kita pahami dulu soalnya. Yang diketahui: ${sp.tahu.join('. ').replace(/^(Kata soal|Pasangan soal|Deret|Pernyataan): /,'')}. Yang ditanyakan: ${lc(sp.tanya)}. Bayangkan begini. ${an[1]}`,tahu:sp.tahu,tanya:sp.tanya,analogi:{ikon:an[0],t:an[1]}});
+  sc.push({k:'pola',vo:`Sekarang cari petunjuknya di soal. ${kt||G.pt}`,kunci:kws.length?kws:G.kw,t:kt||G.pt});
+  const SJ=ks?ks[0]:G.sj,SA=ks?ks[1]:G.sa;sc.push({k:'strategi',vo:`Strategi kita: ${lc(SJ)}. Kenapa cara ini? ${SA}`,judul:SJ,alasan:SA});
+  let dr=null;if(/Deret/.test(q.sub)){dr=vgDeret(q);if(dr)sc.push({k:'deret',vo:dr.ok?`Kita tulis perubahan antarsukunya. Ternyata polanya konsisten: ${dr.nm}. Jadi tanda tanya diisi ${dr.ans}.`:'Kita tulis perubahan antarsukunya dulu, supaya polanya terlihat.',seq:dr.seq,op:dr.op,ans:dr.ok?dr.ans:'?',t:dr.ok?'Aturannya berlaku untuk semua suku.':'Perhatikan perubahan di antara angka-angkanya.'})}
+  let st=vgSteps(q,G);if(dr&&dr.ok)st=st.filter(x=>!(x.papan&&x.papan.join('').length<22));if(dr&&dr.ok&&dr.last!=null&&!st.some(x=>x.papan))st.push({k:'langkah',apa:'Terapkan aturan pada angka terakhir',kenapa:'Angka berikutnya dibuat dengan aturan yang sama.',papan:[`${dr.last} ${dr.opl} = ${dr.ans}`],arti:'angka berikutnya adalah '+dr.ans,vo:`Terapkan aturannya pada angka terakhir. ${dr.last} ${dr.opl} sama dengan ${dr.ans}.`});
+  if(!st.length)st.push({k:'langkah',isi:'Bandingkan setiap pilihan dengan pola yang sudah ditemukan.',vo:'Bandingkan setiap pilihan dengan pola yang sudah ditemukan.'});
+  if(st.length&&!/Numerik/.test(q.sub)&&!fig&&!st.some(x=>x.papan))st.push({k:'langkah',isi:`Pilihan ${Lt}, "${keyT}", memenuhi hal tersebut.`,kenapa:G.why[G.why.length-1],vo:`Coba uji pada pilihan ${Lt}, ${keyT}. Pilihan ini memenuhinya.`});
+  sc.push(...st);
+  const kv=vgNum(key);const eNums=new Set((String(q.e).match(/\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?/g)||[]).map(vgNum));
+  const coret={};const grp={};q.o.forEach((o,i)=>{if(i===q.a||coret[o]!=null||o===key)return;let r=/ingkaran|negasi/i.test(q.q)?'bukan ingkaran yang tepat':G.el;const v=vgNum(o);
+    if(num&&v!=null&&eNums.has(v)&&v!==kv)r='baru hasil antara';if(/Antonim/.test(q.sub)&&sp.w&&new RegExp(o.split(/\s/)[0],'i').test(q.e)&&/sinonim|sama|pemusatan|padanan/i.test(q.e)&&q.e.toLowerCase().includes(o.toLowerCase()))r='justru bersinonim';
+    coret[o]=r;(grp[r]=grp[r]||[]).push('ABCDE'[i])});
+  const gl=Object.entries(grp).map(([r,ls])=>`Pilihan ${ls.join(' dan ').replace(/ dan (?=.* dan )/g,', ')} ${r==='baru hasil antara'?'adalah hasil antara, belum jawaban akhir':r}.`);
+  sc.push({k:'eliminasi',vo:`Sekarang lihat pilihan jawabannya, dan coret yang tidak cocok. ${gl.join(' ')}`,coret});
+  sc.push({k:'jawab',vo:fig?`Jadi, jawabannya gambar ${Lt}.`:`Jadi, jawabannya ${Lt}, ${keyT}.`});
+  sc.push({k:'cek',vo:`Cek sekali lagi. ${G.ck}`,papan:fig?[]:[`Ditanya: ${sp.tanya}`,`Jawaban: ${Lt}. ${vgClip(key,60)} ✓`],t:G.ck});
+  const tips=[...G.tips];sc.push({k:'tips',vo:`Tips untuk soal sejenis. ${tips.join(' ')} Kesimpulannya: ${G.si}`,tips,simpul:G.si});
+  const lvl=q.h?'HOTS':'Standar';
+  return{auto:1,lvl,konsep:dr&&dr.ok?'Deret angka: '+dr.nm:G.ko,buka:`Kita bahas soal ini pelan-pelan, ya. ${qs.length<=170&&!fig&&!/\n/.test(q.q)?'Soalnya: '+qs+' ':''}Baca dulu dengan tenang, jangan buru-buru melihat pilihan jawaban.`,scenes:sc}}
 function vidScenesSkrip(q,k){const L='ABCDE';const sc=[];
   sc.push({k:'intro',say:k.buka_intro||`Halo! Kita bahas soal ${q.sub.replace('–',',')} ini pelan-pelan, ya.`,lvl:k.lvl,konsep:k.konsep});
   sc.push({k:'soal',say:k.buka||'Coba baca dulu soalnya dengan tenang. Jangan buru-buru melihat pilihan jawaban.'});
@@ -3479,7 +3692,7 @@ function vidScenesSkrip(q,k){const L='ABCDE';const sc=[];
   if(!(k.scenes||[]).some(x=>x.k==='jawab'))sc.push({k:'jawab',say:`Jadi, jawaban yang benar adalah ${L[q.a]}.`});
   sc.push({k:'end',say:'Selesai. Sekarang coba kerjakan soal sejenis dengan cara yang sama.'});
   sc.forEach(x=>{if(x.k==='jawab')x.k='ans'});let n=0;const tot=sc.filter(x=>x.k==='langkah').length;sc.forEach(x=>{if(x.k==='langkah'){x.n=++n;x.of=tot}});return sc}
-function vidScenes(q){if(q.vskrip)return vidScenesSkrip(q,q.vskrip);const L='ABCDE';const sc=[];
+function vidScenes(q){const gk=q.vskrip||(q.cat==='tiu'?vidGuru(q):null);if(gk)return vidScenesSkrip(q,gk);const L='ABCDE';const sc=[];
   sc.push({k:'intro',say:`Video pembahasan. ${q.sub.replace('–',',')}.`});
   const qs=q.q.replace(/\s+/g,' ').trim();
   sc.push({k:'soal',say:'Perhatikan soal berikut. '+(qs.length>260?qs.slice(0,260).replace(/\s+\S*$/,'')+'.':qs)});
@@ -3496,7 +3709,7 @@ function vidScene(q,s,i,all){const L='ABCDE';
   if(s.k==='paham')return `<div class="vs"><div class="vhead"><span class="vtag">Memahami soal</span>Apa maksudnya?</div><div class="vpaham"><div class="vbox"><b>Yang diketahui</b>${(s.tahu||[]).map((x,k)=>`<div class="vli" style="animation-delay:${.3+k*.6}s"><i>✓</i><span>${T(x)}</span></div>`).join('')}</div><div class="vbox vq2"><b>Yang ditanyakan</b><div class="vli" style="animation-delay:${.4+(s.tahu||[]).length*.6}s"><i>?</i><span>${T(s.tanya||'')}</span></div>${s.analogi?`<div class="vanal" style="animation-delay:${1+(s.tahu||[]).length*.6}s"><span>${s.analogi.ikon||'💡'}</span><p>${esc(s.analogi.t)}</p></div>`:''}</div></div></div>`;
   if(s.k==='pola')return `<div class="vs vcen"><div class="vhead"><span class="vtag y">Mengenali pola</span>Petunjuk di soal</div><div class="vkeys">${(s.kunci||[]).map((x,k)=>`<span style="animation-delay:${.3+k*.5}s">${esc(x)}</span>`).join('')}</div><p class="vlead">${T(s.t||'')}</p></div>`;
   if(s.k==='strategi')return `<div class="vs vcen"><div class="vhead"><span class="vtag y">Strategi</span>Cara yang kita pakai</div><div class="vstr"><h3>${esc(s.judul||'')}</h3><div><b>Kenapa cara ini?</b><span>${T(s.alasan||'')}</span></div></div></div>`;
-  if(s.k==='langkah')return `<div class="vs"><div class="vhead"><span class="vtag g">Langkah ${s.n}</span>dari ${s.of}</div><div class="vlk">${s.apa?`<div class="vapa"><b>Apa yang dilakukan:</b> ${T(s.apa)}</div>`:''}${s.kenapa?`<div class="vapa y"><b>Kenapa:</b> ${T(s.kenapa)}</div>`:''}
+  if(s.k==='langkah')return `<div class="vs"><div class="vhead"><span class="vtag g">Langkah ${s.n}</span>dari ${s.of}</div><div class="vlk">${s.apa?`<div class="vapa"><b>Apa yang dilakukan:</b> ${T(s.apa)}</div>`:''}${s.isi?`<div class="vcard visi">${T(s.isi)}</div>`:''}${s.kenapa?`<div class="vapa y"><b>Kenapa:</b> ${T(s.kenapa)}</div>`:''}
     ${(s.papan||[]).length?`<div class="vboard">${s.papan.map((x,k)=>`<div style="animation-delay:${.6+k*1.1}s">${T(x)}</div>`).join('')}</div>`:''}${s.arti?`<div class="varti" style="animation-delay:${.8+(s.papan||[]).length*1.1}s">Artinya: ${T(s.arti)}</div>`:''}</div></div>`;
   if(s.k==='deret'){const seq=s.seq||[];return `<div class="vs vcen"><div class="vhead"><span class="vtag g">Pola deret</span>Perhatikan perubahannya</div><div class="vder">${seq.map((x,k)=>`<div class="vdn ${x==='?'?'q':''}" style="animation-delay:${.2+k*.35}s">${x==='?'?`<span class="vqm" style="animation-delay:${1.2+seq.length*.9}s">?</span><span class="vfill" style="animation-delay:${1.2+seq.length*.9}s">${esc(String(s.ans))}</span>`:esc(String(x))}</div>${k<seq.length-1&&s.op&&s.op[k]?`<div class="vop" style="animation-delay:${.8+k*.9}s">${esc(s.op[k])}</div>`:''}`).join('')}</div>${s.t?`<p class="vlead">${T(s.t)}</p>`:''}</div>`}
   if(s.k==='urut')return `<div class="vs vcen"><div class="vhead"><span class="vtag g">Menyusun urutan</span>${esc(s.judul||'')}</div><div class="vurut"><em>${esc((s.label||[])[0]||'')}</em>${(s.items||[]).map((x,k)=>`<div style="animation-delay:${.3+k*.8}s"><i>${k+1}</i>${esc(x)}</div>`).join('')}<em>${esc((s.label||[])[1]||'')}</em></div></div>`;
