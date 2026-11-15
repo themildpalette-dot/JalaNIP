@@ -505,6 +505,12 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .trtx{margin-top:10px}.trst{font-size:17px;color:#2f7d32}.trpc{font-weight:800;color:#2f7d32;font-size:17px}
 .trsteps{display:flex;gap:5px;margin:8px 0}.trsteps i{flex:1;height:7px;border-radius:99px;background:var(--line)}.trsteps i.on{background:linear-gradient(90deg,#8fd36b,#3f9a3a)}
 [data-theme=dark] .tree rect:first-of-type{opacity:.85}[data-theme=dark] .trst,[data-theme=dark] .trpc{color:#8fd36b}
+.lvbox{margin:4px 0 14px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg)}.lvbox b{display:block;margin-bottom:2px}.lvbox span{font-size:13px;color:var(--muted)}
+.lvbox.lv0{border-color:#bfe5cd;background:#effaf3}.lvbox.lv1{border-color:#cfe0f7;background:#f1f6fd}.lvbox.lv2{border-color:#f6d6a8;background:#fff7ea}.lvbox.lv3{border-color:#f3b9b9;background:#fdf0f0}
+[data-theme=dark] .lvbox{background:rgba(255,255,255,.04)!important}
+.lvh{margin-top:10px;display:grid;gap:6px}.lvh>div{display:grid;grid-template-columns:44px 1fr 74px;gap:8px;align-items:center;font-size:12.5px}.lvh i{height:8px;background:var(--line);border-radius:99px;overflow:hidden}.lvh i b{display:block;height:100%;background:#d9822b;border-radius:99px}.lvh em{font-style:normal;font-weight:700;text-align:right}
+.lvro{height:42px;display:flex;align-items:center;padding:0 12px;border-radius:10px;font-weight:800;border:1px solid var(--line)}
+.lv0.lvro,.fp.lvc.lv0{background:#e3f5ea;color:#17824a}.lv1.lvro,.fp.lvc.lv1{background:#e6f0fd;color:#1e6fd9}.lv2.lvro,.fp.lvc.lv2{background:#fff1dc;color:#b86a0c}.lv3.lvro,.fp.lvc.lv3{background:#fde8e8;color:#c93b3b}
 .prg{display:flex;align-items:center;gap:18px;margin-top:10px}.prg .tx b{font-size:15px}.prg .dl{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#e3f5ea;color:#17824a;border-radius:10px;padding:6px 10px;font-size:13px;font-weight:700}.prg .dl.dn{background:#fde8e8;color:#c03a3a}
 [data-theme=dark] .prg .dl{background:#173326;color:#7be0a4}
 .jt{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-top:0;color:var(--ink);text-align:left;font-size:14.5px}.jt:last-child{border-bottom:0}
@@ -815,9 +821,37 @@ const FRAW=[
 ['Pemerintah Kabupaten (daerah 3T)','Guru Kelas Ahli Pertama','S1 PGSD','S1',30,250,0],
 ['Pemerintah Kabupaten (daerah 3T)','Bidan Terampil','D3 Kebidanan','D3',12,180,0]
 ];
-const FORMASI=FRAW.map((r,i)=>({id:'f'+i,inst:r[0],jab:r[1],pend:r[2],jj:r[3],kuota:r[4],peserta:r[5],lvl:r[6],pri:!!r[7],est:true}));
+const FORMASI=FRAW.map((r,i)=>({id:'f'+i,inst:r[0],jab:r[1],pend:r[2],jj:r[3],kuota:r[4],peserta:r[5],lvl:0,pri:!!r[7],est:true}));
 const JJ=[['all','Semua'],['SMA','SMA/SMK'],['D3','D3'],['S1','D4/S1'],['PROF','Profesi']];
 const LVL=['Rendah','Sedang','Tinggi','Sangat tinggi'];
+const CUR_Y=2026;
+function _nf(x){return String(x||'').toLowerCase().replace(/\(.*?\)/g,' ').replace(/[^a-z0-9]+/g,' ').trim()}
+function lvlOfRatio(r){return r<50?0:r<150?1:r<400?2:3}
+function histRows(){return (CLOUD.formasi||[]).filter(d=>d.jab&&+d.kuota>0&&+d.peserta>0&&+d.tahun&&+d.tahun<CUR_Y)}
+/* Persaingan ditentukan sistem: rata-rata tertimbang rasio pelamar per kuota tahun-tahun sebelumnya
+   (tahun terbaru bobot terbesar). Urutan pencarian: jabatan sama di instansi sama → jabatan sama di instansi lain.
+   Bila belum ada riwayat sama sekali, dipakai rasio tahun ini sebagai perkiraan sementara. */
+const LVLC=new Map();
+function lvlSys(f){const ck=f.id+'|'+f.kuota+'|'+f.peserta+'|'+(CLOUD.formasi||[]).length;if(LVLC.has(ck))return LVLC.get(ck);
+  const H=histRows(),j=_nf(f.jab),ins=_nf(f.inst);
+  let rows=H.filter(d=>_nf(d.jab)===j&&_nf(d.inst)===ins),basis='riwayat';
+  if(!rows.length){rows=H.filter(d=>_nf(d.jab)===j);basis='riwayat-jabatan'}
+  let res;
+  if(rows.length){const by={};rows.forEach(d=>{const y=+d.tahun;by[y]=by[y]||{tahun:y,kuota:0,pelamar:0};by[y].kuota+=+d.kuota;by[y].pelamar+=+d.peserta});
+    const yrs=Object.values(by).sort((a,b)=>b.tahun-a.tahun).map(y=>Object.assign(y,{ratio:y.pelamar/y.kuota}));
+    let sw=0,sr=0;yrs.forEach((y,i)=>{const w=Math.pow(.6,i);sw+=w;sr+=w*y.ratio});const avg=sr/sw;
+    const trend=yrs.length>1?(yrs[0].ratio-yrs[yrs.length-1].ratio)/yrs[yrs.length-1].ratio:0;
+    let lv=lvlOfRatio(avg);if(trend>.3&&lv<3&&avg>[50,150,400][lv]*.8)lv++;
+    res={lvl:lv,basis,yrs:yrs.reverse(),avg,trend};}
+  else res={lvl:lvlOfRatio(f.peserta/Math.max(1,f.kuota)),basis:f.est?'estimasi':'tahun-ini',yrs:[],avg:f.peserta/Math.max(1,f.kuota),trend:0};
+  LVLC.set(ck,res);return res}
+function applyLvl(f){f.lvl=lvlSys(f).lvl;return f}
+function lvlNote(f){const r=lvlSys(f);const y=r.yrs.map(x=>x.tahun);
+  if(r.basis==='riwayat')return `Dihitung otomatis dari rasio pelamar formasi ini pada ${y.length>1?y[0]+'–'+y[y.length-1]:y[0]} (rata-rata 1 : ${fmt(Math.round(r.avg))}${r.trend>.1?', tren naik':r.trend<-.1?', tren turun':''}).`;
+  if(r.basis==='riwayat-jabatan')return `Belum ada riwayat untuk instansi ini, jadi dihitung dari jabatan yang sama di instansi lain pada ${y.length>1?y[0]+'–'+y[y.length-1]:y[0]} (rata-rata 1 : ${fmt(Math.round(r.avg))}).`;
+  return `Belum ada data tahun sebelumnya untuk jabatan ini. Sementara dihitung dari rasio ${r.basis==='estimasi'?'estimasi':'tahun ini'} (1 : ${fmt(Math.round(r.avg))}).`}
+function lvlHist(f){const r=lvlSys(f);if(!r.yrs.length)return '';const mx=Math.max(...r.yrs.map(y=>y.ratio));
+  return `<div class="lvh">${r.yrs.map(y=>`<div><span>${y.tahun}</span><i><b style="width:${Math.max(4,y.ratio/mx*100)}%"></b></i><em>1 : ${fmt(Math.round(y.ratio))}</em></div>`).join('')}</div>`}
 
 /* ===================== STORE ===================== */
 const DEF={pg:{twk:65,tiu:80,tkp:166},secPerQ:55,shuffle:true,hist:[],sims:[],customF:[],fullName:'',email:'',hp:'',tahun:'CPNS 2026',jenjang:'',goal:'pg',avatar:'',nArena:true,nInfo:true,act:[],stepDone:{},favM:[],sa:{},last:null,progW:{},favF:[],cmpF:[],fSnap:null,fNotif:true,myJur:'',seen:{},days:{},wrong:{},fc:{},plan:{daily:30},target:450,nick:'',akbar:{}};
@@ -1679,7 +1713,7 @@ async function initCloud(){
 }
 function validQ(d){return d&&['twk','tiu','tkp'].includes(d.cat)&&typeof d.q==='string'&&Array.isArray(d.o)&&d.o.length===5&&(d.cat==='tkp'?Array.isArray(d.w)&&d.w.length===5:Number.isInteger(d.a)&&d.a>=0&&d.a<5)}
 function applySoal(){Q.length=BASEN;CLOUD.soal.slice().sort((a,b)=>(a.created||0)-(b.created||0)||(a.id<b.id?-1:1)).forEach(d=>{if(!validQ(d))return;Q.push({cat:d.cat,sub:String(d.sub||'Lainnya').slice(0,60),q:String(d.q),o:d.o.map(x=>String(x)),a:d.a,w:d.w&&d.w.map(Number),e:String(d.e||''),cid:d.id,hidden:!!d.hidden})})}
-function cloudF(){return CLOUD.formasi.filter(d=>d.jab&&d.kuota).map(d=>{const k=Math.max(1,+d.kuota||1),p=Math.max(1,+d.peserta||k*100);return {id:'d:'+d.id,inst:String(d.inst||'—'),jab:String(d.jab),pend:String(d.pend||'—'),jj:guessJJ(d.pend),kuota:k,peserta:p,lvl:d.lvl!=null?+d.lvl:lvlAuto(k,p),jenis:String(d.jenis||'CPNS').toUpperCase(),lok:String(d.lok||''),cloud:true}})}
+function cloudF(){return CLOUD.formasi.filter(d=>d.jab&&d.kuota&&!(+d.tahun&&+d.tahun<CUR_Y)).map(d=>{const k=Math.max(1,+d.kuota||1),p=Math.max(1,+d.peserta||k*100);return {id:'d:'+d.id,inst:String(d.inst||'—'),jab:String(d.jab),pend:String(d.pend||'—'),jj:guessJJ(d.pend),kuota:k,peserta:p,lvl:0,est:!(+d.peserta),jenis:String(d.jenis||'CPNS').toUpperCase(),lok:String(d.lok||''),cloud:true}})}
 function allInfo(){return CLOUD.berita.filter(b=>b.t).sort((a,b)=>(b.ts||0)-(a.ts||0)).map(b=>({d:String(b.d||''),t:String(b.t),b:String(b.b||''),src:String(b.src||'Admin'),u:/^https?:\/\//.test(b.u||'')?b.u:'',tag:String(b.tag||'Info'),cloud:true})).concat(INFO)}
 let cloudTimer=null;
 function cloudChanged(key){
@@ -3898,7 +3932,7 @@ function resetAll(){S.read={};S.seen={};S.days={};S.wrong={};S.fc={};S.akbar={};
 /* ===================== FORMASI SIMULATION ===================== */
 let F={sel:'f29',q:'',jjs:[],inst:'all',lok:'all',fav:false,myj:false,jen:{cpns:1,pppk:0},pri:false,sort:'rel',n:10,fopen:false,D:null,src:'last',man:{twk:100,tiu:110,tkp:180},skb:70,res:null,batch:null};
 function useScore(id){F.src='hist:'+id;F.res=null;go('formasi')}
-function allF(){return FORMASI.concat(cloudF(),S.customF||[])}
+function allF(){return FORMASI.concat(cloudF(),S.customF||[]).map(applyLvl)}
 function curF(){return allF().find(f=>f.id===F.sel)||allF()[0]}
 function lvlAuto(k,p){const r=p/Math.max(1,k);return r<50?0:r<150?1:r<400?2:3}
 function guessJJ(t){t=(t||'').toUpperCase();if(/PROFESI|NERS|APOTEKER|DOKTER/.test(t))return'PROF';if(/S-?1|D-?IV|D4|SARJANA/.test(t))return'S1';if(/D-?III|D3/.test(t))return'D3';if(/SMA|SMK|SLTA|MA\b/.test(t))return'SMA';return'S1'}
@@ -3965,12 +3999,12 @@ let KPASS=0;function compAbove(lvl,U){const key=lvl+'|'+S.pg.twk+'|'+S.pg.tiu+'|
   let lo=0,hi=arr.length;while(lo<hi){const m=(lo+hi)>>1;if(arr[m]<=U)lo=m+1;else hi=m}return (arr.length-lo)/arr.length}
 function kalk(){const k=Math.max(1,KC.k|0),p=Math.max(1,KC.p|0),U=KC.u|0,N=Math.max(0,p-1);const q=compAbove(KC.l,U);
   return {ratio:p/k,ket:k/p,q,rank:Math.round(N*q)+1,pSKB:binLess(N,q,3*k),pTop:binLess(N,q,k),passPct:KPASS}}
-function kalkHTML(){const f=curF();const u=userSKD();if(!KC)KC={k:f.kuota,p:f.peserta,u:u?u.twk+u.tiu+u.tkp:400,l:+f.lvl||0};const r=kalk();
+function kalkHTML(){const f=curF();const u=userSKD();if(!KC)KC={k:f.kuota,p:f.peserta,u:u?u.twk+u.tiu+u.tkp:400,l:+f.lvl||0,fid:f.id};KC.l=kalkLvl();const r=kalk();
   const col=v=>v>=.5?'#22a05b':v>=.2?'#d9822b':'#d64545';
   return `<div class="card" id="kalkC"><div class="row" style="gap:10px;align-items:center"><span style="color:#1e6fd9">${ic('calc2',24,1.9)}</span><h2 class="grow" style="margin:0">Kalkulator Peluang Cepat</h2><button class="lnk" onclick="KC=null;fRefresh()">Isi dari formasi terpilih</button></div>
    <p class="small muted" style="margin:6px 0 12px">Hitung kasar dari rasio peserta per kuota dan skor SKD-mu, tanpa menunggu simulasi lengkap. Pesaing dimodelkan dari sebaran skor seleksi sebelumnya (yang tidak lolos passing grade tidak dihitung).</p>
    <div class="kalk"><div><label class="f">Kuota</label><input type="number" min="1" value="${KC.k}" oninput="KC.k=+this.value||1;kalkUpd()"></div><div><label class="f">Peserta / pelamar</label><input type="number" min="1" value="${KC.p}" oninput="KC.p=+this.value||1;kalkUpd()"></div>
-    <div><label class="f">Skor SKD-mu (total)</label><input type="number" min="0" max="550" value="${KC.u}" oninput="KC.u=+this.value||0;kalkUpd()"></div><div><label class="f">Persaingan</label><select onchange="KC.l=+this.value;kalkUpd()">${LVL.map((l,i)=>`<option value="${i}" ${KC.l===i?'selected':''}>${l}</option>`).join('')}</select></div></div>
+    <div><label class="f">Skor SKD-mu (total)</label><input type="number" min="0" max="550" value="${KC.u}" oninput="KC.u=+this.value||0;kalkUpd()"></div><div><label class="f">Persaingan (otomatis)</label><div class="lvro lv${KC.l}" id="kal_lv">${LVL[KC.l]}</div></div></div>
    <div id="kres">${kresHTML(r,col)}</div></div>`}
 function kresHTML(r,col){col=col||(v=>v>=.5?'#22a05b':v>=.2?'#d9822b':'#d64545');
   return `<div class="kres"><div><span>Rasio keketatan</span><b>1 : ${fmt(Math.round(r.ratio))}</b><span>${(r.ket*100).toLocaleString('id-ID',{maximumFractionDigits:2})}% pelamar diterima</span></div>
@@ -3979,13 +4013,15 @@ function kresHTML(r,col){col=col||(v=>v>=.5?'#22a05b':v>=.2?'#d9822b':'#d64545')
    <div class="kres" style="grid-template-columns:1fr 1fr"><div><span>Peluang masuk 3× kuota (lanjut SKB)</span><b style="color:${col(r.pSKB)}">${pct(r.pSKB)}</b><div class="kbar"><i style="width:${r.pSKB*100}%;background:${col(r.pSKB)}"></i></div></div>
    <div><span>Peluang peringkat SKD ≤ kuota</span><b style="color:${col(r.pTop)}">${pct(r.pTop)}</b><div class="kbar"><i style="width:${r.pTop*100}%;background:${col(r.pTop)}"></i></div></div></div>
    <p class="small muted" style="margin:10px 0 0">Ini perkiraan kasar. Kelulusan akhir juga ditentukan nilai SKB (bobot 60%); gunakan simulasi lengkap di atas untuk menghitungnya.</p>`}
-let kT=null;function kalkUpd(){clearTimeout(kT);kT=setTimeout(()=>{const e=$('#kres');if(e)e.innerHTML=kresHTML(kalk())},120)}
+function kalkLvl(){const f=allF().find(x=>x.id===KC.fid);if(f&&lvlSys(f).yrs.length)return f.lvl;return lvlOfRatio(KC.p/Math.max(1,KC.k))}
+let kT=null;function kalkUpd(){clearTimeout(kT);kT=setTimeout(()=>{KC.l=kalkLvl();const v=$('#kal_lv');if(v){v.textContent=LVL[KC.l];v.className='lvro lv'+KC.l}const e=$('#kres');if(e)e.innerHTML=kresHTML(kalk())},120)}
 /* ---- detail formasi ---- */
 function fDetail(id){const f=allF().find(x=>x.id===id);if(!f)return;const J=fJur(f);const m=S.myJur?jurMatch(f,S.myJur):null;const ratio=Math.round(f.peserta/f.kuota);
   modal(`<div id="fdm"><div class="row" style="gap:8px;flex-wrap:wrap">${f.pri?'<span class="fp pr">Prioritas 2026</span>':''}<span class="fp jj">${esc(J.jj)}</span><span class="fp jj">${esc(f.jenis||'CPNS')}</span>${f.cloud?'<span class="fp ok">Data resmi</span>':f.custom?'<span class="fp ok">Data kamu</span>':'<span class="fp upd">Estimasi</span>'}</div>
    <h2 style="margin:10px 0 2px;font-size:22px">${esc(f.jab)}</h2><div class="muted">${esc(f.inst)}</div>
    <div class="small" style="margin-top:6px;display:flex;gap:6px;align-items:center">${ic('pin',16,2)}<b>Lokasi penempatan:</b> ${esc(fLok(f))}</div>
    <div class="dgrid"><div><span>Kuota</span><b>${fmt(f.kuota)}</b></div><div><span>Peserta${f.est?' (estimasi)':''}</span><b>${fmt(f.peserta)}</b></div><div><span>Rasio</span><b>1 : ${fmt(ratio)}</b></div><div><span>Persaingan</span><b style="font-size:15px">${LVL[+f.lvl]||'—'}</b></div></div>
+   <div class="lvbox lv${f.lvl}"><b>Persaingan ${LVL[f.lvl].toLowerCase()}</b><span>${lvlNote(f)}</span>${lvlHist(f)}</div>
    <h3 style="margin:6px 0 2px;font-size:16px">Kualifikasi pendidikan</h3><div class="small muted">Jenjang <b style="color:var(--ink)">${esc(J.jj)}</b> · tertulis: “${esc(f.pend)}”</div>
    <div class="jchips">${J.list.map(x=>`<span class="${m&&m.hit.includes(x)?'hit':''}">${esc(x)}</span>`).join('')}</div>
    <label class="f" style="margin-top:14px">Cek jurusanmu</label><div class="row" style="gap:8px;flex-wrap:nowrap"><input type="text" id="myJur" placeholder="mis. Teknik Lingkungan" value="${esc(S.myJur||'')}" onkeydown="if(event.key==='Enter')saveJur('${f.id}')"><button class="btn" style="flex:none" onclick="saveJur('${f.id}')">Cek</button></div>
@@ -4015,7 +4051,7 @@ function fCard(f){
   const ratio=Math.round(f.peserta/f.kuota);const [ci,bg,fg]=fCat(f);const jjL=(JJ.find(j=>j[0]===f.jj)||['',f.jj])[1];const U=FUPD||{added:[],changed:[]};
   const isNew=S.fNotif&&U.added.includes(f.id),isUpd=S.fNotif&&U.changed.includes(f.id);const m=S.myJur?jurMatch(f,S.myJur):null;
   return `<div class="fcard ${F.sel===f.id?'sel':''}" role="button" tabindex="0" onclick="fDetail('${f.id}')" onkeydown="if(event.key==='Enter')fDetail('${f.id}')"><span class="tile" style="background:${bg};color:${fg}">${ic(ci,30,1.8)}</span>
-   <span class="bd"><span class="tt"><b>${esc(f.jab)}</b>${isNew?'<span class="fp new">Baru</span>':''}${isUpd?'<span class="fp upd">Diperbarui</span>':''}${f.pri?'<span class="fp pr">Prioritas 2026</span>':''}<span class="fp jj">${esc(jjL)}</span>${f.custom?'<span class="fp ok">Data kamu</span>':''}${f.cloud?'<span class="fp ok">Data resmi</span>':''}${m&&m.ok?'<span class="fp ok">✓ Jurusanmu</span>':''}</span>
+   <span class="bd"><span class="tt"><b>${esc(f.jab)}</b>${isNew?'<span class="fp new">Baru</span>':''}${isUpd?'<span class="fp upd">Diperbarui</span>':''}${f.pri?'<span class="fp pr">Prioritas 2026</span>':''}<span class="fp jj">${esc(jjL)}</span><span class="fp lvc lv${f.lvl}" title="${esc(lvlNote(f))}">${LVL[f.lvl]}</span>${f.custom?'<span class="fp ok">Data kamu</span>':''}${f.cloud?'<span class="fp ok">Data resmi</span>':''}${m&&m.ok?'<span class="fp ok">✓ Jurusanmu</span>':''}</span>
    <span class="in" style="display:block">${esc(f.inst)}${fLok(f)!==f.inst?` · <span class="lk">${ic('pin',14,2)}${esc(fLok(f))}</span>`:''}</span>
    <span class="mt"><span>${ic('home',17,1.9)}Kuota: <b>${fmt(f.kuota)}</b></span><span>${ic('users',17,1.9)}Peserta${f.est?' (estimasi)':''}: <b>${fmt(f.peserta)}</b></span><span>${ic('bars',17,2.2)}Rasio: <b>1 : ${fmt(ratio)}</b></span></span>
    <span class="acts"><button class="fact fav ${isFav(f.id)?'on':''}" onclick="togFav('${f.id}',event)">${ic('heart',15,2)}${isFav(f.id)?'Favorit':'Simpan'}</button><button class="fact ${inCmp(f.id)?'on':''}" onclick="togCmp('${f.id}',event)">${ic('swap',15,2)}${inCmp(f.id)?'Dibandingkan':'Bandingkan'}</button><button class="fact" onclick="event.stopPropagation();selF('${f.id}')">${ic('target',15,2)}Simulasikan</button></span></span>
@@ -4083,8 +4119,8 @@ function vFormasi(){
    <div class="flow"><span>1. Lolos passing grade</span><span>2. Masuk 3× kuota ke SKB</span><span>3. Nilai akhir SKD 40% + SKB 60%</span><span>4. Peringkat ≤ kuota</span></div></div>${ART_SIM}</section>
   <div class="card" id="fdetail"><h2>1. Formasi terpilih</h2>
    <div style="font-weight:700">${esc(f.jab)}</div><div class="small muted">${esc(f.inst)} · ${esc(f.pend)}</div>
-   <div class="grid3"><div><label class="f">Kuota</label><input type="number" id="c_kuota" min="1" value="${f.kuota}"></div><div><label class="f">Peserta SKD</label><input type="number" id="c_peserta" min="1" value="${f.peserta}"></div><div><label class="f">Persaingan</label><select id="c_lvl">${LVL.map((l,i)=>`<option value="${i}" ${+f.lvl===i?'selected':''}>${l}</option>`).join('')}</select></div></div>
-   <p class="small muted" style="margin-top:8px">Ganti dengan angka asli kalau sudah tahu. "Persaingan" menggeser rata-rata skor pesaing: formasi favorit (hukum, IT, kementerian pusat) biasanya diisi pelamar yang lebih siap.</p>
+   <div class="grid3"><div><label class="f">Kuota</label><input type="number" id="c_kuota" min="1" value="${f.kuota}"></div><div><label class="f">Peserta SKD</label><input type="number" id="c_peserta" min="1" value="${f.peserta}"></div><div><label class="f">Persaingan</label><div class="lvro lv${f.lvl}" id="c_lvl_v">${LVL[f.lvl]}</div></div></div>
+   <p class="small muted" style="margin-top:8px" id="c_lvl_n">${lvlNote(f)} Persaingan menentukan kekuatan rata-rata pesaing dalam simulasi.</p>
    ${f.custom?`<button class="btn danger" style="padding:8px 12px" onclick="delF('${f.id}')">Hapus formasi ini</button>`:''}</div>
   <div class="card"><h2>2. Skor SKD kamu</h2>
    <div class="seg"><button class="${F.src!=='man'?'on':''}" onclick="readFormasiInputs();F.src='last';F.res=null;render()">Dari tryout</button><button class="${F.src==='man'?'on':''}" onclick="readFormasiInputs();F.src='man';F.res=null;render()">Input manual</button></div>
@@ -4102,14 +4138,14 @@ function vFormasi(){
 }
 function readFormasiInputs(){
   const ek=$('#c_kuota');if(!ek||!ek.value)return;
-  const f=curF();f.kuota=Math.max(1,+ek.value||1);f.peserta=Math.max(1,+$('#c_peserta').value||1);f.lvl=+$('#c_lvl').value;
+  const f=curF();f.kuota=Math.max(1,+ek.value||1);f.peserta=Math.max(1,+$('#c_peserta').value||1);applyLvl(f);const lv=$('#c_lvl_v');if(lv){lv.textContent=LVL[f.lvl];lv.className='lvro lv'+f.lvl}const ln=$('#c_lvl_n');if(ln)ln.textContent=lvlNote(f)+' Persaingan menentukan kekuatan rata-rata pesaing dalam simulasi.';
   if(f.custom)save();
   if(F.src==='man'&&$('#m_twk'))['twk','tiu','tkp'].forEach(c=>F.man[c]=Math.max(0,Math.min(CAT[c].max,+$('#m_'+c).value||0)));
 }
 function recordSim(f,r){S.sims=S.sims.filter(s=>s.fid!==f.id);S.sims.push({fid:f.id,inst:f.inst,jab:f.jab,kuota:f.kuota,peserta:f.peserta,skd:r.uTot,pS:r.pS,pF:r.pF});if(S.sims.length>40)S.sims=S.sims.slice(-40)}
 function bindFormasi(){
   $('#skb').oninput=e=>{F.skb=+e.target.value;$('#skbv').textContent=F.skb};
-  ['c_kuota','c_peserta','c_lvl'].forEach(id=>{const e=$('#'+id);if(e)e.onchange=()=>{readFormasiInputs();$('#flist').innerHTML=fListHTML()}});
+  ['c_kuota','c_peserta'].forEach(id=>{const e=$('#'+id);if(e)e.onchange=()=>{readFormasiInputs();$('#flist').innerHTML=fListHTML()}});
   const b=$('#runSim');if(b)b.onclick=()=>{readFormasiInputs();const u=userSKD();if(!u)return;
     b.disabled=true;b.textContent='Menghitung…';
     setTimeout(()=>{const f=curF();F.res=simulate(f,u,F.skb);recordSim(f,F.res);save();
@@ -4130,13 +4166,13 @@ function addFModal(){
 }
 function saveNewF(){
   const k=Math.max(1,+$('#n_k').value||1),p=Math.max(1,+$('#n_p').value||1),pend=$('#n_pend').value||'—';
-  const f={id:'c'+Date.now().toString(36),inst:$('#n_inst').value||'Instansi',jab:$('#n_jab').value||'Jabatan',pend,jj:guessJJ(pend),kuota:k,peserta:p,lvl:lvlAuto(k,p),custom:true};
+  const f={id:'c'+Date.now().toString(36),inst:$('#n_inst').value||'Instansi',jab:$('#n_jab').value||'Jabatan',pend,jj:guessJJ(pend),kuota:k,peserta:p,lvl:0,custom:true};
   S.customF=(S.customF||[]).concat(f);save();modal('');fReset();selF(f.id);
 }
 function importModal(){
   modal(`<h2>Impor data formasi</h2><p class="small muted">Tempel dari spreadsheet atau salin dari SSCASN. Satu formasi per baris, kolom dipisah tab atau titik koma:<br><b>Instansi ; Jabatan ; Pendidikan ; Kuota ; Jumlah pelamar ; Lokasi penempatan</b> (dua kolom terakhir boleh kosong)</p>
   <textarea id="imp" rows="7" style="width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:13px" placeholder="Kementerian X;Analis Kebijakan Ahli Pertama;S1 Administrasi Publik;12;3400"></textarea>
-  <p class="small muted">Kalau jumlah pelamar belum ada, kosongkan saja (diisi 100× kuota). Persaingan dihitung otomatis dari rasio pelamar per kuota.</p>
+  <p class="small muted">Kalau jumlah pelamar belum ada, kosongkan saja (diisi 100× kuota). Persaingan ditentukan sistem dari data tahun-tahun sebelumnya (bila ada), atau dari rasio pelamar per kuota.</p>
   <div id="impmsg" class="small" style="color:var(--bad)"></div>
   <div class="grid2" style="margin-top:10px"><button class="btn line" onclick="modal('')">Batal</button><button class="btn" onclick="doImport()">Impor</button></div>`);
 }
@@ -4145,7 +4181,7 @@ function doImport(){
   rows.forEach((l,i)=>{const c=l.split(/\t|;/).map(x=>x.trim());if(c.length<4)return;
     const k=parseInt(c[3].replace(/\D/g,''));if(!k||/kuota/i.test(c[3]))return;
     const p=parseInt((c[4]||'').replace(/\D/g,''))||k*100;
-    add.push({id:'c'+Date.now().toString(36)+i,inst:c[0],jab:c[1],pend:c[2]||'—',jj:guessJJ(c[2]),kuota:k,peserta:p,lvl:lvlAuto(k,p),lok:c[5]||'',custom:true})});
+    add.push({id:'c'+Date.now().toString(36)+i,inst:c[0],jab:c[1],pend:c[2]||'—',jj:guessJJ(c[2]),kuota:k,peserta:p,lvl:0,lok:c[5]||'',custom:true})});
   if(!add.length){$('#impmsg').textContent='Tidak ada baris yang terbaca. Pastikan minimal ada 4 kolom dan kuota berupa angka.';return}
   S.customF=(S.customF||[]).concat(add);save();Object.assign(F,{q:'',jjs:[],inst:'all',pri:false,D:null,n:10});
   modal(`<h2>${add.length} formasi diimpor</h2><p class="muted">Formasi baru ditandai "Data kamu" di daftar.</p><button class="btn block" onclick="modal('');render()">OK</button>`);
@@ -4282,6 +4318,17 @@ try {
     for (const k in by) BAB[k] = by[k];
   }
 } catch (e) { console.warn('materi', e); }
+
+// --- formasi resmi + riwayat tahun sebelumnya (untuk tingkat persaingan otomatis) ---
+try {
+  const fr = [];
+  for (let from = 0; ; from += 1000) {
+    const { data, error } = await jnip.sb.from('formasi').select('id,instansi,jabatan,pendidikan,kuota,pelamar,lokasi,tahun').order('id').range(from, from + 999);
+    if (error) throw error;
+    fr.push(...data); if (data.length < 1000) break;
+  }
+  CLOUD.formasi = fr.map(r => ({ id: String(r.id), inst: r.instansi, jab: r.jabatan, pend: r.pendidikan || '', kuota: r.kuota, peserta: r.pelamar || null, lok: r.lokasi || '', tahun: r.tahun || 2026 }));
+} catch (e) { console.warn('formasi', e); }
 
 // --- data lokal milik akun lain di perangkat yang sama? mulai bersih ---
 if (S._uid !== user.id) { for (const k of Object.keys(S)) delete S[k]; Object.assign(S, JSON.parse(JSON.stringify(DEF))); }

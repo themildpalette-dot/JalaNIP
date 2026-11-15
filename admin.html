@@ -190,7 +190,7 @@ async function boot() {
 
 // ---------------- Kerangka ----------------
 const NAV = [
-  ["Konsol", [["dash", "Dasbor", "dash"], ["users", "Pengguna", "users"], ["pengumuman", "Pengumuman", "mega"], ["arena", "Arena", "trophy"]]],
+  ["Konsol", [["dash", "Dasbor", "dash"], ["users", "Pengguna", "users"], ["pengumuman", "Pengumuman", "mega"], ["formasi", "Formasi", "layers"], ["arena", "Arena", "trophy"]]],
 ];
 const VIEWS = NAV.flatMap(([, l]) => l.map(([k]) => k));
 let PENDING = 0;
@@ -574,15 +574,15 @@ A.pgSave = async (status) => {
 
 // ---------------- Formasi ----------------
 async function formasi() {
-  const { data, count, error } = await sb.from("formasi").select("*", { count: "exact" }).order("id", { ascending: false }).limit(100); if (error) throw error;
+  const { data, count, error } = await sb.from("formasi").select("*", { count: "exact" }).order("tahun", { ascending: false }).order("id", { ascending: false }).limit(100); if (error) throw error;
   shell(`<h1>Formasi</h1><p class="muted">${count ?? 0} formasi. Dipakai di simulasi peluang formasi.</p>
-  <div class="card"><h2>Impor dari rincian SSCASN</h2><p class="small muted">Tempel dari spreadsheet. Satu baris satu formasi, kolom dipisah tab atau titik koma: <b>Instansi ; Jabatan ; Pendidikan ; Kuota ; Jumlah pelamar ; Lokasi penempatan</b> (pelamar dan lokasi boleh kosong).</p>
+  <div class="card"><h2>Impor dari rincian SSCASN</h2><p class="small muted">Tempel dari spreadsheet. Satu baris satu formasi, kolom dipisah tab atau titik koma: <b>Instansi ; Jabatan ; Pendidikan ; Kuota ; Jumlah pelamar ; Lokasi penempatan ; Tahun</b> (pelamar dan lokasi boleh kosong; tahun kosong = 2026).</p><p class="small muted">Masukkan juga data formasi tahun-tahun sebelumnya (misalnya 2023 dan 2024) lengkap dengan jumlah pelamarnya. Data lama tidak tampil sebagai pilihan formasi, tetapi dipakai sistem untuk menentukan tingkat persaingan secara otomatis.</p>
    <textarea id="f_b" rows="7"></textarea><div class="row" style="margin-top:10px"><button class="btn" onclick="window.A.fImp()">Impor</button><span class="grow"></span>${count ? `<button class="btn danger" onclick="window.A.fDelAll()">Hapus semua formasi</button>` : ""}</div></div>
-  <div class="card tw" style="padding:4px"><table><tr><th>Instansi</th><th>Jabatan</th><th>Pendidikan</th><th>Lokasi</th><th>Kuota</th><th>Pelamar</th></tr>${(data || []).map((f) => `<tr><td class="small">${h(f.instansi)}</td><td><b>${h(f.jabatan)}</b></td><td class="small">${h(f.pendidikan)}</td><td class="small">${h(f.lokasi || "—")}</td><td>${f.kuota}</td><td>${f.pelamar ?? "—"}</td></tr>`).join("") || `<tr><td colspan="6" class="muted">Belum ada formasi.</td></tr>`}</table>${(count || 0) > 100 ? '<p class="small muted" style="padding:8px">Menampilkan 100 terbaru.</p>' : ""}</div>`);
+  <div class="card tw" style="padding:4px"><table><tr><th>Instansi</th><th>Jabatan</th><th>Pendidikan</th><th>Lokasi</th><th>Tahun</th><th>Kuota</th><th>Pelamar</th></tr>${(data || []).map((f) => `<tr><td class="small">${h(f.instansi)}</td><td><b>${h(f.jabatan)}</b></td><td class="small">${h(f.pendidikan)}</td><td class="small">${h(f.lokasi || "—")}</td><td>${f.tahun ?? 2026}</td><td>${f.kuota}</td><td>${f.pelamar ?? "—"}</td></tr>`).join("") || `<tr><td colspan="7" class="muted">Belum ada formasi.</td></tr>`}</table>${(count || 0) > 100 ? '<p class="small muted" style="padding:8px">Menampilkan 100 terbaru.</p>' : ""}</div>`);
 }
 A.fImp = async () => {
   const rows = $("#f_b").value.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).map((l) => l.split(/\t|;/).map((x) => x.trim())).filter((c) => c.length >= 4 && parseInt(c[3].replace(/\D/g, "")))
-    .map((c) => ({ instansi: c[0], jabatan: c[1], pendidikan: c[2] || null, kuota: parseInt(c[3].replace(/\D/g, "")), pelamar: parseInt((c[4] || "").replace(/\D/g, "")) || null, lokasi: c[5] || null }));
+    .map((c) => ({ instansi: c[0], jabatan: c[1], pendidikan: c[2] || null, kuota: parseInt(c[3].replace(/\D/g, "")), pelamar: parseInt((c[4] || "").replace(/\D/g, "")) || null, lokasi: c[5] || null, tahun: parseInt((c[6] || "").replace(/\D/g, "")) || 2026 }));
   if (!rows.length) return flash("Tidak ada baris yang terbaca.", false);
   for (let i = 0; i < rows.length; i += 500) { const { error } = await sb.from("formasi").insert(rows.slice(i, i + 500)); if (error) return flash(error.message, false); }
   flash(`${rows.length} formasi diimpor.`); route();
