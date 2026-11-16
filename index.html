@@ -123,33 +123,6 @@ table.cmp th{color:var(--muted);font-weight:600;border-top:0}
 .cdbox{margin-top:8px;background:var(--bg);border-radius:10px;padding:8px 12px;font-size:14px}.cdbox b{font-variant-numeric:tabular-nums}
 .bigbtn{display:flex;flex-direction:column;gap:2px;text-align:left;margin-bottom:0;cursor:pointer}
 .ta{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;resize:vertical}
-.flcard{perspective:1200px;cursor:pointer;display:block}.flcard .ff,.flcard .fb{overflow:hidden}
-.flcard{--c1:#1d4e7a;--c2:#3b82c4;--cs:#e6f0fb}
-.flcard[data-g="1"]{--c1:#b4232f;--c2:#f0626b;--cs:#fde8ea}
-.flcard[data-g="2"]{--c1:#a1640d;--c2:#f2b705;--cs:#fff4d6}
-.flcard[data-g="3"]{--c1:#4c2f94;--c2:#8b6cd9;--cs:#efe9fc}
-.flcard[data-g="4"]{--c1:#0b6e60;--c2:#22b39a;--cs:#e0f6f1}
-.flcard .ff{background:linear-gradient(140deg,var(--c1),var(--c2))!important;border:0!important;color:#fff!important;box-shadow:0 14px 30px -10px var(--c1)}
-.flcard .ff::before{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.16) 1.6px,transparent 1.8px);background-size:18px 18px;z-index:0}
-.flcard .ff::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;right:-120px;bottom:-150px;background:rgba(255,255,255,.12);box-shadow:-420px -260px 0 -40px rgba(255,255,255,.1);z-index:0}
-.flcard .ff>*,.flcard .fb>*{position:relative;z-index:1}
-.flcard .fdeco{position:absolute!important;inset:0;width:100%;height:100%;pointer-events:none;z-index:0!important}
-.flcard .fart{width:150px;height:150px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 8px rgba(255,255,255,.25),0 0 0 18px rgba(255,255,255,.12),0 16px 30px rgba(0,0,0,.18);margin-bottom:10px;animation:fbob 3s ease-in-out infinite}
-@keyframes fbob{50%{transform:translateY(-6px)}}
-.flcard .ff .pill{background:rgba(255,255,255,.22);color:#fff;border:1px solid rgba(255,255,255,.35)}
-.flcard .ff .fct{font-size:30px;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.18)}
-.flcard .ff .muted{color:rgba(255,255,255,.85)!important;background:rgba(0,0,0,.14);padding:6px 14px;border-radius:99px}
-.flcard .fq{position:absolute!important;top:18px;right:20px;width:42px;height:42px;border-radius:13px;background:#fff;color:var(--c1);font-style:normal;font-weight:900;font-size:22px;display:grid;place-items:center;transform:rotate(10deg);box-shadow:0 6px 14px rgba(0,0,0,.18)}
-.flcard .fb{background:linear-gradient(180deg,var(--cs),#fff)!important;border:2px solid var(--cs)!important;overflow:hidden}
-.flcard .fb::before{content:'';position:absolute;left:0;right:0;top:0;height:10px;background:linear-gradient(90deg,var(--c1),var(--c2));z-index:1}
-.flcard .fb::after{content:'';position:absolute;width:220px;height:220px;border-radius:50%;right:-80px;top:-90px;background:var(--cs);z-index:0}
-.flcard .fbulb{width:84px;height:84px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 0 0 7px var(--cs),0 10px 20px rgba(0,0,0,.08)}
-.flcard .fb .pill{background:var(--c1);color:#fff}
-.flcard .fb .fans{background:#fff;border-radius:14px;padding:14px 18px;box-shadow:0 6px 16px rgba(0,0,0,.06);border-left:5px solid var(--c2);max-width:560px;color:var(--ink)}
-[data-theme=dark] .flcard .fb{background:linear-gradient(180deg,#1c2b40,#141d2a)!important;border-color:#2a3b52!important}[data-theme=dark] .flcard .fb::after{background:rgba(255,255,255,.04)}[data-theme=dark] .flcard .fans{background:#0f1826;color:#e8eef6}[data-theme=dark] .flcard .fbulb{background:#0f1826;box-shadow:0 0 0 7px rgba(255,255,255,.06)}
-.flcard .fin{position:relative;min-height:400px;transition:transform .45s;transform-style:preserve-3d}
-.flcard.flip .fin{transform:rotateY(180deg)}
-.ff,.fb{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--sh);padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px}
 .fb{transform:rotateY(180deg);background:var(--pri-soft)}.fct{font-size:24px;font-weight:800;letter-spacing:-.01em}
 .opt:disabled{cursor:default;opacity:1;color:inherit}
 .list-item .num{flex:none}
@@ -462,7 +435,7 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .bhero{display:flex;align-items:center;gap:10px;min-height:200px;position:relative}
 .bhero .tx{max-width:440px;position:relative;z-index:1}.bhero h1{font-size:36px;letter-spacing:-.03em;line-height:1.12;margin:12px 0 10px;color:#0f2147}[data-theme=dark] .bhero h1{color:#fff}
 .bhero p{margin:0;color:var(--muted);font-size:15.5px;line-height:1.55}.bhero svg.art{margin-left:auto;width:360px;height:210px;flex:none}
-.bmods{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:14px 0 22px}
+.bmods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:14px 0 22px}
 .bmod{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 4px 14px rgba(20,40,80,.04)}
 .bmod:hover{border-color:#9cc1f2}.bmod .ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex:none}.bmod b{display:block;font-size:15.5px}.bmod span.d{font-size:12.5px;color:var(--muted)}
 .bmod.on{background:#1e6fd9;border-color:#1e6fd9;color:#fff;box-shadow:0 8px 20px rgba(30,111,217,.28)}.bmod.on span.d{color:rgba(255,255,255,.85)}.bmod.on .ico{background:rgba(255,255,255,.16)!important;color:#fff!important}
@@ -479,10 +452,6 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .rec .n{width:26px;height:26px;border-radius:50%;background:#e6f0fd;color:#1757b0;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}[data-theme=dark] .rec .n{background:#1c2f4d;color:#cfe2ff}
 .rec b{display:block;font-size:15px}.rec .why{font-size:12.5px;color:var(--muted);margin-top:2px}.rec .why i{font-style:normal;font-weight:700}
 .rec .bt{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}.rec .bt button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:5px 10px;font-size:12.5px;font-weight:700}.rec .bt button.p{background:#1e6fd9;border-color:#1e6fd9;color:#fff}
-.srC{margin-bottom:22px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:18px;align-items:center}
-.srC .stack{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--line);margin:10px 0 8px}.srC .stack i{display:block;height:100%}
-.srC .leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}.srC .leg span{display:inline-flex;align-items:center;gap:6px}.srC .leg b{color:var(--ink)}.srC .leg i{width:9px;height:9px;border-radius:3px;display:inline-block}
-.srC .big{font-size:38px;font-weight:800;color:#1757b0;line-height:1}[data-theme=dark] .srC .big{color:#8fbfff}
 .mtabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}.mtabs button{border:0;background:var(--bg);color:var(--ink);font-weight:700;border-radius:999px;padding:9px 18px;font-size:14px}.mtabs button.on{background:#1e6fd9;color:#fff}
 .mtabs .sp{flex:1}.mtabs select{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card);font:inherit;font-size:13.5px;width:auto}
 .mbox2{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px}
@@ -552,12 +521,11 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .jt .cb{width:22px;height:22px;border-radius:6px;border:2px solid #c9d3df;display:grid;place-items:center;flex:none;color:#fff}.jt.done .cb{background:#1e6fd9;border-color:#1e6fd9}.jt .grow{flex:1}.jt .ct{font-weight:700;font-size:13.5px}.jt.done .ct{color:#22a05b}
 .sup{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.sup button{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 6px;font-size:13px;font-weight:600;color:var(--ink)}.sup button:hover{border-color:#9cc1f2}
 .sup button .ic{color:#1e6fd9}.sup button:nth-child(3) .ic{color:#f2b632}
-.fsr{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.fsr button{border:0;border-radius:12px;padding:10px 6px;font-weight:800;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px}.fsr button small{font-weight:600;opacity:.9;font-size:11.5px}
 @media(max-width:1250px){.bl{grid-template-columns:minmax(0,1fr)}.bside{display:grid;grid-template-columns:1fr 1fr;gap:16px}.bside .card2{margin:0}}
 @media(max-width:900px){.btoday{grid-template-columns:1fr}.bside{grid-template-columns:1fr}.bhero svg.art{width:260px;height:150px}}
-@media(max-width:1250px) and (min-width:641px){.bmods{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-width:1250px) and (min-width:641px){.bmods{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:640px){.bhero{flex-direction:column;align-items:stretch;min-height:0}.bhero h1{font-size:28px}.bhero svg.art{width:100%;max-width:300px;height:auto;margin:6px auto 0}
- .bmods{grid-template-columns:1fr 1fr;gap:10px}.bmod{padding:12px;gap:8px;flex-direction:row;align-items:center}.bmod:first-child{grid-column:1/-1}.bmod .ico{width:38px;height:38px}.bmod b{font-size:14.5px}.srC{grid-template-columns:1fr}
+ .bmods{grid-template-columns:1fr 1fr;gap:10px}.bmod{padding:12px;gap:8px;flex-direction:row;align-items:center}.bmod .ico{width:38px;height:38px}.bmod b{font-size:14.5px}
  .mrow{gap:12px;padding:12px;flex-wrap:wrap}.mrow .tile{width:46px;height:46px}.mrow .pg{width:100%;order:3}.mrow .go{display:none}.srow{flex-wrap:wrap}.srow .pg{width:100%;order:3}.tgt .cdg b{font-size:23px}.mtabs button{padding:8px 14px}}
 /* ===== Formasi (desain baru) ===== */
 .fhero{display:grid;grid-template-columns:minmax(0,1fr) auto 340px;gap:18px;align-items:center;margin-bottom:16px}
@@ -791,7 +759,24 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 @media(max-width:560px){.arstats{width:100%}.arstats div{flex:1;min-width:0}}
 .blogo{width:44px;height:44px;flex:none;object-fit:contain}.tbrand .blogo{width:34px;height:34px}.bname{display:flex;flex-direction:column;line-height:1.05;color:#1757b0}[data-theme=dark] .bname{color:#fff}.bname small{font-size:11px;letter-spacing:0;font-weight:500;color:var(--muted);margin-top:4px;white-space:nowrap}.tbrand .bname small{font-size:10px}@media(max-width:759px){.topbar{gap:4px;padding:10px 12px}.tbrand{gap:7px;min-width:0}.tbrand .bname{font-size:17px}.tbrand .bname small{font-size:9.5px}}@media(max-width:360px){.tbrand .bname small{display:none}}
 .foot{font-size:12px;color:var(--muted);text-align:center;margin-top:20px}
-.skbn .bsoft2{margin:0}</style>
+.skbn .bsoft2{margin:0}
+/* ===== pop-up masukan (kiri bawah) ===== */
+#fbk{position:fixed;left:16px;bottom:16px;z-index:69}
+#fbk[hidden]{display:none}
+body:has(#modal .bg) #fbk{display:none}
+#fbk .fbc{width:250px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-left:5px solid #f2b705;border-radius:16px;box-shadow:0 14px 34px rgba(15,35,80,.16);padding:13px 12px 13px 14px;display:flex;gap:10px;align-items:flex-start;animation:fbIn .3s ease}
+#fbk .fbi{flex:none;width:36px;height:36px;border-radius:11px;background:#e8f0fb;color:#0b3f91;display:grid;place-items:center}
+#fbk .fbt{flex:1;min-width:0;font-size:13.5px;line-height:1.45}#fbk .fbt b{display:block;font-size:14.5px;margin-bottom:2px}
+#fbk .fbt button.go{margin-top:8px;background:#f2b705;color:#3a2a00;border:0;border-radius:9px;padding:6px 12px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}
+#fbk .x{flex:none;background:none;border:0;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;padding:0 2px}
+#fbk .fbm{width:48px;height:48px;border-radius:50%;border:0;background:#0b3f91;color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(11,63,145,.35);cursor:pointer}
+#fbk .fbm:hover{background:#0d4aa8}
+[data-theme=dark] #fbk .fbi{background:#1b2d42;color:#9cc1f2}
+@keyframes fbIn{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+@media(max-width:900px){body.has-ann #fbk{display:none}body.ann-min #fbk{bottom:72px}#fbk{left:12px;bottom:12px}#fbk .fbc{width:min(250px,calc(100vw - 24px))}}
+.fbkat{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}.fbkat button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.fbkat button.on{background:#0b3f91;border-color:#0b3f91;color:#fff}
+</style>
 </head>
 <body>
 <div id="shell"></div>
@@ -942,58 +927,6 @@ const MATERI={
  'Anti Radikalisme':{c:'tkp',p:['Poin 5: menolak paham anti-Pancasila, tidak menyebarkan konten, mengingatkan dengan santun, dan melapor lewat kanal resmi.','Pendekatan persuasif dan dialog untuk keluarga, rekan, dan anak muda.','Waspadai donasi untuk kelompok tidak jelas dan simbol organisasi terlarang.','Poin rendah: ikut menyebarkan, bergabung, atau membiarkan.']}
 };
 
-/* ===================== FLASHCARD TWK ===================== */
-const FC=[
- ['Pasal 1 ayat (1)','Negara Indonesia ialah negara kesatuan yang berbentuk republik','Pasal UUD'],
- ['Pasal 1 ayat (2)','Kedaulatan berada di tangan rakyat dan dilaksanakan menurut UUD','Pasal UUD'],
- ['Pasal 1 ayat (3)','Negara Indonesia adalah negara hukum','Pasal UUD'],
- ['Pasal 3 ayat (1)','MPR berwenang mengubah dan menetapkan UUD','Pasal UUD'],
- ['Pasal 6A ayat (1)','Presiden dan wapres dipilih dalam satu pasangan secara langsung oleh rakyat','Pasal UUD'],
- ['Pasal 7','Masa jabatan presiden/wapres 5 tahun, dapat dipilih kembali satu kali','Pasal UUD'],
- ['Pasal 7B','Usul pemberhentian presiden: DPR → MK memeriksa → MPR memutuskan','Pasal UUD'],
- ['Pasal 18 ayat (1)','NKRI dibagi atas daerah provinsi, lalu kabupaten dan kota','Pasal UUD'],
- ['Pasal 22C','Anggota DPD dipilih dari setiap provinsi melalui pemilu','Pasal UUD'],
- ['Pasal 23E','BPK memeriksa pengelolaan dan tanggung jawab keuangan negara','Pasal UUD'],
- ['Pasal 24A','MA menguji peraturan di bawah UU terhadap UU','Pasal UUD'],
- ['Pasal 24B','Komisi Yudisial mengusulkan pengangkatan hakim agung','Pasal UUD'],
- ['Pasal 24C','MK menguji UU terhadap UUD','Pasal UUD'],
- ['Pasal 27 ayat (3)','Hak dan kewajiban ikut serta dalam upaya pembelaan negara','Pasal UUD'],
- ['Pasal 29 ayat (2)','Negara menjamin kemerdekaan memeluk agama dan beribadat','Pasal UUD'],
- ['Pasal 30 ayat (2)','Hankam melalui sistem pertahanan dan keamanan rakyat semesta','Pasal UUD'],
- ['Pasal 31 ayat (1)','Setiap warga negara berhak mendapat pendidikan','Pasal UUD'],
- ['Pasal 31 ayat (4)','Anggaran pendidikan minimal 20% APBN dan APBD','Pasal UUD'],
- ['Pasal 33 ayat (3)','Bumi, air, dan kekayaan alam dikuasai negara untuk kemakmuran rakyat','Pasal UUD'],
- ['Pasal 34 ayat (1)','Fakir miskin dan anak terlantar dipelihara oleh negara','Pasal UUD'],
- ['Pasal 35 / 36 / 36A / 36B','Bendera / bahasa / lambang negara / lagu kebangsaan','Pasal UUD'],
- ['Pasal 37 ayat (5)','Bentuk NKRI tidak dapat diubah','Pasal UUD'],
- ['29 Mei – 1 Juni 1945','Sidang I BPUPKI membahas dasar negara','Tanggal sejarah'],
- ['1 Juni 1945','Pidato Soekarno, lahirnya istilah Pancasila','Tanggal sejarah'],
- ['22 Juni 1945','Piagam Jakarta oleh Panitia Sembilan','Tanggal sejarah'],
- ['16 Agustus 1945','Peristiwa Rengasdengklok','Tanggal sejarah'],
- ['18 Agustus 1945','PPKI mengesahkan UUD 1945 serta memilih presiden dan wapres','Tanggal sejarah'],
- ['20 Mei 1908','Berdirinya Budi Utomo, kini Hari Kebangkitan Nasional','Tanggal sejarah'],
- ['28 Oktober 1928','Sumpah Pemuda pada Kongres Pemuda II','Tanggal sejarah'],
- ['10 November 1945','Pertempuran Surabaya, kini Hari Pahlawan','Tanggal sejarah'],
- ['19 Desember 1948','PDRI dibentuk, kini Hari Bela Negara','Tanggal sejarah'],
- ['27 Desember 1949','Pengakuan kedaulatan oleh Belanda (hasil KMB)','Tanggal sejarah'],
- ['13 Desember 1957','Deklarasi Djuanda, konsep negara kepulauan','Tanggal sejarah'],
- ['5 Juli 1959','Dekrit Presiden: kembali ke UUD 1945','Tanggal sejarah'],
- ['1999 – 2002','Empat kali amandemen UUD 1945','Tanggal sejarah'],
- ['Bintang','Lambang sila pertama','Lambang negara'],
- ['Rantai','Lambang sila kedua','Lambang negara'],
- ['Pohon beringin','Lambang sila ketiga','Lambang negara'],
- ['Kepala banteng','Lambang sila keempat','Lambang negara'],
- ['Padi dan kapas','Lambang sila kelima','Lambang negara'],
- ['Bulu Garuda','Sayap 17, ekor 8, pangkal ekor 19, leher 45','Lambang negara'],
- ['Perancang Garuda Pancasila','Sultan Hamid II','Lambang negara'],
- ['Asal semboyan Bhinneka Tunggal Ika','Kakawin Sutasoma karya Mpu Tantular','Lambang negara'],
- ['UU No. 24 Tahun 2009','Bendera, bahasa, lambang negara, dan lagu kebangsaan','Undang-undang'],
- ['UU No. 12 Tahun 2011','Pembentukan peraturan perundang-undangan (hierarki)','Undang-undang'],
- ['UU No. 3 Tahun 2002','Pertahanan negara','Undang-undang'],
- ['UU No. 23 Tahun 2019','Pengelolaan sumber daya nasional untuk pertahanan negara','Undang-undang'],
- ['UU No. 30 Tahun 2002','Pembentukan KPK','Undang-undang'],
- ['BerAKHLAK','Berorientasi Pelayanan, Akuntabel, Kompeten, Harmonis, Loyal, Adaptif, Kolaboratif','Nilai ASN']
-].map((x,i)=>({id:'fc'+i,f:x[0],b:x[1],g:x[2]}));
 
 /* ===================== HARIAN, STREAK, TARGET ===================== */
 const pad2=n=>String(n).padStart(2,'0');
@@ -1057,39 +990,8 @@ function renderLearn(){
 }
 function materiBox(sub){const m=MATERI[sub];return `<span class="pill pri">${m?CAT[m.c].name:''}</span><h2 style="margin-top:6px">${esc(sub)}</h2>${m?`<ul style="padding-left:18px;margin:0 0 12px">${m.p.map(x=>`<li style="margin-bottom:8px">${esc(x)}</li>`).join('')}</ul>`:'<p class="muted">Belum ada ringkasan untuk sub-materi ini.</p>'}<div class="grid2"><button class="btn line" onclick="modal('')">Tutup</button><button class="btn" onclick="modal('');startLearn({sub:'${esc(sub)}',label:'Latihan ${esc(sub)}',n:10})">Latihan 10 soal</button></div>`}
 
-/* ===================== FLASHCARD ===================== */
-const FC_INT=[0,1,2,4,7,15,30];
+/* Flashcard sudah dihapus. FS tetap ada (selalu null) karena dicek di beberapa tempat. */
 let FS=null;
-function fcDue(){const t=today(),st=S.fc||{};const due=FC.filter(c=>st[c.id]&&st[c.id].due<=t);const fresh=FC.filter(c=>!st[c.id]);const newToday=(td().fcnew||0);return due.concat(fresh.slice(0,Math.max(0,10-newToday)))}
-function startFlash(all){const list=all?shuffle(FC):shuffle(fcDue());if(!list.length){modal(`<h2>Semua kartu sudah diulang</h2><p class="muted">Tidak ada kartu jatuh tempo hari ini. Kembali besok, atau ulang semua kartu sekarang.</p><div class="grid2"><button class="btn line" onclick="modal('')">Tutup</button><button class="btn" onclick="modal('');startFlash(true)">Ulang semua</button></div>`);return}
-  FS={list,i:0,flip:false,ok:0,rq:{}};S.last=S.last&&S.last.k!=='fc'?S.last:S.last;renderFlash();window.scrollTo(0,0)}
-function fcGrade(g){const c=FS.list[FS.i];S.fc=S.fc||{};const st=S.fc[c.id];if(!st)bump('fcnew');const b0=st?st.b:0;
-  const b=g===0?1:g===1?Math.max(1,b0):Math.min(6,b0+1);const iv=g===0?1:FC_INT[b];S.fc[c.id]={b,due:dayAdd(today(),iv),lv:g,t:Date.now()};bump('fc');if(g===2)FS.ok++;
-  if(g===0&&!FS.rq[c.id]){FS.rq[c.id]=1;FS.list.push(c)}save();
-  if(FS.i>=FS.list.length-1){FS.done=true}else{FS.i++;FS.flip=false}renderFlash()}
-function fcIv(c,g){const st=(S.fc||{})[c.id];const b0=st?st.b:0;const b=g===0?1:g===1?Math.max(1,b0):Math.min(6,b0+1);const d=g===0?1:FC_INT[b];return g===0?'lagi di sesi ini':d===1?'besok':d+' hari lagi'}
-function fcAnswer(ok){const c=FS.list[FS.i];S.fc=S.fc||{};const st=S.fc[c.id];if(!st)bump('fcnew');
-  const b=ok?Math.min(6,(st?st.b:0)+1):1;S.fc[c.id]={b,due:dayAdd(today(),ok?FC_INT[b]:1)};bump('fc');if(ok)FS.ok++;save();
-  if(FS.i>=FS.list.length-1){FS.done=true}else{FS.i++;FS.flip=false}renderFlash()}
-
-/* ilustrasi kartu flashcard per kelompok */
-const FCART={
- 'Pasal UUD':`<svg viewBox="0 0 120 96" width="118" height="94"><ellipse cx="60" cy="88" rx="44" ry="5" fill="#dbe7f7"/><rect x="26" y="12" width="68" height="72" rx="8" fill="#fff" stroke="#c9d9ef" stroke-width="2"/><rect x="20" y="8" width="80" height="12" rx="6" fill="#1d4e7a"/><rect x="20" y="76" width="80" height="12" rx="6" fill="#1d4e7a"/><g stroke="#9db8dc" stroke-width="3" stroke-linecap="round"><path d="M38 34h44M38 44h44M38 54h30"/></g><circle cx="80" cy="64" r="9" fill="#e5484d"/><path d="M76 72l-3 10 7-4 7 4-3-10" fill="#e5484d"/><text x="60" y="30" text-anchor="middle" font-size="9" font-weight="800" fill="#1d4e7a">UUD</text></svg>`,
- 'Tanggal sejarah':`<svg viewBox="0 0 120 96" width="118" height="94"><ellipse cx="60" cy="88" rx="44" ry="5" fill="#dbe7f7"/><rect x="24" y="18" width="62" height="64" rx="10" fill="#fff" stroke="#c9d9ef" stroke-width="2"/><path d="M24 28a10 10 0 0 1 10-10h42a10 10 0 0 1 10 10v8H24z" fill="#e5484d"/><rect x="36" y="10" width="6" height="16" rx="3" fill="#1d4e7a"/><rect x="68" y="10" width="6" height="16" rx="3" fill="#1d4e7a"/><g fill="#c9d9ef"><rect x="34" y="46" width="10" height="9" rx="2"/><rect x="50" y="46" width="10" height="9" rx="2"/><rect x="34" y="62" width="10" height="9" rx="2"/><rect x="66" y="62" width="10" height="9" rx="2"/></g><rect x="66" y="46" width="10" height="9" rx="2" fill="#1d4e7a"/><path d="M92 22v62" stroke="#7a8aa0" stroke-width="3" stroke-linecap="round"/><path d="M93 24h20v9H93z" fill="#e5484d"/><path d="M93 33h20v9H93z" fill="#fff" stroke="#e6e9ee"/></svg>`,
- 'Undang-undang':`<svg viewBox="0 0 120 96" width="118" height="94"><ellipse cx="60" cy="88" rx="44" ry="5" fill="#dbe7f7"/><rect x="22" y="14" width="52" height="68" rx="7" fill="#fff" stroke="#c9d9ef" stroke-width="2"/><g stroke="#9db8dc" stroke-width="3" stroke-linecap="round"><path d="M32 30h32M32 40h32M32 50h22"/></g><rect x="70" y="40" width="34" height="13" rx="4" transform="rotate(-35 87 46)" fill="#a5703a"/><rect x="84" y="50" width="6" height="30" rx="3" transform="rotate(-35 87 65)" fill="#c9934f"/><rect x="66" y="78" width="40" height="8" rx="3" fill="#7a5426"/></svg>`,
- 'Nilai ASN':`<svg viewBox="0 0 120 96" width="118" height="94"><ellipse cx="60" cy="88" rx="40" ry="5" fill="#dbe7f7"/><path d="M60 8l36 12v24c0 22-16 34-36 40-20-6-36-18-36-40V20z" fill="#1d4e7a"/><path d="M60 18l26 9v17c0 16-11 25-26 30-15-5-26-14-26-30V27z" fill="#2c6cb5"/><path d="M60 30l5 10 11 2-8 8 2 11-10-5-10 5 2-11-8-8 11-2z" fill="#f2b705"/></svg>`,
-};
-const FC_DECO=`<svg class="fdeco" viewBox="0 0 400 300" preserveAspectRatio="none"><g fill="#fff"><path d="M40 50l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" opacity=".75"/><path d="M350 230l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" opacity=".7"/><path d="M330 70l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" opacity=".6"/><path d="M70 240l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" opacity=".6"/></g><g opacity=".85"><rect x="90" y="30" width="10" height="4" rx="2" fill="#ffd84d" transform="rotate(30 95 32)"/><rect x="300" y="120" width="10" height="4" rx="2" fill="#ffd84d" transform="rotate(-25 305 122)"/><rect x="40" y="160" width="9" height="4" rx="2" fill="#fff" transform="rotate(60 44 162)"/><circle cx="280" cy="40" r="4" fill="#ffd84d"/><circle cx="120" cy="270" r="3.5" fill="#fff"/><circle cx="370" cy="160" r="3" fill="#fff"/><circle cx="20" cy="110" r="3" fill="#ffd84d"/></g></svg>`;
-const FC_GI={'Pasal UUD':0,'Tanggal sejarah':1,'Lambang negara':2,'Undang-undang':3,'Nilai ASN':4};
-function fcArt(g){return g==='Lambang negara'?`<div class="fart">${garuda(112)}</div>`:`<div class="fart">${FCART[g]||FCART['Pasal UUD']}</div>`}
-const FC_BULB=`<svg viewBox="0 0 64 64" width="54" height="54"><circle cx="32" cy="28" r="18" fill="#fff4c2"/><path d="M32 12a14 14 0 0 0-8 25.5V44h16v-6.5A14 14 0 0 0 32 12z" fill="#f2b705"/><rect x="25" y="46" width="14" height="5" rx="2" fill="#7a8aa0"/><rect x="27" y="52" width="10" height="4" rx="2" fill="#7a8aa0"/><path d="M32 4v3M12 12l2 2M52 12l-2 2M6 28h3M55 28h3" stroke="#f2b705" stroke-width="2.5" stroke-linecap="round"/></svg>`;
-function renderFlash(){
-  if(FS.done){if(!FS.logged){FS.logged=1;logAct({k:'fc',n:FS.list.length,ok:FS.ok})}$('#shell').innerHTML=`<div class="exam-top"><div style="font-weight:800">Flashcard TWK</div><div style="flex:1"></div></div><main><div class="card hero"><div class="muted small">Sesi selesai</div><div class="row" style="margin-top:6px"><div class="big">${FS.ok}</div><div class="muted">/ ${FS.list.length} sudah hafal</div></div><p class="muted small" style="margin:8px 0 0">Kartu yang lupa diulang lagi di sesi yang sama lalu besok. Kartu yang ragu tetap di tingkatnya. Kartu yang hafal naik tingkat dan muncul dengan jarak makin panjang: 1, 2, 4, 7, 15, lalu 30 hari.</p></div><button class="btn block" onclick="FS=null;go('belajar')">Kembali ke Materi</button></main>`;return}
-  const c=FS.list[FS.i],st=(S.fc||{})[c.id];
-  $('#shell').innerHTML=`<div class="exam-top"><div><div style="font-weight:800">Flashcard TWK</div><div class="small" style="opacity:.75">Kartu ${FS.i+1} / ${FS.list.length}${st?' · kotak '+st.b:' · kartu baru'}</div></div><div style="flex:1"></div><button class="gear" onclick="FS=null;render()">Keluar</button></div>
-  <main><div class="flcard ${FS.flip?'flip':''}" data-g="${FC_GI[c.g]||0}" onclick="FS.flip=!FS.flip;renderFlash()"><div class="fin"><div class="ff">${FC_DECO}<i class="fq">?</i>${fcArt(c.g)}<span class="pill pri">${esc(c.g)}</span><div class="fct">${esc(c.f)}</div><div class="small muted">Ketuk untuk melihat jawaban</div></div><div class="fb"><div class="fbulb">${FC_BULB}</div><span class="pill">${esc(c.g)}</span><div class="small muted">${esc(c.f)}</div><div class="fct fans" style="font-size:20px">${esc(c.b)}</div></div></div></div>
-  ${FS.flip?`<p class="small muted" style="text-align:center;margin:12px 0 0">Seberapa ingat kamu? Kartu akan muncul lagi sesuai jawabanmu.</p><div class="fsr"><button style="background:#e5484d" onclick="fcGrade(0)">Lupa<small>${fcIv(c,0)}</small></button><button style="background:#d9822b" onclick="fcGrade(1)">Ragu<small>${fcIv(c,1)}</small></button><button style="background:#22a05b" onclick="fcGrade(2)">Hafal<small>${fcIv(c,2)}</small></button></div>`:`<button class="btn ghost block" style="margin-top:12px" onclick="FS.flip=true;renderFlash()">Lihat jawaban</button>`}</main>`;
-}
 
 /* ===================== JADWAL BELAJAR ===================== */
 function planInfo(){
@@ -1100,8 +1002,7 @@ function planInfo(){
   const daily=(S.plan&&S.plan.daily)||30;const o=td();
   const wm=weakMap(5);const weak=wm.find(x=>x.r<.8);
   const tasks=[
-    {k:'q',t:`Kerjakan ${daily} soal`,d:weak?`Fokus: ${weak.s} (${pct(weak.r)})`:'Menu Latihan Soal atau tryout',v:o.q||0,n:daily,act:weak?`startLearn({sub:'${esc(weak.s)}',label:'Latihan ${esc(weak.s)}',n:10})`:`go('latihan')`},
-    {k:'fc',t:'Ulang 10 kartu TWK',d:`${fcDue().length} kartu jatuh tempo`,v:o.fc||0,n:10,act:'startFlash()'}
+    {k:'q',t:`Kerjakan ${daily} soal`,d:weak?`Fokus: ${weak.s} (${pct(weak.r)})`:'Menu Latihan Soal atau tryout',v:o.q||0,n:daily,act:weak?`startLearn({sub:'${esc(weak.s)}',label:'Latihan ${esc(weak.s)}',n:10})`:`go('latihan')`}
   ];
   const nw=wrongList().length;if(nw)tasks.push({k:'wr',t:`Ulangi soal salah`,d:`${nw} soal di bank`,v:o.wr||0,n:Math.min(10,nw),act:`startLearn({wrong:true,label:'Bank soal salah',n:10})`});
   if(fullDay)tasks.push({k:'full',t:'SKD Lengkap (110 soal)',d:'Jadwal simulasi penuh hari ini',v:o.full||0,n:1,act:`startExam({pkg:'full'})`});
@@ -1531,8 +1432,6 @@ function resumeInfo(){const L=S.last;if(!L||!L.s)return null;const slug=slugSub(
   if(L.k==='materi')return {title:L.s,sub:nb?`Ringkasan materi · ${rd}/${nb} bab dibaca`:'Ringkasan materi',p:nb?rd/nb:0,lbl:nb?(rd?`Lanjut Bab ${Math.min(nb,rd+1)}`:'Mulai Bab 1'):'Buka materi',act:nb?`go('materi-${slug}--b${Math.min(nb,rd+1)}')`:`go('materi-${slug}')`,t:L.t};
   return {title:'Latihan '+L.s,sub:`${doneSub(L.s)} soal dikerjakan${subAcc(L.s)!=null?' · akurasi '+pct(subAcc(L.s)):''}`,p:subProg(L.s),lbl:'Latihan 10 soal lagi',act:`startLearn({sub:'${esc(L.s)}',label:'Latihan ${esc(L.s)}',n:10})`,t:L.t}}
 function agoTxt(t){if(!t)return'';const m=Math.round((Date.now()-t)/6e4);return m<1?'baru saja':m<60?m+' menit lalu':m<1440?Math.round(m/60)+' jam lalu':Math.round(m/1440)+' hari lalu'}
-function srStats(){const st=S.fc||{},t=today();let nw=0,lr=0,mg=0,ms=0,d1=0,d7=0;FC.forEach(c=>{const x=st[c.id];if(!x){nw++;return}if(x.b>=5)ms++;else if(x.b>=3)mg++;else lr++;
-  const dd=daysBetween(t,x.due);if(dd===1)d1++;if(dd>=1&&dd<=7)d7++});return {nw,lr,mg,ms,d1,d7,due:fcDue().length,tot:FC.length}}
 function togFavM(s){S.favM=(S.favM||[]).includes(s)?S.favM.filter(x=>x!==s):(S.favM||[]).concat(s);save();toast((S.favM||[]).includes(s)?'Materi ditandai sebagai favorit.':'Dihapus dari materi favorit.');const y=scrollY;render();scrollTo(0,y)}
 function bankModal(){const nw=wrongList().length;modal(`<h2>Bank Soal</h2><p class="small muted">Latihan tanpa timer dengan pembahasan langsung.</p>
   <button class="task" onclick="modal('');startLearn({n:10,label:'Latihan campuran'})"><span class="grow"><b>Campuran 10 soal</b><br><span class="small muted">TWK, TIU, dan TKP acak, soal yang jarang dikerjakan didahulukan</span></span>›</button>
@@ -1639,7 +1538,7 @@ function vLatihan(){
   </aside></div>`;
 }
 function vBelajar(){
-  const nw=wrongList().length,sr=srStats();const subs=subList();
+  const nw=wrongList().length;const subs=subList();
   const prog=subs.reduce((a,x)=>a+subProg(x.s),0)/Math.max(1,subs.length);const doneN=subs.filter(x=>subProg(x.s)>=.8).length;
   const wk=fmtD(new Date(weekStart()));S.progW=S.progW||{};if(S.progW[wk]==null||Math.abs(S.progW[wk]-prog)>.001){S.progW[wk]=+prog.toFixed(4);const ks=Object.keys(S.progW).sort();if(ks.length>8)delete S.progW[ks[0]];save()}
   const pk=Object.keys(S.progW).filter(k=>k<wk).sort();const prev=pk.length?S.progW[pk[pk.length-1]]:null;const dlt=prev==null?null:prog-prev;
@@ -1654,12 +1553,10 @@ function vBelajar(){
     list=L.length?L.map(({s,c})=>{const slug=slugSub(s),nb=(BAB[s]||[]).length,rd=nb?readCount(slug,nb):0,ac=subAcc(s),w=wrongList(c).filter(i=>Q[i].sub===s).length,pc=subProg(s),fv=(S.favM||[]).includes(s);
       return `<div class="srow"><button class="st ${fv?'on':''}" title="Tandai favorit" onclick="togFavM('${esc(s)}')">${ic('star',19,2)}</button><div class="bd"><b>${esc(s)}</b>${BV.tab==='fav'?` <span class="pill pri" style="font-size:10.5px">${CAT[c].name}</span>`:''}<div class="ds">${nb?`${rd}/${nb} bab dibaca`:'Ringkasan inti'}${MATERI[s]?' · '+MATERI[s].p.length+' poin inti':''}</div></div>
        <div class="pg"><span>${nb?Math.round(rd/nb*100):0}%</span><div class="bar"><i style="width:${nb?Math.round(rd/nb*100):0}%;background:${nb&&rd>=nb?'#22a05b':'#1e6fd9'}"></i></div></div><button class="b2 p" onclick="openMateri('${esc(s)}')">${nb&&rd>=nb?'Baca ulang':rd?'Lanjut baca':'Baca'}</button></div>`}).join(''):`<p class="muted" style="margin:10px 6px">${BV.tab==='fav'?'Belum ada materi favorit. Ketuk ikon bintang di daftar materi untuk menandainya.':'Belum ada materi.'}</p>`}
-  const segs=[[sr.ms,'#22a05b','Dikuasai'],[sr.mg,'#4a8fef','Mengingat'],[sr.lr,'#f2b632','Belajar'],[sr.nw,'#c9d3df','Baru']];
   return `<div class="bl"><div>
-  <section class="bhero"><div class="tx"><span class="arbadge">${ic('book',17,2)}Baca Materi</span><h1>Pahami Konsepnya Dulu, Bab demi Bab</h1><p>Materi TWK, TIU, dan TKP sesuai kisi-kisi terbaru, lengkap dengan ringkasan dan flashcard untuk menghafal.</p></div>${ART_STUDY}</section>
+  <section class="bhero"><div class="tx"><span class="arbadge">${ic('book',17,2)}Baca Materi</span><h1>Pahami Konsepnya Dulu, Bab demi Bab</h1><p>Materi TWK, TIU, dan TKP sesuai kisi-kisi terbaru, lengkap dengan ringkasan inti tiap topik.</p></div>${ART_STUDY}</section>
   <div class="bmods">
    <button class="bmod on" onclick="document.getElementById('pilihMateri').scrollIntoView({behavior:'smooth'})"><span class="ico">${ic('book',24,2)}</span><span><b>Materi</b><span class="d">Pelajari semua topik</span></span></button>
-   <button class="bmod" onclick="startFlash()"><span class="ico" style="background:#fff3d6;color:#e09b12">${ic('file',24,2)}</span><span><b>Flashcard</b><span class="d">Hafal cepat konsep</span></span>${sr.due?`<span class="cnt">${sr.due}</span>`:''}</button>
    <button class="bmod" onclick="ringkasModal()"><span class="ico" style="background:#e3f5ea;color:#22a05b">${ic('book2',24,2)}</span><span><b>Ringkasan</b><span class="d">Inti tiap topik</span></span></button>
    <button class="bmod" onclick="go('skb')"><span class="ico" style="background:#ece9fd;color:#6b55e0">${ic('cap',24,2)}</span><span><b>Modul SKB</b><span class="d">Materi per bidang</span></span></button>
    <button class="bmod" onclick="go('latihan')"><span class="ico" style="background:#fde8e8;color:#d64545">${ic('edit',24,2)}</span><span><b>Latihan Soal</b><span class="d">Uji pemahamanmu</span></span></button></div>
@@ -1667,16 +1564,11 @@ function vBelajar(){
   <div class="btoday">
    <div class="tcard resume"><span class="lb">${ic('resume',14,2)}Lanjutkan belajar</span>${R?`<h3>${esc(R.title)}</h3><div class="sub">${esc(R.sub)} · ${agoTxt(R.t)}</div><div class="pb"><i style="width:${Math.round(R.p*100)}%"></i></div><div class="sub">${Math.round(R.p*100)}% dikuasai</div><button class="go" onclick="${R.act}">${ic('resume',16,2)}${R.lbl}</button>`
      :`<h3>Belum ada materi yang dibuka</h3><div class="sub">Mulai dari rekomendasi pertama. Materi terakhir yang kamu buka akan muncul di sini.</div>${rec[0]?`<button class="go" onclick="${rec[0].nb?`go('materi-${rec[0].slug}--b1')`:`startLearn({sub:'${esc(rec[0].s)}',label:'Latihan ${esc(rec[0].s)}',n:10})`}">${ic('resume',16,2)}Mulai ${esc(rec[0].s)}</button>`:''}`}
-    <div class="tday"><div><b>${subs.reduce((a,x)=>{const nb=(BAB[x.s]||[]).length;return a+(nb?readCount(slugSub(x.s),nb):0)},0)}</b><span>bab dibaca</span></div><div><b>${td().fc||0}</b><span>kartu diulang</span></div><div><b>${streak()}</b><span>hari beruntun</span></div></div></div>
+    <div class="tday"><div><b>${subs.reduce((a,x)=>{const nb=(BAB[x.s]||[]).length;return a+(nb?readCount(slugSub(x.s),nb):0)},0)}</b><span>bab dibaca</span></div><div><b>${td().q||0}</b><span>soal hari ini</span></div><div><b>${streak()}</b><span>hari beruntun</span></div></div></div>
    <div class="tcard"><span class="lb">${ic('brain',14,2)}Bacaan berikutnya</span>
     ${rec.map((r,i)=>`<div class="rec"><span class="n">${i+1}</span><div class="grow"><b>${esc(r.s)} <span class="pill pri" style="font-size:10.5px;vertical-align:2px">${CAT[r.c].name}</span></b><div class="why">${r.why.length?'Karena '+r.why.join(' · '):'Pertahankan penguasaanmu'}</div>
      <div class="bt"><button class="p" onclick="go('materi-${r.slug}--b${r.rd+1}')">Baca Bab ${r.rd+1}</button><button onclick="go('materi-${r.slug}')">Ringkasan</button></div></div></div>`).join('')}
     ${rec.length?'':'<p class="muted" style="margin:8px 0 0">Semua bab sudah kamu baca. Saatnya menguji pemahaman di menu Latihan Soal.</p>'}<p class="small muted" style="margin:8px 0 0">Diurutkan dari topik yang paling perlu kamu perkuat.</p></div></div>
-  <div class="tcard srC"><div><div class="big">${sr.due}</div><div class="small muted">kartu jatuh tempo</div></div>
-   <div><b style="font-size:16px">Ulasan flashcard (spaced repetition)</b><div class="small muted">Kartu muncul lagi otomatis sesuai penguasaanmu: lupa → besok, hafal → jarak makin panjang (1–30 hari).</div>
-    <div class="stack">${segs.map(([v,cl])=>v?`<i style="width:${v/sr.tot*100}%;background:${cl}"></i>`:'').join('')}</div>
-    <div class="leg">${segs.map(([v,cl,t])=>`<span><i style="background:${cl}"></i>${t} <b>${v}</b></span>`).join('')}<span>· besok <b>${sr.d1}</b> · 7 hari <b>${sr.d7}</b></span></div></div>
-   <button class="bblue" onclick="startFlash()">${ic('resume',17,2)}${sr.due?'Mulai ulasan':'Ulang semua'}</button></div>
   <a class="skbban" href="#skb"><span class="ico">${ic('cap',26,2)}</span><span class="grow"><b>Modul SKB per bidang</b><span>Perhubungan, Pertanahan, Pertanian, Kehakiman, Tenaga Pendidik, dan Wawancara</span></span><span class="go2">Buka ${ic('arrow',16,2.4)}</span></a>
   <div class="bh2" id="pilihMateri"><h2>Pilih Materi untuk Dibaca</h2></div>
   <div class="mbox2"><div class="mtabs">${tabs.map(([k,t])=>`<button class="${BV.tab===k?'on':''}" onclick="BV.tab='${k}';render()">${t}</button>`).join('')}<span class="sp"></span><span class="small muted">Urutkan:</span><select onchange="BV.sort=this.value;const y=scrollY;render();scrollTo(0,y)">${[['rek','Rekomendasi'],['low','Progres terendah'],['az','A–Z']].map(([k,t])=>`<option value="${k}" ${BV.sort===k?'selected':''}>${t}</option>`).join('')}</select></div>
@@ -3286,7 +3178,7 @@ function searchIndex(){
   Object.entries(PKG).forEach(([k,p])=>out.push({t:p.name,d:'Tryout · '+p.desc,a:`go('tryout');setTimeout(()=>startExam({pkg:'${k}'}),50)`,k:'Tryout'}));
   subList().forEach(x=>out.push({t:x.s,d:'Materi '+CAT[x.c].name,a:`go('materi-${slugSub(x.s)}')`,k:'Materi'}));
   allF().slice(0,200).forEach(f=>out.push({t:f.jab,d:'Formasi · '+f.inst,a:`selF('${f.id}');go('formasi')`,k:'Formasi'}));
-  [['belajar','Mode Belajar'],['belajar','Flashcard TWK'],['belajar','Bank soal salah'],['arena','Arena'],['riwayat','Riwayat skor'],['pencapaian','Pencapaian dan lencana'],['dokumen','Kompres foto dan dokumen SSCASN'],['riwayat','Rapor PDF']].forEach(([v,t])=>out.push({t,d:'Menu',a:`go('${v}')`,k:'Menu'}));
+  [['belajar','Mode Belajar'],['belajar','Bank soal salah'],['arena','Arena'],['riwayat','Riwayat skor'],['pencapaian','Pencapaian dan lencana'],['dokumen','Kompres foto dan dokumen SSCASN'],['riwayat','Rapor PDF']].forEach(([v,t])=>out.push({t,d:'Menu',a:`go('${v}')`,k:'Menu'}));
   return out;
 }
 function searchResults(q){q=(q||'').trim().toLowerCase();if(q.length<2)return'';
@@ -3358,7 +3250,6 @@ const BADGES=[
  {id:'str30',i:'flame',c:'#b3300f',t:'Sebulan Tanpa Libur',d:'Belajar 30 hari berturut-turut',ok:()=>bestStreak()>=30},
  {id:'q100',i:'layers',c:'#2c6aa3',t:'Seratus Soal',d:'Kerjakan 100 soal berbeda',ok:()=>seenCount()>=100},
  {id:'q500',i:'layers',c:'#1d4e7a',t:'Lima Ratus Soal',d:'Kerjakan 500 soal berbeda',ok:()=>seenCount()>=500},
- {id:'fc',i:'book',c:'#6b4fa3',t:'Penghafal',d:'Pelajari 20 kartu flashcard TWK',ok:()=>Object.keys(S.fc||{}).length>=20},
  {id:'read',i:'book',c:'#2f7d6d',t:'Kutu Buku',d:'Baca 20 bab materi',ok:()=>Object.keys(S.read||{}).length>=20},
  {id:'fix',i:'check',c:'#1e8556',t:'Bangkit dari Salah',d:'Keluarkan 10 soal dari bank soal salah',ok:()=>(S.cleared||0)>=10},
  {id:'arena',arena:1,i:'swords',c:'#1d4e7a',t:'Petarung Arena',d:'Ikuti satu event Arena',ok:()=>Object.keys(S.akbar||{}).length>=1},
@@ -4069,8 +3960,9 @@ window.addEventListener('hashchange',render);
 function cur(){const h=location.hash.slice(1);return VIEWS[h]||h.startsWith('hasil-')||h.startsWith('materi-')||h.startsWith('skb-')?h:'beranda'}
 let _lastV=null;
 function render(){
-  if(EX||SKQ||FS||(LS&&!(LS.paused&&cur().startsWith('materi-'))))_lastV=null;
-  if(EX)return renderExam();if(SKQ)return renderSkq();if(LS&&!(LS.paused&&cur().startsWith('materi-')))return renderLearn();if(FS)return renderFlash();
+  setTimeout(fbDraw,0);
+  if(EX||SKQ||(LS&&!(LS.paused&&cur().startsWith('materi-'))))_lastV=null;
+  if(EX)return renderExam();if(SKQ)return renderSkq();if(LS&&!(LS.paused&&cur().startsWith('materi-')))return renderLearn();
   const v=cur();if(AT&&v!=='atur'){AT=null;applyTheme()}
     const active=v.startsWith('hasil-')?'riwayat':v.startsWith('skb-')?'skb':v.startsWith('materi-')?'belajar':v==='akbar'?'arena':v;
   let body;
@@ -4342,7 +4234,7 @@ function actList(){const L=[];
     if(e.k==='latihan')L.push({k:'latihan',t:e.t,title:e.label||'Latihan',meta:`${e.n} soal${e.sub&&e.label.indexOf(e.sub)<0?' · '+esc(e.sub):''}`,st:['ok','Selesai'],sc:`<b>${e.ok}</b> / ${e.n}`,val:e.n?e.ok/e.n*550:0,act:`latDetail('${e.id}')`,ok:true});
     else if(e.k==='skb')L.push({k:'latihan',t:e.t,title:e.label,meta:`${e.n} soal`,st:['ok','Selesai'],sc:`<b>${e.ok}</b> / ${e.n}`,val:e.n?e.ok/e.n*550:0,act:`go('skb-${e.id}')`,ok:true});
     else if(e.k==='bab')L.push({k:'belajar',t:e.t,title:'Bab '+e.n+': '+e.title,meta:esc(e.s),st:['rd','Dibaca'],sc:`Bab <b>${e.n}</b> / ${e.of}`,val:0,href:`#materi-${e.slug}--b${e.n}`,ok:true});
-    else if(e.k==='fc')L.push({k:'belajar',t:e.t,title:'Ulasan flashcard TWK',meta:`${e.n} kartu`,st:['rd','Selesai'],sc:`<b>${e.ok}</b> / ${e.n} hafal`,val:0,act:'startFlash()',ok:true})});
+  });
   return L}
 const RWI={tryout:['target','#e6f0fd','#1e6fd9'],arena:['trophy','#f0ecfd','#6b55e0'],latihan:['edit','#fff3d6','#e09b12'],belajar:['book','#e3f5ea','#22a05b']};
 const ART_RW=`<svg class="art" viewBox="0 0 300 140" aria-hidden="true"><ellipse cx="170" cy="90" rx="128" ry="50" fill="#e3eefc"/><circle cx="230" cy="64" r="44" fill="#d3e4fb"/>
@@ -4781,6 +4673,43 @@ function simAdvice(r,gap){
   if(r.pF<.3)return `Kamu cukup aman masuk SKB, tapi peluang akhirnya masih ditentukan SKB (bobot 60%). Coba geser slider nilai SKB untuk melihat berapa nilai SKB yang kamu butuhkan.`;
   return `Posisimu kuat untuk formasi ini. Pertahankan skor SKD dan mulai siapkan materi SKB sesuai jabatan.`;
 }
+
+/* ===================== POP-UP MASUKAN ===================== */
+const FB_ICO='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/><path d="M8.5 10.5h7M8.5 13.5h4.5"/></svg>';
+const FB_KAT=['Saran fitur','Ada error/bug','Soal atau kunci keliru','Lainnya'];
+let FBK={kat:FB_KAT[0],kirim:false,last:0};
+function fbSibuk(){return !!(EX||LS||SKQ||FS)}
+function fbDraw(){
+  let el=document.getElementById('fbk');if(!el){el=document.createElement('div');el.id='fbk';document.body.appendChild(el)}
+  el.hidden=fbSibuk();
+  const min=!!S.fbMin;if(el.dataset.m===String(min))return;el.dataset.m=String(min);
+  el.innerHTML=min?`<button class="fbm" title="Kirim masukan" aria-label="Kirim masukan" onclick="fbBuka()">${FB_ICO}</button>`
+   :`<div class="fbc" role="complementary"><div class="fbi">${FB_ICO}</div><div class="fbt"><b>Ada masukan?</b>Kirim di sini ya, biar admin bisa tingkatkan lagi.<br><button class="go" onclick="fbBuka()">Tulis masukan</button></div><button class="x" aria-label="Kecilkan" onclick="fbKecil()">×</button></div>`;
+}
+function fbKecil(){S.fbMin=true;save();fbDraw()}
+function fbBuka(){
+  modal(`<h2 style="margin-top:0">Kirim masukan</h2><p class="muted small" style="margin-top:-4px">Masukanmu langsung dibaca admin untuk memperbaiki Jalan NIP Academy.</p>
+  <div class="small" style="font-weight:700">Jenis masukan</div><div class="fbkat" id="fbkat">${FB_KAT.map(k=>`<button class="${FBK.kat===k?'on':''}" onclick="fbKat(this)">${esc(k)}</button>`).join('')}</div>
+  <textarea id="fbisi" class="ta" rows="5" maxlength="1000" placeholder="Tulis saran, keluhan, atau soal yang menurutmu keliru…" oninput="document.getElementById('fbn').textContent=this.value.length"></textarea>
+  <div class="small muted" style="text-align:right;margin:4px 0 12px"><span id="fbn">0</span>/1000</div>
+  <div class="grid2"><button class="btn line" onclick="modal('')">Batal</button><button class="btn" id="fbgo" onclick="fbKirim()">Kirim</button></div>`);
+  setTimeout(()=>{const t=document.getElementById('fbisi');if(t)t.focus()},50);
+}
+function fbKat(b){FBK.kat=b.textContent;document.querySelectorAll('#fbkat button').forEach(x=>x.classList.toggle('on',x===b))}
+async function fbKirim(){
+  const t=document.getElementById('fbisi'),b=document.getElementById('fbgo');const isi=(t&&t.value||'').trim();
+  if(isi.length<3){toast('Tulis masukanmu dulu ya.');return}
+  if(Date.now()-FBK.last<60000){toast('Tunggu sebentar sebelum mengirim masukan lagi.');return}
+  if(FBK.kirim)return;FBK.kirim=true;if(b){b.disabled=true;b.textContent='Mengirim…'}
+  try{
+    if(!window.JNIP)throw new Error('offline');
+    const {error}=await window.JNIP.sb.from('masukan').insert({kategori:FBK.kat,isi,halaman:(location.hash||'#beranda').slice(1,60),nama:(S.nick||S.fullName||'').slice(0,40)});
+    if(error)throw error;
+    FBK.last=Date.now();modal('');toast('Terima kasih! Masukanmu sudah terkirim ke admin.');
+  }catch(e){toast(e&&e.message==='offline'?'Kirim masukan hanya bisa di versi online.':'Gagal mengirim. Coba lagi sebentar lagi.');if(b){b.disabled=false;b.textContent='Kirim'}}
+  FBK.kirim=false;
+}
+setInterval(()=>{const el=document.getElementById('fbk');if(el&&el.hidden!==fbSibuk())fbDraw()},700);
 
 window.__jnipStart=function(){applyTheme();render();initCloud();};
 </script>
