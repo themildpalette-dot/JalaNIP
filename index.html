@@ -1649,7 +1649,7 @@ async function initCloud(){
 function validQ(d){return d&&['twk','tiu','tkp'].includes(d.cat)&&typeof d.q==='string'&&Array.isArray(d.o)&&d.o.length===5&&(d.cat==='tkp'?Array.isArray(d.w)&&d.w.length===5:Number.isInteger(d.a)&&d.a>=0&&d.a<5)}
 function applySoal(){Q.length=BASEN;CLOUD.soal.slice().sort((a,b)=>(a.created||0)-(b.created||0)||(a.id<b.id?-1:1)).forEach(d=>{if(!validQ(d))return;Q.push({cat:d.cat,sub:String(d.sub||'Lainnya').slice(0,60),q:String(d.q),o:d.o.map(x=>String(x)),a:d.a,w:d.w&&d.w.map(Number),e:String(d.e||''),cid:d.id,hidden:!!d.hidden})})}
 function cloudF(){return CLOUD.formasi.filter(d=>d.jab&&d.kuota&&!(+d.tahun&&+d.tahun<CUR_Y)).map(d=>{const k=Math.max(1,+d.kuota||1),p=Math.max(1,+d.peserta||k*100);return {id:'d:'+d.id,inst:String(d.inst||'—'),jab:String(d.jab),pend:String(d.pend||'—'),jj:guessJJ(d.pend),kuota:k,peserta:p,lvl:0,est:!(+d.peserta),jenis:String(d.jenis||'CPNS').toUpperCase(),lok:String(d.lok||''),cloud:true}})}
-function allInfo(){return CLOUD.berita.filter(b=>b.t).sort((a,b)=>(b.ts||0)-(a.ts||0)).map(b=>({d:String(b.d||''),t:String(b.t),b:String(b.b||''),src:String(b.src||'Admin'),u:/^https?:\/\//.test(b.u||'')?b.u:'',tag:String(b.tag||'Info'),im:'',cloud:true})).concat(INFO)}
+function allInfo(){return CLOUD.berita.filter(b=>b.t).sort((a,b)=>(b.ts||0)-(a.ts||0)).map(b=>({d:String(b.d||''),t:String(b.t),b:String(b.b||''),src:String(b.src||'Admin'),u:/^https?:\/\//.test(b.u||'')?b.u:'',tag:String(b.tag||'Info'),im:'',img:/^https?:\/\//.test(b.img||'')?b.img:'',cloud:true})).concat(window.JNIP?[]:INFO)}
 let cloudTimer=null;
 function cloudChanged(key){
   if(key==='soal')applySoal();
@@ -4040,9 +4040,9 @@ const NART={
   <rect x="78" y="96" width="132" height="8" rx="4" fill="#ece9fd"/><rect x="78" y="96" width="90" height="8" rx="4" fill="#6b55e0"/><rect x="78" y="112" width="100" height="6" rx="3" fill="#e3e6ef"/>
   <circle cx="258" cy="96" r="30" fill="#fff"/><circle cx="258" cy="96" r="24" fill="none" stroke="#f2b705" stroke-width="6"/><path d="M258 96V80M258 96l11 7" stroke="#3b2a8f" stroke-width="4" stroke-linecap="round"/><text x="258" y="150" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Plus Jakarta Sans,system-ui,sans-serif">Jan–Mar 2027?</text>`
 };
-const NART_TAG={Resmi:'resmi',Jadwal:'jadwal',Kuota:'kuota',Formasi:'prioritas',Perkiraan:'skd'};
+const NART_TAG={Resmi:'resmi',Jadwal:'jadwal',Kuota:'kuota',Formasi:'prioritas',Perkiraan:'skd',Tips:'skd',Info:'resmi'};
 let NART_N=0;
-function nArt(n,cls){const k=NART[n.im]?n.im:(NART_TAG[n.tag]||'resmi');const u='n'+(NART_N++)+'_';
+function nArt(n,cls){if(n.img)return `<img class="${cls}" src="${esc(n.img)}" alt="${esc(n.t)}" loading="lazy" style="object-fit:cover">`;const k=NART[n.im]?n.im:(NART_TAG[n.tag]||'resmi');const u='n'+(NART_N++)+'_';
   return `<svg class="${cls}" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(n.t)}">${NART[k].replace(/id="(na\d|nap)"/g,'id="'+u+'$1"').replace(/url\(#(na\d)\)/g,'url(#'+u+'$1)').replace(/href="#nap"/g,'href="#'+u+'nap"')}</svg>`}
 function nTg(n){return n.tag==='Resmi'?'ok':n.tag==='Perkiraan'||n.tag==='Jadwal'?'warn':'pri'}
 function infoOpen(i){const n=allInfo()[i];if(!n)return;
@@ -4875,7 +4875,7 @@ async function muatBerita(popup) {
   try {
     const { data, error } = await jnip.sb.from('berita').select('*').eq('status', 'terbit').order('created_at', { ascending: false }).limit(30);
     if (error) return;
-    CLOUD.berita = (data || []).map((r) => ({ id: r.id, t: r.judul, b: r.ringkasan || '', d: fmtTgl(r.tanggal || r.created_at), src: r.sumber || 'Admin Jalan NIP', u: r.tautan || r.file_url || '', tag: r.label || r.jenis || 'Pengumuman', ts: Date.parse(r.created_at) || 0 }));
+    CLOUD.berita = (data || []).map((r) => ({ id: r.id, t: r.judul, b: r.ringkasan || '', d: fmtTgl(r.tanggal || r.created_at), src: r.sumber || 'Admin Jalan NIP', u: r.tautan || r.file_url || '', tampil: r.tampil || 'popup', img: /\.(jpe?g|png|webp)$/i.test(r.file_nama || r.file_url || '') ? r.file_url : '', tag: r.label || r.jenis || 'Pengumuman', ts: Date.parse(r.created_at) || 0 }));
     cloudChanged('berita');
     annDraw();
   } catch (e) {}
@@ -4916,12 +4916,13 @@ function trialDraw() {
 }
 window.trialTutup = () => { S.trialTutup = new Date().toISOString().slice(0, 10); save(); trialDraw(); };
 function annSibuk() { try { return !!(EX || LS || FS || SKQ); } catch (e) { return false; } }
+const annList = () => CLOUD.berita.filter((b) => b.tampil !== 'info');
 function annDraw() {
-  const top = CLOUD.berita[0];
+  const top = annList()[0];
   const sibuk = annSibuk();
   document.body.classList.remove('has-ann', 'ann-min');
   if (!top || sibuk || S.nInfo === false) { annEl.innerHTML = ''; return; }
-  const baru = CLOUD.berita.filter((b) => b.id > (S.seenBerita || 0)).length;
+  const baru = annList().filter((b) => b.id > (S.seenBerita || 0)).length;
   if (S.annMin === top.id) {
     document.body.classList.add('ann-min');
     annEl.innerHTML = `<button class="pill2" onclick="annBuka()">${MEGA}Pengumuman${baru ? `<i>${baru} baru</i>` : ''}</button>`;
@@ -4932,10 +4933,10 @@ function annDraw() {
     <div class="ak"><button class="k1" onclick="annDetail()">Selengkapnya</button>${/^https?:\/\//.test(top.u) ? `<a class="k2" href="${escH(top.u)}" target="_blank" rel="noopener">Buka lampiran</a>` : ''}</div></div>
     <button class="x" aria-label="Kecilkan pengumuman" onclick="annKecil()">×</button></div>`;
 }
-window.annKecil = () => { const top = CLOUD.berita[0]; if (!top) return; S.annMin = top.id; S.seenBerita = Math.max(S.seenBerita || 0, top.id); save(); annDraw(); };
+window.annKecil = () => { const top = annList()[0]; if (!top) return; S.annMin = top.id; S.seenBerita = Math.max(S.seenBerita || 0, top.id); save(); annDraw(); };
 window.annBuka = () => { S.annMin = 0; save(); annDraw(); };
 window.annDetail = () => {
-  const list = CLOUD.berita.slice(0, 5); const top = list[0]; if (!top) return;
+  const list = annList().slice(0, 5); const top = list[0]; if (!top) return;
   S.seenBerita = Math.max(S.seenBerita || 0, top.id); save(); annDraw();
   modal(`<h2 style="margin-top:0">Pengumuman</h2>${list.map((b, i) => `<div style="${i ? 'border-top:1px solid var(--line,#e3e8ef);padding-top:12px;margin-top:12px' : ''}"><span class="pill pri">${escH(b.tag)}</span>
     <h3 style="margin:8px 0 4px">${escH(b.t)}</h3><p class="small muted" style="margin:0 0 6px">${escH(b.d)} · ${escH(b.src)}</p><p style="white-space:pre-line;margin:0">${escH(b.b)}</p>
@@ -4947,7 +4948,7 @@ const _render = window.render;
 window.render = function () { const r = _render.apply(this, arguments); annDraw(); trialDraw(); return r; };
 addEventListener('hashchange', () => setTimeout(() => { annDraw(); trialDraw(); }, 0));
 // saat ujian/latihan/flashcard berjalan, kartu disembunyikan (beberapa layar tidak lewat render())
-setInterval(() => { const b = annSibuk(); if (b && annEl.innerHTML) annDraw(); else if (!b && !annEl.innerHTML && CLOUD.berita.length) annDraw(); }, 800);
+setInterval(() => { const b = annSibuk(); if (b && annEl.innerHTML) annDraw(); else if (!b && !annEl.innerHTML && annList().length) annDraw(); }, 800);
 setTimeout(() => muatBerita(true), 1200);
 setInterval(() => muatBerita(true), 120000);
 

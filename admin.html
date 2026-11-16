@@ -432,6 +432,8 @@ const JENIS = [
   { k: "infografis", t: "Infografis", i: "image", fmt: ["JPG", "PNG"], kb: 1024, label: "Info" },
   { k: "tips", t: "Tips & Info", i: "bulb", fmt: ["JPG", "PDF"], kb: 1024, label: "Tips" },
   { k: "lain", t: "Dokumen Lain", i: "clip", fmt: ["PDF", "JPG", "PNG"], kb: 5120, label: "Info" },
+  { k: "kuota", t: "Kuota & Angka", i: "users", fmt: ["JPG", "PDF"], kb: 1024, label: "Kuota" },
+  { k: "perkiraan", t: "Perkiraan Media", i: "info", fmt: ["JPG", "PDF"], kb: 1024, label: "Perkiraan" },
 ];
 const MIME = { PDF: "application/pdf", JPG: "image/jpeg", PNG: "image/png", XLSX: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
 const EXT = { "application/pdf": "PDF", "image/jpeg": "JPG", "image/png": "PNG", "image/webp": "WEBP", [MIME.XLSX]: "XLSX" };
@@ -443,8 +445,8 @@ async function pengumuman() {
   PG = null;
   const { data, error } = await sb.from("berita").select("*").order("tanggal", { ascending: false }).order("id", { ascending: false }); if (error) throw error;
   const n = { terbit: 0, draft: 0 }; (data || []).forEach((b) => n[b.status === "draft" ? "draft" : "terbit"]++);
-  shell(`<div class="row" style="align-items:flex-end;margin-bottom:16px"><div class="grow"><h1>Pengumuman</h1><p class="muted" style="margin:0">Dikirim ke semua peserta: muncul sebagai pop-up saat aplikasi dibuka dan tersimpan di Beranda. ${n.terbit} terbit · ${n.draft} draf.</p></div><a class="btn" href="#pengumuman-baru">${ic("mega")}Buat Pengumuman</a></div>
-  <div class="card tw" style="padding:4px"><table><tr><th>Tanggal</th><th>Pengumuman</th><th>Lampiran</th><th>Status</th><th></th></tr>${(data || []).map((b) => `<tr><td class="small">${tgl(b.tanggal)}</td><td><span class="pill pri">${h(b.label)}</span> <b>${h(b.judul)}</b><div class="small muted">${h(b.ringkasan || "")}</div></td>
+  shell(`<div class="row" style="align-items:flex-end;margin-bottom:16px"><div class="grow"><h1>Pengumuman</h1><p class="muted" style="margin:0">Dikirim ke semua peserta. "Pop-up" muncul saat aplikasi dibuka dan tersimpan di kartu Info CPNS; "Info CPNS saja" hanya tampil di kartu Info CPNS di Beranda. ${n.terbit} terbit · ${n.draft} draf.</p></div><a class="btn" href="#pengumuman-baru">${ic("mega")}Buat Pengumuman</a></div>
+  <div class="card tw" style="padding:4px"><table><tr><th>Tanggal</th><th>Pengumuman</th><th>Lampiran</th><th>Status</th><th></th></tr>${(data || []).map((b) => `<tr><td class="small">${tgl(b.tanggal)}</td><td><span class="pill pri">${h(b.label)}</span> ${b.tampil === "info" ? '<span class="pill ok">Info CPNS saja</span>' : '<span class="pill warn">Pop-up</span>'} <b>${h(b.judul)}</b><div class="small muted">${h(b.ringkasan || "")}</div></td>
    <td class="small">${b.file_url ? `<a href="${h(b.file_url)}" target="_blank">${h(b.file_nama || "Lampiran")}</a><div class="muted">${b.file_kb ? kbStr(b.file_kb) : ""}</div>` : '<span class="muted">—</span>'}</td>
    <td>${b.status === "draft" ? '<span class="pill warn">Draf</span>' : '<span class="pill ok">Terbit</span>'}</td>
    <td class="row" style="gap:4px;flex-wrap:nowrap"><a class="btn sm line" href="#pengumuman-${b.id}">Edit</a>${b.status === "draft" ? `<button class="btn sm" onclick="window.A.pgPub(${b.id})">Terbitkan</button>` : ""}<button class="btn sm danger" onclick="window.A.bDel(${b.id})">Hapus</button></td></tr>`).join("") || `<tr><td colspan="5" class="muted" style="padding:24px">Belum ada pengumuman. Klik <b>Buat Pengumuman</b> untuk mulai.</td></tr>`}</table></div>`);
@@ -461,11 +463,11 @@ A.bDel = async (id) => {
 async function pgForm() {
   const id = SUB === "baru" ? null : +SUB;
   if (!PG || PG.id !== id) {
-    PG = { id, jenis: "resmi", kb: 2048, fmt: "PDF", file: null, blob: null, url: null, judul: "", ringkasan: "", tanggal: new Date().toISOString().slice(0, 10), sumber: "", tautan: "", old: null };
+    PG = { id, tampil: "popup", jenis: "resmi", kb: 2048, fmt: "PDF", file: null, blob: null, url: null, judul: "", ringkasan: "", tanggal: new Date().toISOString().slice(0, 10), sumber: "", tautan: "", old: null };
     if (id) {
       const { data: b, error } = await sb.from("berita").select("*").eq("id", id).single(); if (error) throw error;
       const j = JENIS.find((x) => x.k === b.jenis) || JENIS.find((x) => x.label === b.label) || JENIS[5];
-      Object.assign(PG, { jenis: j.k, kb: j.kb, fmt: j.fmt[0], judul: b.judul, ringkasan: b.ringkasan || "", tanggal: b.tanggal, sumber: b.sumber || "", tautan: b.tautan || "", old: b });
+      Object.assign(PG, { tampil: b.tampil === "info" ? "info" : "popup", jenis: j.k, kb: j.kb, fmt: j.fmt[0], judul: b.judul, ringkasan: b.ringkasan || "", tanggal: b.tanggal, sumber: b.sumber || "", tautan: b.tautan || "", old: b });
     }
   }
   pgRender();
@@ -500,6 +502,8 @@ function pgRender() {
    <section class="step"><div class="sh"><span class="n">3</span><div><h2>Isi Pengumuman</h2><p>Teks ini yang dibaca peserta di Beranda.</p></div></div>
     <label class="f" style="margin-top:0">Judul</label><input id="pg_j" maxlength="140" value="${h(PG.judul)}" placeholder="mis. Jadwal SKD CPNS 2026 resmi diumumkan">
     <label class="f">Ringkasan</label><textarea id="pg_r" rows="3" maxlength="500" placeholder="Dua atau tiga kalimat inti pengumuman.">${h(PG.ringkasan)}</textarea>
+    <label class="f">Tampil sebagai</label><div class="row" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn sm ${PG.tampil === "popup" ? "" : "line"}" onclick="window.A.pgTampil('popup')">Pengumuman (pop-up + Info CPNS)</button><button type="button" class="btn sm ${PG.tampil === "info" ? "" : "line"}" onclick="window.A.pgTampil('info')">Info CPNS saja (tanpa pop-up)</button></div>
+    <p class="small muted" style="margin:6px 0 0">Info CPNS saja: hanya muncul di kartu "Info CPNS 2026" di Beranda, tidak muncul sebagai pop-up.</p>
     <div class="grid3"><div><label class="f">Tanggal</label><input type="date" id="pg_d" value="${h(PG.tanggal)}"></div><div><label class="f">Sumber</label><input id="pg_s" value="${h(PG.sumber)}" placeholder="mis. BKN"></div><div><label class="f">Tautan (opsional)</label><input id="pg_u" value="${h(PG.tautan)}" placeholder="https://"></div></div>
    </section>
   </div>
@@ -522,6 +526,7 @@ function pgRender() {
 }
 A.pgJenis = (k) => { PG.judul = $("#pg_j").value; PG.ringkasan = $("#pg_r").value; PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value; PG.tautan = $("#pg_u").value;
   const j = JENIS.find((x) => x.k === k); PG.jenis = k; PG.kb = j.kb; PG.fmt = j.fmt[0]; pgPrep(); };
+A.pgTampil = (t) => { PG.judul = $("#pg_j").value; PG.ringkasan = $("#pg_r").value; PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value; PG.tautan = $("#pg_u").value; PG.tampil = t; pgRender(); };
 A.pgClear = () => { if (PG.url) URL.revokeObjectURL(PG.url); PG.file = PG.blob = PG.url = null; PG.err = ""; pgRender(); };
 function pgFile(file) { if (PG.url) URL.revokeObjectURL(PG.url); PG.file = file; PG.blob = null; PG.url = URL.createObjectURL(file); pgPrep(); }
 // cek format & ukuran; gambar dikonversi/dikompres bila format hasil JPG
@@ -558,7 +563,7 @@ A.pgSave = async (status) => {
   if (f && (PG.err || f.size / 1024 > PG.kb)) { flash(PG.err || `File melebihi batas ${kbStr(PG.kb)}.`, false); scrollTo(0, 0); return; }
   const j = JENIS.find((x) => x.k === PG.jenis);
   $("#pg_pub").disabled = $("#pg_draft").disabled = true; $(status === "draft" ? "#pg_draft" : "#pg_pub").lastChild.textContent = f ? "Mengunggah…" : "Menyimpan…";
-  const row = { tanggal: PG.tanggal, label: j.label, jenis: j.k, judul: PG.judul, ringkasan: PG.ringkasan, sumber: PG.sumber || "Jalan NIP Academy", tautan: /^https?:\/\//.test(PG.tautan) ? PG.tautan : null, status };
+  const row = { tanggal: PG.tanggal, label: j.label, jenis: j.k, judul: PG.judul, ringkasan: PG.ringkasan, tampil: PG.tampil, sumber: PG.sumber || "Jalan NIP Academy", tautan: /^https?:\/\//.test(PG.tautan) ? PG.tautan : null, status };
   if (f) {
     const safe = f.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-+|-+$/g, "");
     const path = `${new Date().toISOString().slice(0, 7)}/${Date.now()}-${safe}`;
