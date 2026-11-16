@@ -760,6 +760,14 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .blogo{width:44px;height:44px;flex:none;object-fit:contain}.tbrand .blogo{width:34px;height:34px}.bname{display:flex;flex-direction:column;line-height:1.05;color:#1757b0}[data-theme=dark] .bname{color:#fff}.bname small{font-size:11px;letter-spacing:0;font-weight:500;color:var(--muted);margin-top:4px;white-space:nowrap}.tbrand .bname small{font-size:10px}@media(max-width:759px){.topbar{gap:4px;padding:10px 12px}.tbrand{gap:7px;min-width:0}.tbrand .bname{font-size:17px}.tbrand .bname small{font-size:9.5px}}@media(max-width:360px){.tbrand .bname small{display:none}}
 .foot{font-size:12px;color:var(--muted);text-align:center;margin-top:20px}
 .skbn .bsoft2{margin:0}
+/* ===== info CPNS dengan gambar ===== */
+.hinfo a{cursor:pointer;align-items:center}
+.hinfo .nth{flex:none;width:96px;height:54px;border-radius:10px;display:block;box-shadow:0 2px 8px rgba(15,35,80,.12)}
+.hinfo .bd div{white-space:normal!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.hinfo .mt{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);margin-bottom:3px}.hinfo .mt .tg{margin:0;padding:1px 8px}
+.hinfo a:hover b{color:var(--pri2)}
+.nbig{margin:-6px -6px 0;border-radius:16px;overflow:hidden;line-height:0}.nbig .nimg{width:100%;height:auto;aspect-ratio:16/9;display:block}
+@media(max-width:600px){.hinfo .nth{width:80px;height:45px;border-radius:9px}.hinfo a{align-items:flex-start}.hinfo .nth{margin-top:4px}}
 /* ===== pop-up masukan (kiri bawah) ===== */
 #fbk{position:fixed;left:16px;bottom:16px;z-index:69}
 #fbk[hidden]{display:none}
@@ -1641,7 +1649,7 @@ async function initCloud(){
 function validQ(d){return d&&['twk','tiu','tkp'].includes(d.cat)&&typeof d.q==='string'&&Array.isArray(d.o)&&d.o.length===5&&(d.cat==='tkp'?Array.isArray(d.w)&&d.w.length===5:Number.isInteger(d.a)&&d.a>=0&&d.a<5)}
 function applySoal(){Q.length=BASEN;CLOUD.soal.slice().sort((a,b)=>(a.created||0)-(b.created||0)||(a.id<b.id?-1:1)).forEach(d=>{if(!validQ(d))return;Q.push({cat:d.cat,sub:String(d.sub||'Lainnya').slice(0,60),q:String(d.q),o:d.o.map(x=>String(x)),a:d.a,w:d.w&&d.w.map(Number),e:String(d.e||''),cid:d.id,hidden:!!d.hidden})})}
 function cloudF(){return CLOUD.formasi.filter(d=>d.jab&&d.kuota&&!(+d.tahun&&+d.tahun<CUR_Y)).map(d=>{const k=Math.max(1,+d.kuota||1),p=Math.max(1,+d.peserta||k*100);return {id:'d:'+d.id,inst:String(d.inst||'—'),jab:String(d.jab),pend:String(d.pend||'—'),jj:guessJJ(d.pend),kuota:k,peserta:p,lvl:0,est:!(+d.peserta),jenis:String(d.jenis||'CPNS').toUpperCase(),lok:String(d.lok||''),cloud:true}})}
-function allInfo(){return CLOUD.berita.filter(b=>b.t).sort((a,b)=>(b.ts||0)-(a.ts||0)).map(b=>({d:String(b.d||''),t:String(b.t),b:String(b.b||''),src:String(b.src||'Admin'),u:/^https?:\/\//.test(b.u||'')?b.u:'',tag:String(b.tag||'Info'),cloud:true})).concat(INFO)}
+function allInfo(){return CLOUD.berita.filter(b=>b.t).sort((a,b)=>(b.ts||0)-(a.ts||0)).map(b=>({d:String(b.d||''),t:String(b.t),b:String(b.b||''),src:String(b.src||'Admin'),u:/^https?:\/\//.test(b.u||'')?b.u:'',tag:String(b.tag||'Info'),im:'',cloud:true})).concat(INFO)}
 let cloudTimer=null;
 function cloudChanged(key){
   if(key==='soal')applySoal();
@@ -3986,15 +3994,63 @@ function scoreBars(p){
   <div class="small ${ok?'':'muted'}" style="color:${ok?'var(--ok)':'var(--bad)'}">${ok?'Lolos':'Kurang '+(S.pg[c]-p[c])} · passing grade ${S.pg[c]}</div></div>`}).join('');
 }
 /* ===================== KONTEN BERANDA ===================== */
-const INFO_ASOF='14 November 2026';
+const INFO_ASOF='16 November 2026';
 const INFO=[
- {d:'6 Nov 2026',t:'Seleksi CPNS 2026 resmi diumumkan',b:'Pengumuman disampaikan Mensesneg Prasetyo Hadi. Masyarakat diminta memantau informasi resmi dan bersiap mengikuti seluruh tahapan seleksi.',src:'Bisnis.com',u:'https://kabar24.bisnis.com/read/20261109/243/2019578/daftar-formasi-cpns-2026-untuk-lulusan-smasmk-dan-s1',tag:'Resmi'},
- {d:'13 Nov 2026',t:'Kuota sekitar 150.000 formasi',b:'Pemerintah dan DPR menyepakati alokasi sekitar 150 ribu formasi untuk instansi pusat dan daerah, bagi lulusan SMA/SMK hingga S1.',src:'Radar Semarang',u:'https://radarsemarang.jawapos.com/nasional/2611130009/rincian-formasi-cpns-2026-untuk-lulusan-smasmk-dan-s1',tag:'Kuota'},
- {d:'13 Nov 2026',t:'Rincian formasi diperkirakan rilis sekitar 20 November',b:'Pendaftaran di SSCASN diperkirakan dibuka pekan keempat November hingga awal Desember. Tanggal ini masih perkiraan media, belum jadwal resmi BKN.',src:'Radar Semarang',u:'https://radarsemarang.jawapos.com/nasional/2611130032/kuota-150000-formasi-cpns-2026-akan-dibuka-november-ini-jabatan-paling-banyak-dicari-pemerintah',tag:'Jadwal'},
- {d:'Nov 2026',t:'Empat formasi prioritas',b:'Polisi Hutan, Manggala Agni, Guru Sekolah Terintegrasi, dan Guru Sekolah Unggul Garuda disebut sebagai formasi prioritas tahun ini.',src:'rekrutmencpns.id',u:'https://rekrutmencpns.id/cpns',tag:'Formasi'},
- {d:'13 Nov 2026',t:'SKD dan SKB diperkirakan Januari–Maret 2027',b:'Perkiraan media berdasarkan pola tahun-tahun sebelumnya. Artinya masih ada sekitar 2 bulan untuk latihan intensif.',src:'Radar Semarang',u:'https://radarsemarang.jawapos.com/nasional/2611130032/kuota-150000-formasi-cpns-2026-akan-dibuka-november-ini-jabatan-paling-banyak-dicari-pemerintah',tag:'Perkiraan'}
+ {d:'14 Nov 2026',t:'Pembuatan akun SSCASN sudah dibuka',b:'BKN membuka pembuatan akun di sscasn.bkn.go.id mulai 14 November. Membuat akun belum berarti mendaftar: pemilihan formasi baru bisa dilakukan setelah pendaftaran resmi dibuka. Siapkan KTP, KK, dan email aktif.',src:'detikFinance',u:'https://finance.detik.com/cpns/d-8753004/pelamar-cpns-2026-sudah-bisa-bikin-akun/amp',tag:'Resmi',im:'akun'},
+ {d:'14 Nov 2026',t:'Pendaftaran ditargetkan pekan keempat November',b:'Kepala BKN Zudan Arif Fakrulloh memperkirakan pengumuman tahapan seleksi dan rincian formasi keluar sekitar 20 atau 23 November. Tanggal pastinya belum ditetapkan.',src:'CNBC Indonesia',u:'https://www.cnbcindonesia.com/news/20261114122411-4-785216/pengumuman-pembuatan-akun-dibuka-daftar-cpns-mulai-23-november-2026',tag:'Jadwal',im:'jadwal'},
+ {d:'16 Nov 2026',t:'Kuota sekitar 150–158 ribu formasi',b:'Menteri PANRB Rini Widyantini menyebut kisaran 150.000–158.000 formasi, terutama untuk menggantikan PNS yang pensiun. Rincian formasi per instansi belum diumumkan.',src:'Radar Semarang',u:'https://radarsemarang.jawapos.com/nasional/2611160016/pembuatan-akun-sscasn-cpns-2026-resmi-dibuka-ini-syarat-cara-daftar-dan-jadwal-formasinya',tag:'Kuota',im:'kuota'},
+ {d:'16 Nov 2026',t:'Empat formasi prioritas',b:'Polisi Hutan, Manggala Agni, Guru Sekolah Terintegrasi, dan Guru Sekolah Unggul Garuda disebut termasuk formasi prioritas tahun ini.',src:'Informasi.com',u:'https://informasi.com/nasional/infrms-29949/cpns-2026-dibuka-november-kapan-tanggal-resmi-pendaftaran-dimulai',tag:'Formasi',im:'prioritas'},
+ {d:'6 Nov 2026',t:'Seleksi CPNS 2026 resmi diumumkan',b:'Rencana rekrutmen diumumkan Mensesneg Prasetyo Hadi di Kompleks Parlemen. Menteri PANRB Rini Widyantini ditunjuk sebagai ketua tim panitia seleksi.',src:'detikJabar',u:'https://www.detik.com/jabar/jabar-gaskeun/d-8753727/cpns-2026-dibuka-november-kapan-pendaftaran-dimulai',tag:'Resmi',im:'resmi'},
+ {d:'13 Nov 2026',t:'SKD dan SKB diperkirakan Januari–Maret 2027',b:'Ini perkiraan media berdasarkan pola tahun-tahun sebelumnya, belum jadwal resmi. Artinya masih ada sekitar 2 bulan untuk latihan intensif.',src:'Radar Semarang',u:'https://radarsemarang.jawapos.com/nasional/2611130032/kuota-150000-formasi-cpns-2026-akan-dibuka-november-ini-jabatan-paling-banyak-dicari-pemerintah',tag:'Perkiraan',im:'skd'}
 ];
 let infoAll=false;
+/* ===== gambar ilustrasi berita (SVG buatan sendiri, 320x180) ===== */
+const NART={
+ akun:`<defs><linearGradient id="na1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b3f91"/><stop offset="1" stop-color="#2a74d0"/></linearGradient></defs><rect width="320" height="180" fill="url(#na1)"/><circle cx="285" cy="20" r="60" fill="#fff" opacity=".07"/><circle cx="20" cy="170" r="50" fill="#fff" opacity=".06"/>
+  <rect x="78" y="34" width="164" height="104" rx="9" fill="#e9f0fa"/><rect x="86" y="42" width="148" height="88" rx="5" fill="#fff"/><path d="M60 140h200l-12 14H72z" fill="#c9d8ec"/>
+  <circle cx="113" cy="74" r="15" fill="#dbe7f7"/><circle cx="113" cy="70" r="6" fill="#1d4e7a"/><path d="M102 84a11 9 0 0 1 22 0z" fill="#1d4e7a"/>
+  <rect x="136" y="60" width="84" height="9" rx="4.5" fill="#dbe7f7"/><rect x="136" y="76" width="64" height="9" rx="4.5" fill="#dbe7f7"/><rect x="100" y="102" width="120" height="16" rx="8" fill="#f2b705"/><text x="160" y="114" text-anchor="middle" font-size="10" font-weight="800" fill="#3a2a00" font-family="Plus Jakarta Sans,system-ui,sans-serif">BUAT AKUN</text>
+  <circle cx="238" cy="44" r="17" fill="#22a05b" stroke="#fff" stroke-width="4"/><path d="M230 44l6 6 10-11" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`,
+ jadwal:`<defs><linearGradient id="na2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff4cf"/><stop offset="1" stop-color="#ffe08a"/></linearGradient></defs><rect width="320" height="180" fill="url(#na2)"/><circle cx="40" cy="30" r="46" fill="#fff" opacity=".45"/>
+  <rect x="92" y="28" width="136" height="128" rx="14" fill="#fff" stroke="#e7c766" stroke-width="2"/><path d="M92 42a14 14 0 0 1 14-14h108a14 14 0 0 1 14 14v18H92z" fill="#0b3f91"/><rect x="118" y="18" width="10" height="22" rx="5" fill="#1d4e7a"/><rect x="192" y="18" width="10" height="22" rx="5" fill="#1d4e7a"/>
+  <text x="160" y="54" text-anchor="middle" font-size="13" font-weight="800" fill="#fff" letter-spacing="2" font-family="Plus Jakarta Sans,system-ui,sans-serif">NOVEMBER</text>
+  <text x="160" y="112" text-anchor="middle" font-size="38" font-weight="900" fill="#0b3f91" font-family="Plus Jakarta Sans,system-ui,sans-serif">20–23</text>
+  <rect x="122" y="126" width="76" height="16" rx="8" fill="#f2b705"/><text x="160" y="138" text-anchor="middle" font-size="9.5" font-weight="800" fill="#3a2a00" font-family="Plus Jakarta Sans,system-ui,sans-serif">PERKIRAAN</text>
+  <circle cx="246" cy="132" r="24" fill="#fff" stroke="#0b3f91" stroke-width="5"/><path d="M246 132v-13M246 132l9 6" stroke="#0b3f91" stroke-width="4" stroke-linecap="round"/>`,
+ kuota:`<defs><linearGradient id="na3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f5a39"/><stop offset="1" stop-color="#22a05b"/></linearGradient><g id="nap"><circle r="7" cy="-9" fill="#fff"/><path d="M-11 9a11 11 0 0 1 22 0z" fill="#fff"/></g></defs><rect width="320" height="180" fill="url(#na3)"/><circle cx="300" cy="160" r="70" fill="#fff" opacity=".07"/>
+  <text x="28" y="86" font-size="46" font-weight="900" fill="#fff" font-family="Plus Jakarta Sans,system-ui,sans-serif">±158rb</text><text x="30" y="110" font-size="14" font-weight="700" fill="#d6f5e3" font-family="Plus Jakarta Sans,system-ui,sans-serif">formasi CPNS 2026</text>
+  <g opacity=".95"><use href="#nap" x="230" y="60"/><use href="#nap" x="258" y="60"/><use href="#nap" x="286" y="60"/><use href="#nap" x="244" y="92"/><use href="#nap" x="272" y="92"/><use href="#nap" x="230" y="124"/><use href="#nap" x="258" y="124"/><use href="#nap" x="286" y="124"/></g>
+  <use href="#nap" x="244" y="156" style="opacity:.9"/><g transform="translate(272 156)"><circle r="7" cy="-9" fill="#f2b705"/><path d="M-11 9a11 11 0 0 1 22 0z" fill="#f2b705"/></g>
+  <rect x="28" y="128" width="150" height="12" rx="6" fill="#fff" opacity=".2"/><rect x="28" y="128" width="118" height="12" rx="6" fill="#f2b705"/>`,
+ prioritas:`<rect width="320" height="180" fill="#eef4fc"/><circle cx="160" cy="90" r="120" fill="#fff" opacity=".6"/>
+  <g font-family="Plus Jakarta Sans,system-ui,sans-serif" font-size="9.5" font-weight="800" text-anchor="middle">
+  <rect x="14" y="32" width="68" height="104" rx="14" fill="#fff" stroke="#cfe0d4" stroke-width="2"/><path d="M48 50l-16 26h9l-12 20h38l-12-20h9z" fill="#22a05b"/><rect x="45" y="96" width="6" height="12" fill="#7a5a2a"/><text x="48" y="126" fill="#0f5a39">Polhut</text>
+  <rect x="90" y="32" width="68" height="104" rx="14" fill="#fff" stroke="#f3d3c4" stroke-width="2"/><path d="M124 52c12 14 20 22 20 36a20 20 0 0 1-40 0c0-8 4-14 9-19 0 8 4 12 8 12-3-10 0-20 3-29z" fill="#e5484d"/><path d="M124 80c5 6 8 9 8 14a8 8 0 0 1-16 0c0-5 4-9 8-14z" fill="#f2b705"/><text x="124" y="126" fill="#a33a1c">Manggala Agni</text>
+  <rect x="166" y="32" width="68" height="104" rx="14" fill="#fff" stroke="#d3dcf0" stroke-width="2"/><path d="M200 52l26 14-26 14-26-14z" fill="#0b3f91"/><path d="M186 74v14c0 6 28 6 28 0V74l-14 7z" fill="#2a74d0"/><path d="M226 66v18" stroke="#f2b705" stroke-width="3"/><text x="200" y="116" fill="#0b3f91">Guru Sekolah</text><text x="200" y="128" fill="#0b3f91">Terintegrasi</text>
+  <rect x="242" y="32" width="68" height="104" rx="14" fill="#fff" stroke="#efdca6" stroke-width="2"/><path d="M276 50l7 14 15 2-11 11 3 15-14-7-14 7 3-15-11-11 15-2z" fill="#f2b705"/><text x="276" y="116" fill="#8a6200">Sekolah</text><text x="276" y="128" fill="#8a6200">Unggul Garuda</text></g>
+  <text x="160" y="160" text-anchor="middle" font-size="12" font-weight="800" fill="#1d4e7a" font-family="Plus Jakarta Sans,system-ui,sans-serif">FORMASI PRIORITAS 2026</text>`,
+ resmi:`<defs><linearGradient id="na5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b2a5c"/><stop offset="1" stop-color="#0b3f91"/></linearGradient></defs><rect width="320" height="180" fill="url(#na5)"/><g opacity=".08" fill="#fff"><circle cx="40" cy="40" r="40"/><circle cx="300" cy="150" r="60"/></g>
+  <path d="M70 92v20a6 6 0 0 0 6 6h14l26 22V64L90 86H76a6 6 0 0 0-6 6z" fill="#f2b705"/><path d="M130 82a16 16 0 0 1 0 32M142 70a32 32 0 0 1 0 56" stroke="#f2b705" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <rect x="176" y="46" width="112" height="90" rx="10" fill="#fff"/><rect x="190" y="62" width="70" height="8" rx="4" fill="#0b3f91"/><rect x="190" y="78" width="84" height="6" rx="3" fill="#cdd9ea"/><rect x="190" y="90" width="76" height="6" rx="3" fill="#cdd9ea"/><rect x="190" y="102" width="60" height="6" rx="3" fill="#cdd9ea"/>
+  <g transform="rotate(-14 262 120)"><rect x="226" y="106" width="74" height="26" rx="6" fill="none" stroke="#e5484d" stroke-width="3.5"/><text x="263" y="125" text-anchor="middle" font-size="15" font-weight="900" fill="#e5484d" font-family="Plus Jakarta Sans,system-ui,sans-serif">RESMI</text></g>`,
+ skd:`<defs><linearGradient id="na6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2a8f"/><stop offset="1" stop-color="#6b55e0"/></linearGradient></defs><rect width="320" height="180" fill="url(#na6)"/><circle cx="290" cy="30" r="56" fill="#fff" opacity=".07"/>
+  <rect x="58" y="30" width="170" height="108" rx="10" fill="#1c1640"/><rect x="66" y="38" width="154" height="92" rx="5" fill="#fff"/><rect x="128" y="138" width="30" height="14" fill="#1c1640"/><rect x="108" y="150" width="70" height="8" rx="4" fill="#1c1640"/>
+  <text x="78" y="58" font-size="11" font-weight="800" fill="#3b2a8f" font-family="Plus Jakarta Sans,system-ui,sans-serif">SKD · CAT</text>
+  <g font-family="Plus Jakarta Sans,system-ui,sans-serif" font-size="9" font-weight="800"><rect x="78" y="68" width="40" height="18" rx="5" fill="#e6f0fd"/><text x="98" y="80" text-anchor="middle" fill="#1757b0">TWK</text><rect x="124" y="68" width="40" height="18" rx="5" fill="#fdf0d5"/><text x="144" y="80" text-anchor="middle" fill="#b26b00">TIU</text><rect x="170" y="68" width="40" height="18" rx="5" fill="#d9f3e3"/><text x="190" y="80" text-anchor="middle" fill="#17824a">TKP</text></g>
+  <rect x="78" y="96" width="132" height="8" rx="4" fill="#ece9fd"/><rect x="78" y="96" width="90" height="8" rx="4" fill="#6b55e0"/><rect x="78" y="112" width="100" height="6" rx="3" fill="#e3e6ef"/>
+  <circle cx="258" cy="96" r="30" fill="#fff"/><circle cx="258" cy="96" r="24" fill="none" stroke="#f2b705" stroke-width="6"/><path d="M258 96V80M258 96l11 7" stroke="#3b2a8f" stroke-width="4" stroke-linecap="round"/><text x="258" y="150" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Plus Jakarta Sans,system-ui,sans-serif">Jan–Mar 2027?</text>`
+};
+const NART_TAG={Resmi:'resmi',Jadwal:'jadwal',Kuota:'kuota',Formasi:'prioritas',Perkiraan:'skd'};
+let NART_N=0;
+function nArt(n,cls){const k=NART[n.im]?n.im:(NART_TAG[n.tag]||'resmi');const u='n'+(NART_N++)+'_';
+  return `<svg class="${cls}" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(n.t)}">${NART[k].replace(/id="(na\d|nap)"/g,'id="'+u+'$1"').replace(/url\(#(na\d)\)/g,'url(#'+u+'$1)').replace(/href="#nap"/g,'href="#'+u+'nap"')}</svg>`}
+function nTg(n){return n.tag==='Resmi'?'ok':n.tag==='Perkiraan'||n.tag==='Jadwal'?'warn':'pri'}
+function infoOpen(i){const n=allInfo()[i];if(!n)return;
+  modal(`<div class="nbig">${nArt(n,'nimg')}</div><div class="row" style="gap:8px;margin:12px 0 4px"><span class="pill ${nTg(n)}">${esc(n.tag)}</span><span class="small muted">${esc(n.d)} · ${esc(n.src)}</span></div>
+  <h2 style="margin:4px 0 8px">${esc(n.t)}</h2><p style="margin:0 0 14px;line-height:1.6">${esc(n.b)}</p>
+  <p class="small muted" style="margin:0 0 14px">Ringkasan dari pemberitaan media. Jadwal dan angka final mengacu ke sscasn.bkn.go.id.</p>
+  <div class="grid2"><button class="btn line" onclick="modal('')">Tutup</button>${n.u?`<a class="btn" style="text-align:center;text-decoration:none" href="${esc(n.u)}" target="_blank" rel="noopener">Baca di sumber ↗</a>`:`<button class="btn" onclick="modal('');go('tryout')">Latihan sekarang</button>`}</div>`,true)}
+
 const ILL={
  target:`<circle cx="100" cy="62" r="44" fill="#fbf1da"/><circle cx="100" cy="62" r="32" fill="#fff" stroke="#c9931a" stroke-width="6"/><circle cx="100" cy="62" r="18" fill="#1d4e7a"/><circle cx="100" cy="62" r="7" fill="#fff"/><path d="M150 18 L104 60" stroke="#17202b" stroke-width="4" stroke-linecap="round"/><path d="M150 18 l12-4 -4 12 -8 -8z" fill="#c03a3a"/><text x="22" y="112" font-size="13" font-weight="800" fill="#1d4e7a">225</text>`,
  timer:`<circle cx="100" cy="66" r="42" fill="#e6eef6"/><circle cx="100" cy="66" r="32" fill="#fff" stroke="#1d4e7a" stroke-width="6"/><rect x="92" y="14" width="16" height="10" rx="3" fill="#1d4e7a"/><path d="M100 66 L100 44" stroke="#17202b" stroke-width="5" stroke-linecap="round"/><path d="M100 66 L116 74" stroke="#c9931a" stroke-width="5" stroke-linecap="round"/><circle cx="100" cy="66" r="4" fill="#17202b"/><text x="146" y="40" font-size="14" font-weight="800" fill="#c03a3a">55"</text>`,
@@ -4028,9 +4084,7 @@ function tipModal(i){const t=TIPS[i];modal(`<div style="background:var(--bg);bor
 function infoHTML(){
   const ALL=allInfo();const list=infoAll?ALL:ALL.slice(0,3);
   return `<div class="card"><div class="row" style="margin-bottom:4px"><h2 class="grow" style="margin:0">Info CPNS 2026</h2><span class="pill pri">per ${ALL[0]&&ALL[0].cloud?esc(ALL[0].d):INFO_ASOF}</span></div>
-  ${list.map(n=>`<a class="list-item" style="text-decoration:none;color:inherit;align-items:flex-start" ${n.u?`href="${esc(n.u)}" target="_blank" rel="noopener"`:''}>
-    <div style="flex:none;width:42px;text-align:center"><div style="font-weight:800;font-size:16px;line-height:1.1">${esc(n.d.split(' ')[0])}</div><div class="small muted">${esc(n.d.split(' ').slice(1).join(' '))}</div></div>
-    <div class="grow"><span class="pill ${n.tag==='Resmi'?'ok':n.tag==='Perkiraan'||n.tag==='Jadwal'?'warn':'pri'}">${n.tag}</span><div style="font-weight:700;margin-top:4px">${esc(n.t)}</div><div class="small muted">${esc(n.b)}</div><div class="small" style="color:var(--pri2);margin-top:2px">${esc(n.src)}${n.u?' ↗':''}</div></div></a>`).join('')}
+  <div class="hinfo">${list.map((n,i)=>`<a href="javascript:void 0" onclick="infoOpen(${i})">${nArt(n,'nth')}<span class="bd"><span class="mt"><span class="tg ${nTg(n)}">${esc(n.tag)}</span>${esc(n.d)}</span><b>${esc(n.t)}</b><div>${esc(n.b)}</div></span></a>`).join('')}</div>
   <button class="btn line block" style="margin-top:8px" onclick="infoAll=!infoAll;render()">${infoAll?'Tampilkan lebih sedikit':'Lihat semua info ('+ALL.length+')'}</button>
   <p class="small muted" style="margin:10px 0 0">Ringkasan dari pemberitaan media. Jadwal dan angka final tetap mengacu pada pengumuman resmi di sscasn.bkn.go.id.</p></div>`;
 }
@@ -4087,7 +4141,7 @@ function vHome(){
     <button class="bsoft2" ${last?'':'disabled style="opacity:.6"'} onclick="startExam({focus:true})">${ic('target',17,2)}Latihan di Materi Terlemah</button></div></div>
   <div class="hg2">
    <div class="hcard"><div class="hh">${ic('mega',22,2)}<h2>Info CPNS 2026</h2><button class="lnk" onclick="infoAll=!infoAll;const y=scrollY;render();scrollTo(0,y)">${infoAll?'Lebih sedikit':'Lihat Semua'} ${ic('arrow',15,2.2)}</button></div>
-    <div class="hinfo">${inf.map(n=>{const pp=n.d.split(' ');return `<a ${n.u?`href="${esc(n.u)}" target="_blank" rel="noopener"`:''}><span class="dt"><b>${esc(/^\d+$/.test(pp[0])?pp[0]:'•')}</b><span>${esc(/^\d+$/.test(pp[0])?pp[1]||'':pp[0])}</span></span><span class="tg ${n.tag==='Resmi'?'ok':n.tag==='Perkiraan'||n.tag==='Jadwal'?'warn':'pri'}">${esc(n.tag)}</span><span class="bd"><b>${esc(n.t)}</b><div>${esc(n.b)}</div></span></a>`}).join('')}</div>
+    <div class="hinfo">${inf.map((n,i)=>`<a href="javascript:void 0" onclick="infoOpen(${i})">${nArt(n,'nth')}<span class="bd"><span class="mt"><span class="tg ${nTg(n)}">${esc(n.tag)}</span>${esc(n.d)}</span><b>${esc(n.t)}</b><div>${esc(n.b)}</div></span></a>`).join('')}</div>
     <p class="small muted" style="margin:8px 0 0">Ringkasan media per ${ALL[0]&&ALL[0].cloud?esc(ALL[0].d):INFO_ASOF}. Angka final mengacu ke sscasn.bkn.go.id.</p></div>
    <div class="hcard"><div class="hh">${ic('target',22,2)}<h2>Passing Grade SKD</h2></div>
     <div class="pgbox"><b>TWK ${S.pg.twk} · TIU ${S.pg.tiu} · TKP ${S.pg.tkp}</b><span class="sp"></span><span class="small muted">Total maksimal: 550</span></div>
