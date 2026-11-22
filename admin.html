@@ -114,7 +114,8 @@ const h = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<"
 const rp = (n) => "Rp" + Number(n || 0).toLocaleString("id-ID");
 const SELAMANYA = "2099-12-31T23:59:59Z";
 const abadi = (d) => !!d && new Date(d).getFullYear() >= 2099;
-const tgl = (d, jam) => abadi(d) ? "Selamanya" : d ? new Date(d).toLocaleString("id-ID", jam ? { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" } : { day: "numeric", month: "short", year: "numeric" }) : "—";
+const TRIAL_SAMPAI = "2100-01-01T00:00:00Z";
+const tgl = (d, jam) => abadi(d) ? (new Date(d).getUTCFullYear() === 2100 ? "Sampai kuota habis" : "Selamanya") : d ? new Date(d).toLocaleString("id-ID", jam ? { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" } : { day: "numeric", month: "short", year: "numeric" }) : "—";
 const modal = (html) => { $("#modal").innerHTML = html ? `<div class="bg" onclick="if(event.target===this)window.A.closeModal()"><div class="box">${html}</div></div>` : ""; };
 
 const IP = {
@@ -163,7 +164,7 @@ const ST = (u) => { const on = u.akses_sampai && new Date(u.akses_sampai) > new 
   if (u.is_trial) return on ? { on, k: "trial", t: "Trial", c: "pri" } : { on, k: "trialhabis", t: "Trial habis", c: "warn" };
   return on ? { on, k: "penuh", t: abadi(u.akses_sampai) ? "Akses penuh" : "Akses terbatas", c: "ok" } : { on, k: "habis", t: "Habis", c: "bad" }; };
 const AKSI = (u) => { const st = ST(u); if (u.is_admin) return "";
-  return `${!abadi(u.akses_sampai) ? `<button class="btn sm" onclick="window.A.uSetujui('${u.id}')">Akses penuh</button>` : ""}${st.k === "menunggu" ? `<button class="btn sm line" onclick="window.A.uTrial('${u.id}')">Trial ${TRIAL_HARI} hari</button>` : ""}`; };
+  return `${!abadi(u.akses_sampai) || u.is_trial ? `<button class="btn sm" onclick="window.A.uSetujui('${u.id}')">Akses penuh</button>` : ""}${st.k === "menunggu" || st.k === "trialhabis" || st.k === "habis" ? `<button class="btn sm line" onclick="window.A.uTrial('${u.id}')">Trial</button>` : ""}`; };
 function flash(t, ok = true) { MSG = `<div class="msg ${ok ? "ok" : "err"}">${h(t)}</div>`; const m = $("#msg"); if (m) m.innerHTML = MSG; }
 
 // ---------------- Login ----------------
@@ -247,11 +248,11 @@ async function dash() {
   <div class="stats">
    <div class="stat"><div class="ic">${ic("users")}</div><div><div class="k">Peserta terdaftar</div><div class="v">${total}</div></div></div>
    <div class="stat" style="cursor:pointer" onclick="window.A.goTunggu()"><div class="ic">${ic("bell")}</div><div><div class="k">Menunggu persetujuan</div><div class="v">${tunggu}</div></div></div>
-   <div class="stat"><div class="ic">${ic("dash")}</div><div><div class="k">Sedang trial</div><div class="v">${trial}</div><div class="s">${TRIAL_HARI} hari per akun</div></div></div>
+   <div class="stat"><div class="ic">${ic("dash")}</div><div><div class="k">Sedang trial</div><div class="v">${trial}</div><div class="s">otomatis saat daftar</div></div></div>
    <div class="stat"><div class="ic">${ic("check")}</div><div><div class="k">Akses penuh</div><div class="v">${penuh}</div><div class="s">${segera} berakhir dalam 7 hari</div></div></div>
    <div class="stat"><div class="ic">${ic("card")}</div><div><div class="k">Trial/akses habis</div><div class="v">${habis}</div></div></div>
   </div>
-  <div class="card"><h2>Menunggu persetujuan</h2><p class="small muted" style="margin-top:0">Pilih <b>Trial ${TRIAL_HARI} hari</b> untuk mencoba, atau <b>Akses penuh</b> (selamanya) setelah pembayaran kamu terima.</p><div class="tw"><table><tr><th>Peserta</th><th>Status</th><th>Daftar</th><th></th></tr>
+  <div class="card"><h2>Menunggu persetujuan</h2><p class="small muted" style="margin-top:0">Akun baru kini otomatis masuk sebagai <b>trial</b>. Daftar ini hanya berisi akun yang aksesnya dicabut. Pilih <b>Trial</b> untuk mengaktifkan lagi, atau <b>Akses penuh</b> (selamanya) setelah pembayaran kamu terima.</p><div class="tw"><table><tr><th>Peserta</th><th>Status</th><th>Daftar</th><th></th></tr>
   ${(baru || []).map((u) => row(u, "created_at")).join("") || `<tr><td colspan="4" class="muted">Tidak ada akun yang menunggu.</td></tr>`}</table></div>
   ${tunggu > 10 ? `<button class="btn line" style="margin-top:10px" onclick="window.A.goTunggu()">Lihat semua (${tunggu})</button>` : ""}</div>
   <div class="card"><h2>Trial & akses yang habis atau segera habis</h2><div class="tw"><table><tr><th>Peserta</th><th>Status</th><th>Berakhir</th><th></th></tr>
@@ -307,7 +308,7 @@ A.uAkses = async (id, hari, trial = false) => {
   const { error } = await sb.rpc("admin_set_akses", { p_user: id, p_sampai: base.toISOString(), p_trial: trial });
   flash(error ? error.message : trial ? `Trial diperpanjang/diaktifkan ${hari} hari.` : `Akses aktif ${hari} hari.`, !error); route();
 };
-A.uTrial = async (id) => { if (!confirm(`Beri akun ini trial ${TRIAL_HARI} hari?`)) return; await A.uAkses(id, TRIAL_HARI, true); };
+A.uTrial = async (id) => { if (!confirm("Jadikan akun ini trial (tanpa batas waktu, dibatasi kuota)?")) return; const { error } = await sb.rpc("admin_set_akses", { p_user: id, p_sampai: TRIAL_SAMPAI, p_trial: true }); flash(error ? error.message : "Akun sekarang trial.", !error); route(); };
 A.uTgl = (id, cur) => modal(`<h2>Atur masa akses</h2><label class="f">Akses berlaku sampai</label><input type="date" id="ut" value="${cur ? cur.slice(0, 10) : ""}"><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn line" onclick="window.A.closeModal()">Batal</button><button class="btn" onclick="window.A.uTglSave('${id}')">Simpan</button></div>`);
 A.uTglSave = async (id) => { const v = $("#ut").value; if (!v) return; const { error } = await sb.rpc("admin_set_akses", { p_user: id, p_sampai: new Date(v + "T23:59:59").toISOString() }); modal(""); flash(error ? error.message : "Masa akses disimpan.", !error); route(); };
 A.uCabut = async (id, trial = false) => { if (!confirm("Cabut akses pengguna ini sekarang?")) return; const { error } = await sb.rpc("admin_set_akses", { p_user: id, p_sampai: new Date().toISOString(), p_trial: trial }); flash(error ? error.message : "Akses dicabut.", !error); route(); };
@@ -378,7 +379,7 @@ A.sPage = (d) => { SP = Math.max(0, SP + d); route(); };
 A.sHide = async (id, hid) => { const { error } = await sb.from("soal").update({ hidden: hid }).eq("id", id); flash(error ? error.message : "Status soal diperbarui.", !error); route(); };
 A.sEdit = async (id) => {
   let x = { kategori: "twk", sub_materi: SUBS.twk[0], level: "standar", soal: "", opsi_a: "", opsi_b: "", opsi_c: "", opsi_d: "", opsi_e: "", kunci: "A", bobot_tkp: "5,4,3,2,1", pembahasan: "" };
-  if (id) { const { data } = await sb.from("soal").select("*").eq("id", id).single(); x = data; }
+  if (id) { const [{ data }, bh] = await Promise.all([sb.from("soal").select("id,kategori,sub_materi,level,soal,opsi_a,opsi_b,opsi_c,opsi_d,opsi_e,kunci,bobot_tkp,figur_json,hidden").eq("id", id).single(), sb.rpc("ambil_pembahasan", { p_ids: [id] })]); x = data; x.pembahasan = (bh.data && bh.data[0] && bh.data[0].pembahasan) || ""; }
   if (x.figur_json) return modal(`<h2>Soal figural #${id}</h2><p class="muted">Soal bergambar diedit lewat file data, bukan di konsol. Kamu tetap bisa menyembunyikannya dari daftar.</p><button class="btn" onclick="window.A.closeModal()">Tutup</button>`);
   modal(`<h2>${id ? "Edit soal #" + id : "Soal baru"}</h2>
    <div class="grid3"><div><label class="f">Kategori</label><select id="e_k" onchange="window.A.sSubs()">${["twk", "tiu", "tkp"].map((k) => `<option ${x.kategori === k ? "selected" : ""}>${k}</option>`).join("")}</select></div><div><label class="f">Sub-materi</label><input id="e_s" list="e_sl" value="${h(x.sub_materi)}"><datalist id="e_sl"></datalist></div><div><label class="f">Level</label><select id="e_l"><option ${x.level !== "HOTS" ? "selected" : ""}>standar</option><option ${x.level === "HOTS" ? "selected" : ""}>HOTS</option></select></div></div>

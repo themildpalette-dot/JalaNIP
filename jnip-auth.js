@@ -203,7 +203,7 @@ export function createJNIP(cfg) {
 
   async function afterLogin(resolve) {
     const { user, profile } = await getProfile();
-    if (!user) return showAuth("masuk", resolve);
+    if (!user) return showAuth(/[?&]daftar\b/.test(location.search) ? "daftar" : "masuk", resolve);
     // akun admin hanya melihat konsol admin
     // akun admin: login di halaman yang sama, lalu langsung ke Konsol Admin (kecuali membuka pratinjau ?app=1)
     if (profile?.is_admin && !new URLSearchParams(location.search).has("app")) { location.replace(cfg.adminUrl || "admin.html"); return; }
