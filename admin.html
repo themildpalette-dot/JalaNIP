@@ -114,7 +114,7 @@ const h = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<"
 const rp = (n) => "Rp" + Number(n || 0).toLocaleString("id-ID");
 const SELAMANYA = "2099-12-31T23:59:59Z";
 const abadi = (d) => !!d && new Date(d).getFullYear() >= 2099;
-const TRIAL_SAMPAI = "2100-01-01T00:00:00Z";
+const trialSampai = () => new Date(Date.now() + TRIAL_HARI * 864e5).toISOString();
 const tgl = (d, jam) => abadi(d) ? (new Date(d).getUTCFullYear() === 2100 ? "Sampai kuota habis" : "Selamanya") : d ? new Date(d).toLocaleString("id-ID", jam ? { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" } : { day: "numeric", month: "short", year: "numeric" }) : "—";
 const modal = (html) => { $("#modal").innerHTML = html ? `<div class="bg" onclick="if(event.target===this)window.A.closeModal()"><div class="box">${html}</div></div>` : ""; };
 
@@ -308,7 +308,7 @@ A.uAkses = async (id, hari, trial = false) => {
   const { error } = await sb.rpc("admin_set_akses", { p_user: id, p_sampai: base.toISOString(), p_trial: trial });
   flash(error ? error.message : trial ? `Trial diperpanjang/diaktifkan ${hari} hari.` : `Akses aktif ${hari} hari.`, !error); route();
 };
-A.uTrial = async (id) => { if (!confirm("Jadikan akun ini trial (tanpa batas waktu, dibatasi kuota)?")) return; const { error } = await sb.rpc("admin_set_akses", { p_user: id, p_sampai: TRIAL_SAMPAI, p_trial: true }); flash(error ? error.message : "Akun sekarang trial.", !error); route(); };
+A.uTrial = async (id) => { if (!confirm("Jadikan akun ini trial selama 7 hari (fitur tetap dibatasi kuota)?")) return; const { error } = await sb.rpc("admin_set_akses", { p_user: id, p_sampai: trialSampai(), p_trial: true }); flash(error ? error.message : "Akun sekarang trial.", !error); route(); };
 A.uTgl = (id, cur) => modal(`<h2>Atur masa akses</h2><label class="f">Akses berlaku sampai</label><input type="date" id="ut" value="${cur ? cur.slice(0, 10) : ""}"><div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn line" onclick="window.A.closeModal()">Batal</button><button class="btn" onclick="window.A.uTglSave('${id}')">Simpan</button></div>`);
 A.uTglSave = async (id) => { const v = $("#ut").value; if (!v) return; const { error } = await sb.rpc("admin_set_akses", { p_user: id, p_sampai: new Date(v + "T23:59:59").toISOString() }); modal(""); flash(error ? error.message : "Masa akses disimpan.", !error); route(); };
 A.uCabut = async (id, trial = false) => { if (!confirm("Cabut akses pengguna ini sekarang?")) return; const { error } = await sb.rpc("admin_set_akses", { p_user: id, p_sampai: new Date().toISOString(), p_trial: trial }); flash(error ? error.message : "Akses dicabut.", !error); route(); };

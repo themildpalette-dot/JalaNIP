@@ -584,7 +584,7 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .fact:hover{border-color:#9cc1f2}.fact.on{background:#e6f0fd;border-color:#9cc1f2;color:#1757b0}.fact.fav.on{background:#fde8ec;border-color:#f3b6c2;color:#d6336c}.fact.fav.on .ic{fill:currentColor}
 [data-theme=dark] .fact.on{background:#1c2f4d;color:#cfe2ff}[data-theme=dark] .fact.fav.on{background:#4a1d2a;color:#ff9ab8}
 .fp.new{background:#e5484d;color:#fff}.fp.upd{background:#fde9c4;color:#c76a00}
-.fp.off{background:#eef0f4;color:#5b6475}[data-theme=dark] .fp.off{background:#2a3140;color:#b9c2d3}
+.fp.off{background:#eef0f4;color:#5b6475}.tlsal{background:#fff1f0;border:1px solid #f6c9c5;color:#a1261c;border-radius:12px;padding:10px 12px;font-size:13.5px;margin:0 0 12px;text-align:left}[data-theme=dark] .tlsal{background:#3a1d1b;border-color:#6b2e29;color:#ffb4ad}.tupsal{color:#c2362b;font-weight:600;margin:6px 0 10px}[data-theme=dark] .tupsal{color:#ff9a90}[data-theme=dark] .fp.off{background:#2a3140;color:#b9c2d3}
 .fcard .mt .thpc{color:#17824a}.fcard .mt .thpc b{color:#17824a}[data-theme=dark] .fcard .mt .thpc,[data-theme=dark] .fcard .mt .thpc b{color:#7be0a4}
 .thpbox{background:linear-gradient(135deg,#e9f8ef,#f4fbf6);border:1px solid #c9ecd6;border-radius:16px;padding:14px 16px;margin:4px 0 16px}
 [data-theme=dark] .thpbox{background:#15301f;border-color:#24573a}
@@ -1041,8 +1041,9 @@ function startLearn(o){
   let pool;
   if(o.wrong){pool=shuffle(wrongList(o.cat)).sort((a,b)=>(S.wrong[b].n-S.wrong[a].n))}
   else{const seen=S.seen||{};pool=shuffle(visIdx().filter(i=>(!o.cat||Q[i].cat===o.cat)&&(!o.sub||Q[i].sub===o.sub))).sort((a,b)=>(seen[a]||0)-(seen[b]||0))}
+  if(isTrial()&&!trialTotLeft()){trialLock('total');return}
   if(isTrial()&&!o.wrong){const T=trialT(),u={};pool=pool.filter(i=>{const s=Q[i].sub,n=(T.sub[s]||0)+(u[s]||0);if(n>=TRIAL_LIM.materi)return false;u[s]=(u[s]||0)+1;return true});if(!pool.length){trialLock('materi');return}}
-  const qs=pool.slice(0,o.n||10);
+  const qs=pool.slice(0,isTrial()?Math.min(o.n||10,trialTotLeft()):(o.n||10));
   if(!qs.length){modal(`<h2>Belum ada soal</h2><p class="muted">${o.wrong?'Bank soal salahmu masih kosong. Bagus!':'Tidak ada soal untuk pilihan ini.'}</p><button class="btn block" onclick="modal('')">OK</button>`);return}
   LS={qs,i:0,pick:null,res:[],wrong:!!o.wrong,label:o.label||'Mode Belajar',done:false,cleared:0};
   if(o.sub){S.last={k:'latihan',s:o.sub,t:Date.now()};save()}
@@ -1050,7 +1051,7 @@ function startLearn(o){
 }
 function learnPick(k){if(!LS||LS.pick!=null)return;const qi=LS.qs[LS.i],q=Q[qi];LS.pick=k;
   const good=isGood(q,k);LS.res.push({qi,a:k,good,pts:q.cat==='tkp'?q.w[k]:(good?5:0)});
-  S.seen=S.seen||{};S.seen[qi]=(S.seen[qi]||0)+1;bump('q');if(LS.wrong)bump('wr');S.sa=S.sa||{};const sa=S.sa[q.sub]=S.sa[q.sub]||{n:0,ok:0};sa.n++;if(good)sa.ok++;if(isTrial()&&!LS.wrong){const T=trialT();T.sub[q.sub]=(T.sub[q.sub]||0)+1}
+  S.seen=S.seen||{};S.seen[qi]=(S.seen[qi]||0)+1;bump('q');if(LS.wrong)bump('wr');S.sa=S.sa||{};const sa=S.sa[q.sub]=S.sa[q.sub]||{n:0,ok:0};sa.n++;if(good)sa.ok++;if(isTrial()){const T=trialT();T.tot++;if(!LS.wrong)T.sub[q.sub]=(T.sub[q.sub]||0)+1;if(!good&&LS.i>=TRIAL_LIM.guru)T.wr++}
   if(good){if(markRight(qi))LS.cleared++}else markWrong(qi);save();renderLearn()}
 function learnNext(){if(LS.i>=LS.qs.length-1){LS.done=true}else{LS.i++;LS.pick=null}renderLearn()}
 function exitLearn(){LS=null;render()}
@@ -4304,7 +4305,7 @@ function finishExam(timeout){
   EX.qs.forEach((qi,i)=>{if(isGood(Q[qi],EX.ans[i]))markRight(qi);else markWrong(qi)});
   bump('q',EX.ans.filter(a=>a!=null).length);if(EX.pkg==='full'||EX.akbar)bump('full');
   const ak=EX.akbar;if(ak){h.akbar=ak;const e=evList().find(x=>x.id===ak);h.akTitle=e?e.title:'Arena'}
-  S.hist.push(h);if(S.hist.length>40)S.hist=S.hist.slice(-40);if(isTrial()&&!ak)trialT().to++;save();
+  S.hist.push(h);if(S.hist.length>40)S.hist=S.hist.slice(-40);if(isTrial()&&!ak){const T=trialT();T.to++;EX.qs.forEach((qi,i)=>{if(i>=TRIAL_LIM.guru&&EX.ans[i]!=null&&!isGood(Q[qi],EX.ans[i]))T.wr++})}save();
   EX=null;go('hasil-'+h.id);
   if(ak){submitAkbar(ak,{total:h.total,twk:h.proj.twk,tiu:h.proj.tiu,tkp:h.proj.tkp,pass:h.pass,at:Date.now()}).then(st=>{
     modal(`<h2>${st==='ok'?'Skor terkirim':'Skor tersimpan di perangkat'}</h2><p class="muted">${st==='ok'?'Skormu sudah masuk papan peringkat.':st==='dup'?'Kamu sudah pernah mengirim skor untuk event ini.':'Skor tidak bisa dikirim ke papan peringkat dari tampilan ini (akses tulis tidak tersedia). Hasilmu tetap tersimpan di Riwayat.'}</p><div class="grid2"><button class="btn line" onclick="modal('')">Lihat hasil</button><button class="btn gold" onclick="modal('');go('arena')">Papan peringkat</button></div>`)})}
@@ -4845,11 +4846,15 @@ function bahasWait(qi){const q=Q[qi];if(bahasOK(q))return '';
 
 /* ===================== BATASAN TRIAL 7 HARI ===================== */
 /* Trial: 1 tryout, pembahasan lengkap 5 soal pertama, 10 soal per materi, 1 simulasi formasi, riwayat dikunci. Info CPNS tetap terbuka. */
-const TRIAL_LIM={tryout:1,guru:5,materi:10,sim:1};
+const TRIAL_LIM={tryout:1,guru:5,materi:10,sim:1,total:100,hari:7};
 const TRIAL_HARGA={promo:'Rp59.000',normal:'Rp150.000'};
 const LOCK_I=`<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><rect x='4.5' y='10.5' width='15' height='10' rx='2.5'/><path d='M8 10.5V7.8a4 4 0 0 1 8 0v2.7'/></svg>`;
 function isTrial(){return !!(window.JNIP_ACC&&window.JNIP_ACC.trial)}
-function trialT(){S.trial=S.trial||{};S.trial.to=S.trial.to||0;S.trial.sim=S.trial.sim||0;S.trial.sub=S.trial.sub||{};return S.trial}
+function trialT(){S.trial=S.trial||{};const T=S.trial;T.to=T.to||0;T.sim=T.sim||0;T.sub=T.sub||{};T.wr=T.wr||0;
+ if(T.tot==null)T.tot=Object.values(T.sub).reduce((a,b)=>a+b,0);return T}
+function trialTotLeft(){return Math.max(0,TRIAL_LIM.total-trialT().tot)}
+function trialHari(){const a=window.JNIP_ACC;return a&&a.trialSisa!=null?a.trialSisa:null}
+function trialSalah(){const n=trialT().wr;return n>=3?`Kamu sudah salah <b>${n} soal</b> tanpa tahu alasannya.`:''}
 function trialTOLeft(){return Math.max(0,TRIAL_LIM.tryout-trialT().to)}
 function trialSimLeft(){return Math.max(0,TRIAL_LIM.sim-trialT().sim)}
 function trialWA(){const a=window.JNIP_ACC;return a&&a.wa||''}
@@ -4857,14 +4862,15 @@ const LOCK_TXT={
  tryout:['Tryout trial sudah terpakai','Masa trial berisi 1 kali tryout. Dengan Akses Penuh kamu bisa mengerjakan semua paket tryout tanpa batas: SKD Lengkap, Mini, HOTS, dan per subtes.'],
  guru:['Pembahasan lengkap terkunci','Di masa trial, pembahasan lengkap terbuka untuk 5 soal pertama. Soal lain hanya menampilkan kunci jawaban.'],
  materi:['Kuota latihan materi ini habis','Di masa trial, setiap materi bisa dilatih 10 soal. Dengan Akses Penuh, latihan per materi tanpa batas.'],
+ total:['Kuota latihan gratis habis','Akun trial bisa mengerjakan 100 soal latihan. Dengan Akses Penuh, latihan semua materi tanpa batas, lengkap dengan pembahasan guru di setiap soal.'],
  sim:['Simulasi formasi trial sudah terpakai','Masa trial berisi 1 kali simulasi peluang formasi. Dengan Akses Penuh, simulasi tanpa batas, termasuk menghitung banyak formasi sekaligus.'],
  riwayat:['Riwayat dan perkembangan skor terkunci','Dengan Akses Penuh kamu bisa melihat semua riwayat tryout dan latihan, serta grafik perkembangan skormu dari waktu ke waktu.']};
-function trialLock(k){const t=LOCK_TXT[k]||LOCK_TXT.tryout,wa=trialWA();
- modal(`<div class="tlk"><div class="tlki">${LOCK_I}</div><h2>${t[0]}</h2><p class="muted">${t[1]}</p>
+function trialLock(k){const t=LOCK_TXT[k]||LOCK_TXT.tryout,wa=trialWA(),sl=trialSalah(),hr=trialHari();
+ modal(`<div class="tlk"><div class="tlki">${LOCK_I}</div><h2>${t[0]}</h2><p class="muted">${t[1]}</p>${sl?`<div class="tlsal">${sl} Pembahasan guru menjelaskan langkah demi langkah kenapa jawabanmu salah.</div>`:''}${hr!=null?`<p class="small muted" style="margin:-4px 0 10px">Masa trial tersisa <b>${hr} hari</b>.</p>`:''}
  <div class="tlkb"><b>Akses Penuh, sekali bayar selamanya</b>${['Semua paket tryout tanpa batas','Pembahasan guru di semua soal','Latihan per materi tanpa batas','Simulasi formasi tanpa batas','Riwayat dan perkembangan skor'].map(x=>`<span>${ic('check',15,2.4)}${x}</span>`).join('')}
  <div class="tlkp"><s>${TRIAL_HARGA.normal}</s> <b>${TRIAL_HARGA.promo}</b> <span>harga promo</span></div></div>
  <div class="grid2"><button class="btn line" onclick="modal('')">Nanti saja</button>${wa?`<a class="btn gold" style="text-align:center;text-decoration:none" href="${esc(wa)}" target="_blank" rel="noopener">Buka Akses Penuh</a>`:`<button class="btn gold" onclick="modal('');toast('Hubungi admin untuk membuka Akses Penuh.')">Buka Akses Penuh</button>`}</div></div>`)}
-function trialExp(qi,a,i){const q=Q[qi];if(isTrial()&&i>=TRIAL_LIM.guru)return `<div class="tlx"><span class="tlxi">${LOCK_I}</span><span class="grow"><b>Pembahasan terkunci di masa trial</b><br><span class="small muted">Kunci jawaban sudah ditandai hijau. Pembahasan lengkap terbuka untuk ${TRIAL_LIM.guru} soal pertama.</span></span><button class="btn sm gold" onclick="trialLock('guru')">Buka</button></div>`;
+function trialExp(qi,a,i){const q=Q[qi];if(isTrial()&&i>=TRIAL_LIM.guru)return `<div class="tlx"><span class="tlxi">${LOCK_I}</span><span class="grow"><b>Pembahasan terkunci di masa trial</b><br><span class="small muted">${a!=null&&!isGood(q,a)&&trialT().wr>=3?`Kamu sudah salah ${trialT().wr} soal tanpa tahu alasannya. `:''}Kunci jawaban sudah ditandai hijau. Pembahasan lengkap terbuka untuk ${TRIAL_LIM.guru} soal pertama.</span></span><button class="btn sm gold" onclick="trialLock('guru')">Buka</button></div>`;
  const w=bahasWait(qi);if(w)return w;
  return `<div class="exp">${esc(q.e)}</div>${guruBtn(qi)}${aiBtn(qi,a)}`}
 function trialOffer(h){if(!isTrial())return '';
@@ -4875,6 +4881,7 @@ function trialOffer(h){if(!isTrial())return '';
  const isi=h.pass?`Skormu ${h.total} sudah di atas passing grade. Biar tidak turun di hari H, kamu perlu latihan rutin dan memperkuat bagian yang masih sering salah${subs.length?`, terutama <b>${subs.map(esc).join('</b> dan <b>')}</b>`:''}.`
   :`Subtes yang paling perlu dikejar: <b>${CAT[w.c].name}</b>${gapT?` (total kurang ${gapT} poin dari passing grade)`:''}. Sub-materi yang paling sering salah: <b>${subs.map(esc).join('</b> dan <b>')}</b>.`;
  return `<div class="tup"><div class="tupL"><span class="tupk">LANGKAH BERIKUTNYA</span><h2>${judul}</h2><p>${isi}</p>
+  ${(()=>{const n=h.qs.filter((qi,i)=>i>=TRIAL_LIM.guru&&h.ans[i]!=null&&!isGood(Q[qi],h.ans[i])).length;return n?`<p class="tupsal">Di tryout ini kamu salah <b>${n} soal</b> yang pembahasannya masih terkunci.</p>`:''})()}
   <div class="tupb"><span>${ic('check',15,2.4)}Pembahasan guru untuk semua ${h.qs.length} soal tryout ini (sekarang baru ${Math.min(TRIAL_LIM.guru,h.qs.length)} soal)</span><span>${ic('check',15,2.4)}Tryout tanpa batas untuk memantau kenaikan skor</span><span>${ic('check',15,2.4)}Latihan ${CAT[w.c].name} per materi tanpa batas</span></div></div>
   <div class="tupR"><div class="tupp"><s>${TRIAL_HARGA.normal}</s><b>${TRIAL_HARGA.promo}</b><span>sekali bayar, berlaku selamanya</span></div>
   ${wa?`<a class="btn gold" style="text-align:center;text-decoration:none" href="${esc(wa)}" target="_blank" rel="noopener">Buka Akses Penuh</a>`:`<button class="btn gold" onclick="trialLock('tryout')">Buka Akses Penuh</button>`}
@@ -4884,12 +4891,12 @@ function trialRiwayat(){const tr=S.hist.slice().reverse();
  return `<h1 style="margin-bottom:6px">Riwayat</h1><div class="card tlpage"><div class="tlki">${LOCK_I}</div><h2>${LOCK_TXT.riwayat[0]}</h2><p class="muted">${LOCK_TXT.riwayat[1]}</p><button class="btn gold" onclick="trialLock('riwayat')">Buka dengan Akses Penuh</button></div>
  ${tr.length?`<h3 style="margin:18px 0 8px">Hasil tryout di masa trial</h3>${tr.map(h=>`<a class="list-item" style="text-decoration:none;color:inherit" href="#hasil-${h.id}"><span class="grow"><b>${esc(tryoutTitle(h))}</b><br><span class="small muted">${dstr(h.date)}</span></span><b>${h.total}</b><span class="small muted">/550</span></a>`).join('')}`:''}`}
 const TRIAL_NOTE={tryout:()=>trialTOLeft()?`Akun trial: kamu bisa mengerjakan <b>1 tryout</b> (pilih paket mana saja). Pembahasan lengkap terbuka untuk ${TRIAL_LIM.guru} soal pertama.`:`Tryout di masa trial sudah terpakai. Buka Akses Penuh untuk mengerjakan semua paket tanpa batas.`,
- latihan:()=>`Akun trial: setiap materi bisa dilatih <b>${TRIAL_LIM.materi} soal</b>. Pembahasan lengkap terbuka untuk ${TRIAL_LIM.guru} soal pertama tiap sesi.`,
+ latihan:()=>trialTotLeft()?`Akun trial: sisa <b>${trialTotLeft()} soal latihan</b> (maks. ${TRIAL_LIM.materi} per materi). Pembahasan lengkap terbuka untuk ${TRIAL_LIM.guru} soal pertama tiap sesi.${trialSalah()?' '+trialSalah():''}`:`Kuota ${TRIAL_LIM.total} soal latihan trial sudah habis.${trialSalah()?' '+trialSalah():''} Buka Akses Penuh untuk latihan tanpa batas.`,
  formasi:()=>trialSimLeft()?`Akun trial: <b>1 kali</b> simulasi peluang formasi. Cari dan bandingkan formasi tetap bebas.`:`Simulasi formasi di masa trial sudah terpakai. Buka Akses Penuh untuk simulasi tanpa batas.`};
 TRIAL_NOTE.belajar=TRIAL_NOTE.latihan;
 function trialDeco(){if(!isTrial()||EX||LS||SKQ)return;
  const v=cur(),main=document.querySelector('#shell main');
- const n=TRIAL_NOTE[v];if(main&&n&&!main.querySelector('.tnote')){const d=document.createElement('div');d.className='tnote';d.innerHTML=`<span class="tlxi">${LOCK_I}</span><span class="grow">${n()}</span><button class="btn sm gold" onclick="trialLock('${v==='formasi'?'sim':v==='tryout'?'tryout':'materi'}')">Akses Penuh</button>`;const tb=main.querySelector('#trialbar');tb?tb.after(d):main.prepend(d)}
+ const n=TRIAL_NOTE[v];if(main&&n&&!main.querySelector('.tnote')){const d=document.createElement('div');d.className='tnote';d.innerHTML=`<span class="tlxi">${LOCK_I}</span><span class="grow">${n()}</span><button class="btn sm gold" onclick="trialLock('${v==='formasi'?'sim':v==='tryout'?'tryout':trialTotLeft()?'materi':'total'}')">Akses Penuh</button>`;const tb=main.querySelector('#trialbar');tb?tb.after(d):main.prepend(d)}
  const lk=el=>{if(el&&!el.classList.contains('tlock'))el.classList.add('tlock')};
  if(!trialTOLeft())document.querySelectorAll('[onclick*="startExam({pkg"],[onclick*="startExam({focus"]').forEach(lk);
  if(!trialSimLeft())lk(document.getElementById('runSim'));
@@ -5053,6 +5060,8 @@ window.JNIP_ACC = {
   selamanya: !!(profile && !profile.is_trial && profile.akses_sampai && new Date(profile.akses_sampai).getFullYear() >= 2099),
   sampai: profile && !profile.is_trial && profile.akses_sampai && new Date(profile.akses_sampai).getFullYear() < 2099 ? new Date(profile.akses_sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '',
   trial: !!(profile && profile.is_trial && !profile.is_admin),
+  trialSisa: profile && profile.is_trial && !profile.is_admin && profile.akses_sampai && new Date(profile.akses_sampai).getFullYear() < 2099 ? Math.max(0, Math.ceil((new Date(profile.akses_sampai) - Date.now()) / 864e5)) : null,
+  trialSampai: profile && profile.is_trial && profile.akses_sampai && new Date(profile.akses_sampai).getFullYear() < 2099 ? new Date(profile.akses_sampai).toLocaleDateString('id-ID', { day: 'numeric', month: 'long' }) : '',
   admin: !!(profile && profile.is_admin),
   wa: JNIP_CONFIG.waAdmin ? 'https://wa.me/' + String(JNIP_CONFIG.waAdmin).replace(/\D/g, '').replace(/^0/, '62') + '?text=' + encodeURIComponent('Halo admin Jalan NIP Academy, saya ingin membuka Akses Penuh untuk akun dengan username: ' + uname(user.email)) : '',
   out: () => { if (confirm('Keluar dari akun ini?')) jnip.signOut(); },
@@ -5100,8 +5109,10 @@ function trialDraw() {
   const main = document.querySelector('#shell main'); if (!main) return;
   const wa = JNIP_CONFIG.waAdmin ? 'https://wa.me/' + String(JNIP_CONFIG.waAdmin).replace(/\D/g, '').replace(/^0/, '62') + '?text=' + encodeURIComponent('Halo admin Jalan NIP Academy, saya ingin membuka akses penuh untuk akun dengan username: ' + acc.email.replace(/^@/, '')) : '';
   const el = document.createElement('div'); el.id = 'trialbar';
-  const kuota = typeof trialTOLeft === 'function' ? (trialTOLeft() ? `sisa <b>${trialTOLeft()} tryout</b>, ${TRIAL_LIM.materi} soal per materi, dan ${trialSimLeft()} simulasi formasi` : 'kuota tryout sudah terpakai') : 'kuota terbatas';
-  el.innerHTML = `<span>Kamu memakai akun <b>trial gratis</b>: ${kuota}.${wa ? ` <a href="${wa}" target="_blank" rel="noopener">Buka akses penuh</a>` : ' Hubungi admin untuk akses penuh.'}</span><button aria-label="Tutup" onclick="trialTutup()">×</button>`;
+  const kuota = typeof trialTOLeft === 'function' ? `sisa <b>${trialTOLeft()} tryout</b>, <b>${trialTotLeft()} soal latihan</b>, dan ${trialSimLeft()} simulasi formasi` : 'kuota terbatas';
+  const hari = acc.trialSisa != null ? ` Berakhir dalam <b>${acc.trialSisa} hari</b>${acc.trialSampai ? ` (${acc.trialSampai})` : ''}.` : '';
+  const salah = typeof trialSalah === 'function' && trialSalah() ? ' ' + trialSalah() : '';
+  el.innerHTML = `<span>Kamu memakai akun <b>trial gratis</b>: ${kuota}.${hari}${salah}${wa ? ` <a href="${wa}" target="_blank" rel="noopener">Buka akses penuh</a>` : ' Hubungi admin untuk akses penuh.'}</span><button aria-label="Tutup" onclick="trialTutup()">×</button>`;
   main.prepend(el);
 }
 window.trialTutup = () => { S.trialTutup = new Date().toISOString().slice(0, 10); save(); trialDraw(); };

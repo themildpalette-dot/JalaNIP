@@ -164,7 +164,7 @@ export function createJNIP(cfg) {
     const teks = encodeURIComponent(`Halo admin Jalan NIP Academy, saya ingin ${habis && profile.is_trial ? "membuka akses penuh untuk" : habis ? "memperpanjang" : "mengaktifkan"} akun dengan username: ${un}`);
     const trial = habis && profile.is_trial;
     box().innerHTML = `${brand}<div class="pend">${ico("clock")}</div><h1>${trial ? "Masa trial berakhir" : habis ? "Masa akses habis" : "Menunggu persetujuan"}</h1>
-      <p>Akun <b>@${h(un)}</b> ${trial ? "sudah menyelesaikan masa trial. Hubungi admin untuk membuka akses penuh. Progres belajarmu tetap tersimpan." : habis ? "sudah melewati masa aktifnya. Hubungi admin untuk memperpanjang akses. Progres belajarmu tetap tersimpan." : "sudah terdaftar dan sedang menunggu persetujuan admin. Begitu admin menyetujui, halaman ini otomatis terbuka."}</p>
+      <p>Akun <b>@${h(un)}</b> ${trial ? "sudah menyelesaikan masa trial 7 hari. Buka akses penuh cukup Rp59.000, sekali bayar untuk selamanya. Hubungi admin lewat tombol di bawah. Progres belajarmu tetap tersimpan." : habis ? "sudah melewati masa aktifnya. Hubungi admin untuk memperpanjang akses. Progres belajarmu tetap tersimpan." : "sudah terdaftar dan sedang menunggu persetujuan admin. Begitu admin menyetujui, halaman ini otomatis terbuka."}</p>
       ${cfg.infoAktivasi ? `<div class="msg">${h(cfg.infoAktivasi)}</div>` : ""}
       ${wa ? `<a class="go" href="https://wa.me/${wa}?text=${teks}" target="_blank" rel="noopener">${ico("chat")} Hubungi admin via WhatsApp</a>` : ""}
       <button class="${wa ? "alt" : "go"}" id="jn-cek">Cek status sekarang</button>
