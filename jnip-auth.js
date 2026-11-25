@@ -83,6 +83,12 @@ export function createJNIP(cfg) {
       #jnip-gate .fld{display:flex;align-items:center;gap:10px;border:1.5px solid #dfe6ef;border-radius:12px;padding:0 14px;background:#fff;transition:border-color .15s,box-shadow .15s}
       #jnip-gate .fld:focus-within{border-color:#1f63e0;box-shadow:0 0 0 3px rgba(31,99,224,.12)}
       #jnip-gate .fld>svg{color:#6b7686;flex:none}
+      #jnip-gate .wajib{color:#d64545}
+      #jnip-gate .src{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-radius:12px}
+      #jnip-gate .src button{font:inherit;font-size:14px;font-weight:600;color:#0f1b2d;background:#fff;border:1.5px solid #dfe6ef;border-radius:10px;padding:10px 6px;cursor:pointer;transition:border-color .15s,background .15s}
+      #jnip-gate .src button:hover{border-color:#9db4d6}
+      #jnip-gate .src button[aria-checked="true"]{border-color:#1f63e0;background:#eaf1ff;color:#0b3f91;box-shadow:0 0 0 3px rgba(31,99,224,.12)}
+      #jnip-gate .src.err{outline:2px solid #d64545;outline-offset:3px}
       #jnip-gate .fld input{flex:1;min-width:0;border:0;outline:0;padding:14px 0;font:inherit;font-size:15.5px;color:#0f1b2d;background:transparent}
       #jnip-gate .fld input::placeholder{color:#6b7686}
       #jnip-gate .eye{background:none;border:0;padding:4px;margin:0;color:#6b7686;cursor:pointer;display:flex;width:auto}
@@ -103,6 +109,7 @@ export function createJNIP(cfg) {
     return root;
   }
   const box = () => mount().querySelector("#jnip-bx");
+  const SUMBER = ["TikTok", "Instagram", "Facebook", "X", "Threads", "Dari teman"];
   const brand = `<div class="brand"><img src="${cfg.logoUrl || "logo-jalannip.png"}" alt=""><div class="nm"><b>JalanNIP</b><i>Academy</i></div><div class="tg">Jalani prosesnya,<br>raih NIP-nya.</div></div>`;
   function unmount() { if (root) { root.remove(); root = null; } }
 
@@ -122,7 +129,7 @@ export function createJNIP(cfg) {
       <label for="jn-user">Username</label><div class="fld">${ico(daftar ? "at" : "user")}<input id="jn-user" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="Masukkan username kamu"></div>
       ${daftar ? `<div class="hint">3–20 karakter: huruf kecil, angka, titik, atau garis bawah.</div>` : ""}
       <label for="jn-pass">Kata sandi</label><div class="fld">${ico("lock")}<input id="jn-pass" type="password" autocomplete="${daftar ? "new-password" : "current-password"}" placeholder="${daftar ? "Minimal 8 karakter" : "Masukkan kata sandi"}"><button type="button" class="eye" id="jn-eye" aria-label="Tampilkan kata sandi">${ico("eyeoff")}</button></div>
-      ${daftar ? "" : `<div class="row"><button type="button" class="lnk" id="jn-lupa">Lupa kata sandi?</button></div>`}
+      ${daftar ? `<label>Tahu JalanNIP dari mana? <span class="wajib">*</span></label><div class="src" id="jn-src" role="radiogroup" aria-label="Tahu JalanNIP dari mana">${SUMBER.map((x) => `<button type="button" role="radio" aria-checked="false" data-v="${x}">${x}</button>`).join("")}</div>` : `<div class="row"><button type="button" class="lnk" id="jn-lupa">Lupa kata sandi?</button></div>`}
       <button class="go" id="jn-go">${daftar ? "Daftar" : "Masuk"} ${ico("arrow")}</button>
       <div id="jn-msg">${note ? `<div class="msg">${h(note)}</div>` : ""}</div>
       <div class="foot">${daftar ? "Sudah punya akun?" : "Belum punya akun?"}<a id="jn-sw">${daftar ? "Masuk di sini" : "Daftar sekarang"}</a></div>`;
@@ -130,6 +137,8 @@ export function createJNIP(cfg) {
     box().querySelector("#jn-sw").onclick = () => showAuth(daftar ? "masuk" : "daftar", resolve);
     const pass = box().querySelector("#jn-pass"), eye = box().querySelector("#jn-eye");
     eye.onclick = () => { const show = pass.type === "password"; pass.type = show ? "text" : "password"; eye.innerHTML = ico(show ? "eye" : "eyeoff"); eye.setAttribute("aria-label", show ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"); };
+    let sumber = "";
+    box().querySelectorAll("#jn-src button").forEach((b) => b.onclick = () => { sumber = b.dataset.v; box().querySelectorAll("#jn-src button").forEach((x) => x.setAttribute("aria-checked", x === b ? "true" : "false")); box().querySelector("#jn-src").classList.remove("err"); });
     const lupa = box().querySelector("#jn-lupa");
     if (lupa) lupa.onclick = () => msg(cfg.lupaSandi || "Hubungi admin Jalan NIP Academy dan sebutkan username-mu. Admin akan mengatur kata sandi baru untukmu.");
     const go = async () => {
@@ -140,7 +149,8 @@ export function createJNIP(cfg) {
           const nama = box().querySelector("#jn-nama").value.trim();
           if (!USER_RE.test(user)) throw new Error("Username harus 3–20 karakter: huruf kecil, angka, titik, atau garis bawah.");
           if (password.length < 8) throw new Error("Kata sandi minimal 8 karakter.");
-          const { data, error } = await sb.auth.signUp({ email: toEmail(user), password, options: { data: { nama, username: user } } });
+          if (!sumber) { box().querySelector("#jn-src").classList.add("err"); throw new Error("Pilih dulu dari mana kamu tahu JalanNIP."); }
+          const { data, error } = await sb.auth.signUp({ email: toEmail(user), password, options: { data: { nama, username: user, sumber } } });
           if (error) throw new Error(/already|registered|exists/i.test(error.message) ? "Username sudah dipakai. Coba yang lain." : error.message);
           if (!data.session) { showAuth("masuk", resolve, "Akun dibuat. Silakan masuk."); return; }
         } else {

@@ -241,6 +241,12 @@ async function dash() {
     cnt(base().eq("is_trial", false).gt("akses_sampai", now)), cnt(base().gt("akses_sampai", now).lte("akses_sampai", s7)),
   ]);
   const habis = Math.max(0, total - tunggu - trial - penuh);
+  const { data: src } = await sb.from("profiles").select("sumber_tahu,is_trial,akses_sampai").eq("is_admin", false).limit(10000);
+  const SRC = ["TikTok", "Instagram", "Facebook", "X", "Threads", "Dari teman"], sk = {};
+  (src || []).forEach((u) => { const k = u.sumber_tahu || "Belum tercatat"; const o = sk[k] = sk[k] || { n: 0, beli: 0 }; o.n++; if (!u.is_trial && u.akses_sampai && new Date(u.akses_sampai) > new Date()) o.beli++; });
+  const srcKeys = SRC.concat(sk["Belum tercatat"] ? ["Belum tercatat"] : []), srcMax = Math.max(1, ...srcKeys.map((k) => (sk[k] || { n: 0 }).n));
+  const srcCard = `<div class="card"><h2>Asal pendaftar</h2><p class="small muted" style="margin-top:0">Jawaban "Tahu JalanNIP dari mana?" saat daftar. Kolom kanan: berapa yang sudah membeli akses penuh. "Belum tercatat" = akun yang daftar sebelum pertanyaan ini ada.</p>
+   <div class="tw"><table><tr><th>Sumber</th><th style="width:45%"></th><th>Pendaftar</th><th>Beli</th></tr>${srcKeys.map((k) => { const o = sk[k] || { n: 0, beli: 0 }; return `<tr><td><b>${h(k)}</b></td><td><div style="height:8px;border-radius:9px;background:#eef2f7;overflow:hidden"><div style="height:100%;width:${(o.n / srcMax) * 100}%;background:#f2b705"></div></div></td><td>${o.n}</td><td>${o.beli}${o.n ? ` <span class="small muted">(${Math.round((o.beli / o.n) * 100)}%)</span>` : ""}</td></tr>`; }).join("")}</table></div></div>`;
   const { data: baru } = await sb.from("profiles").select("*").is("akses_sampai", null).eq("is_admin", false).order("created_at", { ascending: false }).limit(10);
   const { data: hampir } = await sb.from("profiles").select("*").lte("akses_sampai", s7).eq("is_admin", false).order("akses_sampai", { ascending: false }).limit(12);
   const row = (u, dCol) => { const st = ST(u); return `<tr><td><b>${h(u.nama || u.nick || "—")}</b><div class="small muted">@${h(UN(u.email))}</div></td><td><span class="pill ${st.c}">${st.t}</span></td><td class="small">${tgl(u[dCol])}</td><td class="row" style="gap:4px">${AKSI(u)}</td></tr>`; };
@@ -252,6 +258,7 @@ async function dash() {
    <div class="stat"><div class="ic">${ic("check")}</div><div><div class="k">Akses penuh</div><div class="v">${penuh}</div><div class="s">${segera} berakhir dalam 7 hari</div></div></div>
    <div class="stat"><div class="ic">${ic("card")}</div><div><div class="k">Trial/akses habis</div><div class="v">${habis}</div></div></div>
   </div>
+  ${srcCard}
   <div class="card"><h2>Menunggu persetujuan</h2><p class="small muted" style="margin-top:0">Akun baru kini otomatis masuk sebagai <b>trial</b>. Daftar ini hanya berisi akun yang aksesnya dicabut. Pilih <b>Trial</b> untuk mengaktifkan lagi, atau <b>Akses penuh</b> (selamanya) setelah pembayaran kamu terima.</p><div class="tw"><table><tr><th>Peserta</th><th>Status</th><th>Daftar</th><th></th></tr>
   ${(baru || []).map((u) => row(u, "created_at")).join("") || `<tr><td colspan="4" class="muted">Tidak ada akun yang menunggu.</td></tr>`}</table></div>
   ${tunggu > 10 ? `<button class="btn line" style="margin-top:10px" onclick="window.A.goTunggu()">Lihat semua (${tunggu})</button>` : ""}</div>
@@ -278,7 +285,7 @@ async function users() {
    <select id="uf" style="width:auto">${[["all", "Semua"], ["menunggu", "Menunggu persetujuan"], ["trial", "Sedang trial"], ["aktif", "Akses penuh aktif"], ["belum", "Trial/akses habis"], ["admin", "Admin"]].map(([k, t]) => `<option value="${k}" ${UF === k ? "selected" : ""}>${t}</option>`).join("")}</select>
    <button class="btn" onclick="window.A.uSearch()">Cari</button></div>
   <div class="card tw" style="padding:4px"><table><tr><th>Pengguna</th><th>Daftar</th><th>Akses sampai</th><th>Peran</th><th>Aksi</th></tr>
-  ${(data || []).map((u) => { const st = ST(u), on = st.on; return `<tr><td><b>${h(u.nama || u.nick || "—")}</b><div class="small muted">@${h(UN(u.email))}</div></td><td class="small">${tgl(u.created_at)}</td>
+  ${(data || []).map((u) => { const st = ST(u), on = st.on; return `<tr><td><b>${h(u.nama || u.nick || "—")}</b><div class="small muted">@${h(UN(u.email))}</div></td><td class="small">${tgl(u.created_at)}${u.sumber_tahu ? `<div class="muted">via ${h(u.sumber_tahu)}</div>` : ""}</td>
    <td><span class="pill ${st.c}">${st.t}</span><div class="small muted">${tgl(u.akses_sampai)}</div></td><td>${u.is_admin ? '<span class="pill pri">Admin</span>' : '<span class="small muted">Pengguna</span>'}</td>
    <td class="row" style="gap:4px">${AKSI(u)}${u.is_trial && !u.is_admin ? `<button class="btn sm line" onclick="window.A.uAkses('${u.id}',7,true)">Trial +7 hari</button>` : ""}<button class="btn sm line" onclick="window.A.uTgl('${u.id}','${u.akses_sampai || ""}')">Atur tanggal</button>${on ? `<button class="btn sm danger" onclick="window.A.uCabut('${u.id}',${!!u.is_trial})">Cabut</button>` : ""}<button class="btn sm line" onclick="window.A.uSandi('${u.id}','${h(UN(u.email))}')">Reset sandi</button><button class="btn sm line" onclick="window.A.uAdmin('${u.id}',${!u.is_admin})">${u.is_admin ? "Cabut admin" : "Jadikan admin"}</button></td></tr>`; }).join("") || `<tr><td colspan="5" class="muted">Tidak ada pengguna.</td></tr>`}</table></div>
   <div class="row"><button class="btn line" ${UP ? "" : "disabled"} onclick="window.A.uPage(-1)">‹ Sebelumnya</button><span class="small muted">Halaman ${UP + 1}</span><button class="btn line" ${(UP + 1) * 50 < (count || 0) ? "" : "disabled"} onclick="window.A.uPage(1)">Berikutnya ›</button></div>`);
@@ -447,7 +454,7 @@ async function pengumuman() {
   const { data, error } = await sb.from("berita").select("*").order("tanggal", { ascending: false }).order("id", { ascending: false }); if (error) throw error;
   const n = { terbit: 0, draft: 0 }; (data || []).forEach((b) => n[b.status === "draft" ? "draft" : "terbit"]++);
   shell(`<div class="row" style="align-items:flex-end;margin-bottom:16px"><div class="grow"><h1>Pengumuman</h1><p class="muted" style="margin:0">Dikirim ke semua peserta. "Pop-up" muncul saat aplikasi dibuka dan tersimpan di kartu Info CPNS; "Info CPNS saja" hanya tampil di kartu Info CPNS di Beranda. ${n.terbit} terbit · ${n.draft} draf.</p></div><a class="btn" href="#pengumuman-baru">${ic("mega")}Buat Pengumuman</a></div>
-  <div class="card tw" style="padding:4px"><table><tr><th>Tanggal</th><th>Pengumuman</th><th>Lampiran</th><th>Status</th><th></th></tr>${(data || []).map((b) => `<tr><td class="small">${tgl(b.tanggal)}</td><td><span class="pill pri">${h(b.label)}</span> ${b.tampil === "info" ? '<span class="pill ok">Info CPNS saja</span>' : '<span class="pill warn">Pop-up</span>'} <b>${h(b.judul)}</b><div class="small muted">${h(b.ringkasan || "")}</div></td>
+  <div class="card tw" style="padding:4px"><table><tr><th>Tanggal</th><th>Pengumuman</th><th>Lampiran</th><th>Status</th><th></th></tr>${(data || []).map((b) => `<tr><td class="small">${tgl(b.tanggal)}</td><td><span class="pill pri">${h(b.label)}</span> ${b.tampil === "info" ? '<span class="pill ok">Info CPNS saja</span>' : '<span class="pill warn">Pop-up</span>'}${b.tampil_sampai ? (new Date(b.tampil_sampai) < new Date() ? ' <span class="pill bad">Sudah berakhir</span>' : ` <span class="pill">s.d. ${new Date(b.tampil_sampai).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</span>`) : ""} <b>${h(b.judul)}</b><div class="small muted">${h(b.ringkasan || "")}</div></td>
    <td class="small">${b.file_url ? `<a href="${h(b.file_url)}" target="_blank">${h(b.file_nama || "Lampiran")}</a><div class="muted">${b.file_kb ? kbStr(b.file_kb) : ""}</div>` : '<span class="muted">—</span>'}</td>
    <td>${b.status === "draft" ? '<span class="pill warn">Draf</span>' : '<span class="pill ok">Terbit</span>'}</td>
    <td class="row" style="gap:4px;flex-wrap:nowrap"><a class="btn sm line" href="#pengumuman-${b.id}">Edit</a>${b.status === "draft" ? `<button class="btn sm" onclick="window.A.pgPub(${b.id})">Terbitkan</button>` : ""}<button class="btn sm danger" onclick="window.A.bDel(${b.id})">Hapus</button></td></tr>`).join("") || `<tr><td colspan="5" class="muted" style="padding:24px">Belum ada pengumuman. Klik <b>Buat Pengumuman</b> untuk mulai.</td></tr>`}</table></div>`);
@@ -464,11 +471,11 @@ A.bDel = async (id) => {
 async function pgForm() {
   const id = SUB === "baru" ? null : +SUB;
   if (!PG || PG.id !== id) {
-    PG = { id, tampil: "popup", jenis: "resmi", kb: 2048, fmt: "PDF", file: null, blob: null, url: null, judul: "", ringkasan: "", tanggal: new Date().toISOString().slice(0, 10), sumber: "", tautan: "", old: null };
+    PG = { id, tampil: "popup", jenis: "resmi", kb: 2048, fmt: "PDF", file: null, blob: null, url: null, judul: "", ringkasan: "", tanggal: new Date().toISOString().slice(0, 10), sumber: "", tautan: "", sampai: "", old: null };
     if (id) {
       const { data: b, error } = await sb.from("berita").select("*").eq("id", id).single(); if (error) throw error;
       const j = JENIS.find((x) => x.k === b.jenis) || JENIS.find((x) => x.label === b.label) || JENIS[5];
-      Object.assign(PG, { tampil: b.tampil === "info" ? "info" : "popup", jenis: j.k, kb: j.kb, fmt: j.fmt[0], judul: b.judul, ringkasan: b.ringkasan || "", tanggal: b.tanggal, sumber: b.sumber || "", tautan: b.tautan || "", old: b });
+      Object.assign(PG, { tampil: b.tampil === "info" ? "info" : "popup", jenis: j.k, kb: j.kb, fmt: j.fmt[0], judul: b.judul, ringkasan: b.ringkasan || "", tanggal: b.tanggal, sumber: b.sumber || "", tautan: b.tautan || "", sampai: b.tampil_sampai ? new Date(new Date(b.tampil_sampai).getTime() - new Date().getTimezoneOffset() * 6e4).toISOString().slice(0, 16) : "", old: b });
     }
   }
   pgRender();
@@ -506,6 +513,8 @@ function pgRender() {
     <label class="f">Tampil sebagai</label><div class="row" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn sm ${PG.tampil === "popup" ? "" : "line"}" onclick="window.A.pgTampil('popup')">Pengumuman (pop-up + Info CPNS)</button><button type="button" class="btn sm ${PG.tampil === "info" ? "" : "line"}" onclick="window.A.pgTampil('info')">Info CPNS saja (tanpa pop-up)</button></div>
     <p class="small muted" style="margin:6px 0 0">Info CPNS saja: hanya muncul di kartu "Info CPNS 2026" di Beranda, tidak muncul sebagai pop-up.</p>
     <div class="grid3"><div><label class="f">Tanggal</label><input type="date" id="pg_d" value="${h(PG.tanggal)}"></div><div><label class="f">Sumber</label><input id="pg_s" value="${h(PG.sumber)}" placeholder="mis. BKN"></div><div><label class="f">Tautan (opsional)</label><input id="pg_u" value="${h(PG.tautan)}" placeholder="https://"></div></div>
+    <label class="f">Tampil sampai (opsional)</label><div class="row" style="gap:8px;flex-wrap:wrap;align-items:center"><input type="datetime-local" id="pg_e" value="${h(PG.sampai || "")}" style="max-width:240px"><button type="button" class="btn sm line" onclick="document.getElementById('pg_e').value=''">Tanpa batas</button></div>
+    <p class="small muted" style="margin:6px 0 0">Setelah waktu ini lewat, pengumuman otomatis berhenti tampil (pop-up dan kartu Info CPNS). Kosongkan kalau tampil terus.</p>
    </section>
   </div>
   <aside>
@@ -515,8 +524,8 @@ function pgRender() {
   </aside></div>`, false,
   `<div class="foot"><a class="btn line cancel" href="#pengumuman">Batal</a><span class="grow"></span><button class="btn line" id="pg_draft" onclick="window.A.pgSave('draft')">${ic("save")}<span>Simpan<span class="hm"> sebagai Draf</span></span></button><button class="btn" id="pg_pub" onclick="window.A.pgSave('terbit')">${ic("send")}Publikasikan</button></div>`);
   // pasang event
-  const keep = () => { PG.judul = $("#pg_j").value; PG.ringkasan = $("#pg_r").value; PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value; PG.tautan = $("#pg_u").value; };
-  ["#pg_j", "#pg_r", "#pg_d", "#pg_s", "#pg_u"].forEach((q) => $(q).addEventListener("input", () => { keep(); $("#pg_prev").innerHTML = pgPrev(); }));
+  const keep = () => { PG.judul = $("#pg_j").value; PG.ringkasan = $("#pg_r").value; PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value; PG.tautan = $("#pg_u").value; PG.sampai = $("#pg_e").value; };
+  ["#pg_j", "#pg_r", "#pg_d", "#pg_s", "#pg_u", "#pg_e"].forEach((q) => $(q).addEventListener("input", () => { keep(); $("#pg_prev").innerHTML = pgPrev(); }));
   $("#pg_kb").onchange = (e) => { keep(); PG.kb = Math.max(50, +e.target.value || j.kb); pgPrep(); };
   $("#pg_fmt").onchange = (e) => { keep(); PG.fmt = e.target.value; pgPrep(); };
   $("#pg_file").onchange = (e) => { keep(); e.target.files[0] && pgFile(e.target.files[0]); };
@@ -525,9 +534,9 @@ function pgRender() {
   d.ondragleave = () => d.classList.remove("over");
   d.ondrop = (e) => { e.preventDefault(); d.classList.remove("over"); keep(); e.dataTransfer.files[0] && pgFile(e.dataTransfer.files[0]); };
 }
-A.pgJenis = (k) => { PG.judul = $("#pg_j").value; PG.ringkasan = $("#pg_r").value; PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value; PG.tautan = $("#pg_u").value;
+A.pgJenis = (k) => { PG.judul = $("#pg_j").value; PG.ringkasan = $("#pg_r").value; PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value; PG.tautan = $("#pg_u").value; PG.sampai = $("#pg_e").value;
   const j = JENIS.find((x) => x.k === k); PG.jenis = k; PG.kb = j.kb; PG.fmt = j.fmt[0]; pgPrep(); };
-A.pgTampil = (t) => { PG.judul = $("#pg_j").value; PG.ringkasan = $("#pg_r").value; PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value; PG.tautan = $("#pg_u").value; PG.tampil = t; pgRender(); };
+A.pgTampil = (t) => { PG.judul = $("#pg_j").value; PG.ringkasan = $("#pg_r").value; PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value; PG.tautan = $("#pg_u").value; PG.sampai = $("#pg_e").value; PG.tampil = t; pgRender(); };
 A.pgClear = () => { if (PG.url) URL.revokeObjectURL(PG.url); PG.file = PG.blob = PG.url = null; PG.err = ""; pgRender(); };
 function pgFile(file) { if (PG.url) URL.revokeObjectURL(PG.url); PG.file = file; PG.blob = null; PG.url = URL.createObjectURL(file); pgPrep(); }
 // cek format & ukuran; gambar dikonversi/dikompres bila format hasil JPG
@@ -558,13 +567,13 @@ async function toJpg(file, maxKb) {
   throw new Error("terlalu besar");
 }
 A.pgSave = async (status) => {
-  PG.judul = $("#pg_j").value.trim(); PG.ringkasan = $("#pg_r").value.trim(); PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value.trim(); PG.tautan = $("#pg_u").value.trim();
+  PG.judul = $("#pg_j").value.trim(); PG.ringkasan = $("#pg_r").value.trim(); PG.tanggal = $("#pg_d").value; PG.sumber = $("#pg_s").value.trim(); PG.tautan = $("#pg_u").value.trim(); PG.sampai = $("#pg_e").value;
   if (!PG.judul) { flash("Judul wajib diisi.", false); scrollTo(0, 0); return; }
   const f = PG.blob || PG.file;
   if (f && (PG.err || f.size / 1024 > PG.kb)) { flash(PG.err || `File melebihi batas ${kbStr(PG.kb)}.`, false); scrollTo(0, 0); return; }
   const j = JENIS.find((x) => x.k === PG.jenis);
   $("#pg_pub").disabled = $("#pg_draft").disabled = true; $(status === "draft" ? "#pg_draft" : "#pg_pub").lastChild.textContent = f ? "Mengunggah…" : "Menyimpan…";
-  const row = { tanggal: PG.tanggal, label: j.label, jenis: j.k, judul: PG.judul, ringkasan: PG.ringkasan, tampil: PG.tampil, sumber: PG.sumber || "Jalan NIP Academy", tautan: /^https?:\/\//.test(PG.tautan) ? PG.tautan : null, status };
+  const row = { tanggal: PG.tanggal, label: j.label, jenis: j.k, judul: PG.judul, ringkasan: PG.ringkasan, tampil: PG.tampil, sumber: PG.sumber || "Jalan NIP Academy", tautan: /^https?:\/\//.test(PG.tautan) ? PG.tautan : null, tampil_sampai: PG.sampai ? new Date(PG.sampai).toISOString() : null, status };
   if (f) {
     const safe = f.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/^-+|-+$/g, "");
     const path = `${new Date().toISOString().slice(0, 7)}/${Date.now()}-${safe}`;

@@ -5088,7 +5088,7 @@ async function muatBerita(popup) {
   try {
     const { data, error } = await jnip.sb.from('berita').select('*').eq('status', 'terbit').order('created_at', { ascending: false }).limit(30);
     if (error) return;
-    CLOUD.berita = (data || []).map((r) => ({ id: r.id, t: r.judul, b: r.ringkasan || '', d: fmtTgl(r.tanggal || r.created_at), src: r.sumber || 'Admin Jalan NIP', u: r.tautan || r.file_url || '', tampil: r.tampil || 'popup', img: /\.(jpe?g|png|webp)$/i.test(r.file_nama || r.file_url || '') ? r.file_url : '', tag: r.label || r.jenis || 'Pengumuman', ts: Date.parse(r.created_at) || 0 }));
+    CLOUD.berita = (data || []).filter((r) => !r.tampil_sampai || Date.parse(r.tampil_sampai) > Date.now()).map((r) => ({ id: r.id, t: r.judul, b: r.ringkasan || '', d: fmtTgl(r.tanggal || r.created_at), src: r.sumber || 'Admin Jalan NIP', u: r.tautan || r.file_url || '', tampil: r.tampil || 'popup', img: /\.(jpe?g|png|webp)$/i.test(r.file_nama || r.file_url || '') ? r.file_url : '', tag: r.label || r.jenis || 'Pengumuman', ts: Date.parse(r.created_at) || 0, sampai: r.tampil_sampai ? Date.parse(r.tampil_sampai) : 0 }));
     cloudChanged('berita');
     annDraw();
   } catch (e) {}
@@ -5132,7 +5132,8 @@ function trialDraw() {
 }
 window.trialTutup = () => { S.trialTutup = new Date().toISOString().slice(0, 10); save(); trialDraw(); };
 function annSibuk() { try { return !!(EX || LS || FS || SKQ); } catch (e) { return false; } }
-const annList = () => CLOUD.berita.filter((b) => b.tampil !== 'info');
+const annList = () => CLOUD.berita.filter((b) => b.tampil !== 'info' && (!b.sampai || b.sampai > Date.now()));
+setInterval(() => { try { if (CLOUD.berita.some((b) => b.sampai && b.sampai <= Date.now())) { CLOUD.berita = CLOUD.berita.filter((b) => !b.sampai || b.sampai > Date.now()); cloudChanged('berita'); annDraw(); } } catch (e) {} }, 60000);
 function annDraw() {
   const top = annList()[0];
   const sibuk = annSibuk();
