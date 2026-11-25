@@ -584,6 +584,23 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .fact:hover{border-color:#9cc1f2}.fact.on{background:#e6f0fd;border-color:#9cc1f2;color:#1757b0}.fact.fav.on{background:#fde8ec;border-color:#f3b6c2;color:#d6336c}.fact.fav.on .ic{fill:currentColor}
 [data-theme=dark] .fact.on{background:#1c2f4d;color:#cfe2ff}[data-theme=dark] .fact.fav.on{background:#4a1d2a;color:#ff9ab8}
 .fp.new{background:#e5484d;color:#fff}.fp.upd{background:#fde9c4;color:#c76a00}
+.fp.off{background:#eef0f4;color:#5b6475}[data-theme=dark] .fp.off{background:#2a3140;color:#b9c2d3}
+.fcard .mt .thpc{color:#17824a}.fcard .mt .thpc b{color:#17824a}[data-theme=dark] .fcard .mt .thpc,[data-theme=dark] .fcard .mt .thpc b{color:#7be0a4}
+.thpbox{background:linear-gradient(135deg,#e9f8ef,#f4fbf6);border:1px solid #c9ecd6;border-radius:16px;padding:14px 16px;margin:4px 0 16px}
+[data-theme=dark] .thpbox{background:#15301f;border-color:#24573a}
+.thpbox .ti{width:42px;height:42px;border-radius:12px;background:#22a05b;color:#fff;display:grid;place-items:center;flex:none}
+.thpbox .big{font-size:22px;font-weight:800;color:#17824a;line-height:1.2}.thpbox .big small{font-size:13px;font-weight:600;color:var(--muted)}
+[data-theme=dark] .thpbox .big{color:#7be0a4}
+.thpbox .pns{text-align:right}.thpbox .pns span{display:block;font-size:12px;color:var(--muted)}.thpbox .pns b{font-size:15px}
+.thpbox details{margin-top:10px}.thpbox summary{cursor:pointer;font-size:13.5px;font-weight:700;color:#17824a}
+.thpt{width:100%;border-collapse:collapse;margin-top:8px;font-size:13.5px}.thpt th,.thpt td{padding:6px 4px;border-bottom:1px solid var(--line,#e2e8f1);text-align:right}.thpt th:first-child,.thpt tbody th{text-align:left;font-weight:500}
+.thpt thead th{font-size:12px;color:var(--muted);font-weight:700}.thpt tr.tot th,.thpt tr.tot td{font-weight:800;border-bottom:0}
+@media(max-width:600px){.thpbox{padding:12px}.thpbox .pns{text-align:left;width:100%;margin-top:6px}.thpbox .row{flex-wrap:wrap}.thpt{table-layout:fixed;font-size:12px}.thpt th:first-child,.thpt tbody th{width:36%}.thpt td{overflow-wrap:anywhere}}
+.fresmi{background:var(--card,#fff);border:1px solid var(--line,#e2e8f1);border-radius:16px;padding:12px 16px;margin:0 0 16px}
+.fresmi summary{cursor:pointer;font-weight:700;display:flex;gap:8px;align-items:center}
+.fr-g{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:12px}.fr-g h4{margin:0 0 8px;font-size:14px;display:flex;justify-content:space-between;gap:8px}.fr-g h4 span{color:#1757b0}
+.fr-r{display:grid;grid-template-columns:minmax(0,1.4fr) 1fr auto;gap:8px;align-items:center;font-size:13px;margin:5px 0}.fr-r i{height:8px;border-radius:9px;background:var(--bg,#f1f4f9);overflow:hidden}.fr-r i b{display:block;height:100%;background:#F2B705;border-radius:9px}.fr-r em{font-style:normal;font-weight:700;min-width:52px;text-align:right}
+@media(max-width:700px){.fr-g{grid-template-columns:1fr}}
 .fcard .lk{display:inline-flex;align-items:center;gap:5px}
 .fupd{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:linear-gradient(135deg,#1e6fd9,#1757b0);color:#fff;border-radius:18px;padding:14px 18px;margin-bottom:16px}
 .fupd .ic{flex:none}.fupd .tx{flex:1;min-width:200px;font-size:14.5px}.fupd b{font-size:16px}
@@ -819,55 +836,100 @@ const L='ABCDE';
 const Q=[
 ];
 
-/* Katalog formasi — nama jabatan & instansi mengikuti pola CPNS sebelumnya; KUOTA & PESERTA = ESTIMASI sampai rincian resmi 2026 terbit di SSCASN */
+/* Katalog formasi CPNS 2026.
+   Resmi (Panselnas, 25 Nov 2026): total 154.052 formasi prioritas nasional, pendaftaran mulai 27 Nov 2026 di SSCASN.
+   Kuota per jabatan yang sudah diumumkan ditandai res:1 (mis. Kementerian Kehutanan). Kuota lain & PESERTA = ESTIMASI.
+   PENTING: urutan baris jangan diubah (id 'f'+indeks dipakai favorit & simulasi). Baris baru selalu ditambah di akhir. */
 const PENDING='Menunggu rincian resmi';
+const RESMI={tgl:'25 November 2026',daftar:'27 November 2026',total:154052,
+ grup:[['Program Hasil Terbaik Cepat & prioritas Presiden',118208,[['Kehutanan',70000],['Dosen & tenaga kependidikan tinggi',26614],['Tenaga kesehatan',13362],['Guru & tenaga kependidikan',3621],['Audit internal pemerintah',2007],['Pelayanan pemenuhan gizi',1618],['Pengawasan koperasi',986]]],
+  ['Sektor prioritas nasional lainnya',35844,[['Hukum, HAM, peradilan & pemasyarakatan',19016],['Statistik & data pembangunan',7285],['Swasembada pangan & ekonomi biru',4496],['Penerimaan & pengawasan keuangan',2867],['Pembangunan generasi unggul',1395],['Keamanan siber & diplomasi',785]]]]};
 const FRAW=[
-// [instansi, jabatan, pendidikan, jenjang, kuota, peserta, lvl, prioritas]
-[PENDING,'Guru Sekolah Terintegrasi','S1 Pendidikan (sesuai mapel)','S1',40,2500,2,1],
-[PENDING,'Guru & Tendik Sekolah Unggul Garuda','S1 Pendidikan MIPA/Bahasa','S1',25,3000,3,1],
-[PENDING,'Polisi Hutan','SMA/SMK/D3 Kehutanan','SMA',60,3500,1,1],
-[PENDING,'Manggala Agni (Pengendali Kebakaran Hutan)','SMA/SMK','SMA',80,5000,1,1],
-['Kementerian Agama','Guru Pendidikan Agama Islam Ahli Pertama','S1 Pendidikan Agama Islam','S1',30,1800,2],
-['Kementerian Agama','Penghulu Ahli Pertama','S1 Syariah/Hukum Islam','S1',8,900,2],
-['Kementerian Agama','Penyuluh Agama Islam Ahli Pertama','S1 Agama Islam','S1',10,1200,2],
-['Kementerian Agama','Pranata Komputer Ahli Pertama','S1 Informatika/Sistem Informasi','S1',5,700,2],
-['Kementerian Kesehatan','Dokter Ahli Pertama','Profesi Dokter','PROF',20,350,1],
-['Kementerian Kesehatan','Perawat Ahli Pertama','Profesi Ners','PROF',25,2200,2],
-['Kementerian Kesehatan','Apoteker Ahli Pertama','Profesi Apoteker','PROF',8,300,1],
-['Kementerian Kesehatan','Bidan Terampil','D3 Kebidanan','D3',15,1400,1],
-['Kementerian Kesehatan','Pranata Laboratorium Kesehatan Terampil','D3 Teknologi Laboratorium Medis','D3',6,500,1],
-['Kejaksaan RI','Jaksa Ahli Pertama','S1 Hukum','S1',50,9000,3],
-['Kejaksaan RI','Pengelola Penanganan Perkara','SMA/D3','SMA',30,6000,2],
-['Kementerian Pekerjaan Umum','Teknik Jalan dan Jembatan Ahli Pertama','S1 Teknik Sipil','S1',20,1500,2],
-['Kementerian Pekerjaan Umum','Teknik Pengairan Ahli Pertama','S1 Teknik Sipil/Pengairan','S1',15,900,1],
-['Kementerian Pekerjaan Umum','Teknik Tata Bangunan dan Perumahan Ahli Pertama','S1 Arsitektur/Teknik Sipil','S1',8,600,1],
-['Kementerian Pertahanan','Pranata Komputer Ahli Pertama','S1 Informatika/Ilmu Komputer','S1',15,1800,2],
-['Kementerian Pertahanan','Analis SDM Aparatur Ahli Pertama','S1 Psikologi/Manajemen SDM','S1',10,2500,3],
-['Kementerian Imigrasi dan Pemasyarakatan','Penjaga Tahanan','SMA/SMK','SMA',150,12000,2],
-['Kementerian Imigrasi dan Pemasyarakatan','Pemeriksa Keimigrasian Ahli Pertama','S1 Hukum','S1',20,3500,3],
-['Pemprov DKI Jakarta','Analis Kebijakan Ahli Pertama','S1 Administrasi Publik/Ilmu Pemerintahan','S1',10,2800,3],
-['Pemprov DKI Jakarta','Pengawas Lingkungan Hidup Ahli Pertama','D4/S1 Teknik Lingkungan','S1',6,450,1],
-['Kementerian Komunikasi dan Digital','Pranata Komputer Ahli Pertama','S1 Informatika/Sistem Informasi','S1',25,2600,2],
-['Kementerian Komunikasi dan Digital','Pranata Hubungan Masyarakat Ahli Pertama','S1 Ilmu Komunikasi','S1',10,2400,3],
-['Mahkamah Agung','Analis Perkara Peradilan (Calon Hakim)','S1 Hukum','S1',40,7000,3],
-['Mahkamah Agung','Penata Layanan Operasional (Klerek)','S1 Hukum','S1',30,5000,2],
-['Kementerian Lingkungan Hidup','Pengendali Dampak Lingkungan Ahli Pertama','S1 Teknik Lingkungan','S1',10,1100,2],
-['Kementerian Lingkungan Hidup','Pengawas Lingkungan Hidup Ahli Pertama','D4/S1 Teknik & Manajemen Lingkungan','S1',6,520,1],
-['Badan Pusat Statistik','Statistisi Ahli Pertama','S1 Statistika/Matematika','S1',30,2500,2],
-['Badan Pusat Statistik','Statistisi Terampil','D3 Statistika','D3',15,900,1],
-['Kementerian Keuangan','Analis Anggaran Ahli Pertama','S1 Akuntansi/Ekonomi','S1',15,3200,3],
-['Badan Kepegawaian Negara','Analis SDM Aparatur Ahli Pertama','S1 Manajemen/Psikologi','S1',10,2000,3],
-['Pemerintah Kabupaten/Kota','Guru Kelas Ahli Pertama','S1 PGSD','S1',40,1500,1],
-['Pemerintah Kabupaten/Kota','Penyuluh Pertanian Terampil','D3 Pertanian','D3',20,350,0],
-['Pemerintah Kabupaten/Kota','Perawat Terampil','D3 Keperawatan','D3',15,1100,1],
-['Pemerintah Kabupaten/Kota','Penata Layanan Operasional','S1 semua jurusan','S1',10,3000,2],
-['Pemerintah Kabupaten/Kota','Pengelola Layanan Operasional','D3 semua jurusan','D3',8,1500,1],
-['Pemerintah Kabupaten/Kota','Operator Layanan Operasional','SMA/SMK','SMA',5,2600,1],
-['Pemerintah Kabupaten (daerah 3T)','Guru Kelas Ahli Pertama','S1 PGSD','S1',30,250,0],
-['Pemerintah Kabupaten (daerah 3T)','Bidan Terampil','D3 Kebidanan','D3',12,180,0]
+// [instansi, jabatan, pendidikan, jenjang, kuota, peserta, lvl, prioritas, ekstra{res:kuota resmi, bid:bidang, off:pola lama/tidak dibuka 2026, kls:[kelas jabatan min,max], tk:faktor tukin}]
+[PENDING,'Guru Sekolah Terintegrasi','S1 Pendidikan (sesuai mapel)','S1',40,2500,2,1,{bid:'Guru & tenaga kependidikan'}],
+[PENDING,'Guru & Tendik Sekolah Unggul Garuda','S1 Pendidikan MIPA/Bahasa','S1',25,3000,3,1,{bid:'Guru & tenaga kependidikan'}],
+['Kementerian Kehutanan','Polisi Kehutanan','SMA/SMK/D3/S1 (sesuai jenjang jabatan)','SMA',60000,420000,1,1,{res:1,bid:'Kehutanan',kls:[5,7]}],
+['Kementerian Kehutanan','Manggala Agni (Pengendali Kebakaran Hutan)','SMA/SMK','SMA',5465,90000,1,1,{res:1,bid:'Kehutanan',kls:[5,6]}],
+['Kementerian Agama','Guru Pendidikan Agama Islam Ahli Pertama','S1 Pendidikan Agama Islam','S1',30,1800,2,0,{off:1}],
+['Kementerian Agama','Penghulu Ahli Pertama','S1 Syariah/Hukum Islam','S1',8,900,2,0,{off:1}],
+['Kementerian Agama','Penyuluh Agama Islam Ahli Pertama','S1 Agama Islam','S1',10,1200,2,0,{off:1}],
+['Kementerian Agama','Pranata Komputer Ahli Pertama','S1 Informatika/Sistem Informasi','S1',5,700,2,0,{off:1}],
+['Kementerian Kesehatan','Dokter Ahli Pertama','Profesi Dokter','PROF',1200,9000,1,1,{bid:'Tenaga kesehatan',kls:[9,9]}],
+['Kementerian Kesehatan','Perawat Ahli Pertama','Profesi Ners','PROF',3500,60000,2,1,{bid:'Tenaga kesehatan'}],
+['Kementerian Kesehatan','Apoteker Ahli Pertama','Profesi Apoteker','PROF',600,7000,1,1,{bid:'Tenaga kesehatan'}],
+['Kementerian Kesehatan','Bidan Terampil','D3 Kebidanan','D3',1500,30000,1,1,{bid:'Tenaga kesehatan'}],
+['Kementerian Kesehatan','Pranata Laboratorium Kesehatan Terampil','D3 Teknologi Laboratorium Medis','D3',800,12000,1,1,{bid:'Tenaga kesehatan'}],
+['Kejaksaan RI','Jaksa Ahli Pertama','S1 Hukum','S1',1500,90000,3,0,{bid:'Hukum, HAM, peradilan & pemasyarakatan'}],
+['Kejaksaan RI','Pengelola Penanganan Perkara','SMA/D3','SMA',800,60000,2,0,{bid:'Hukum, HAM, peradilan & pemasyarakatan'}],
+['Kementerian Pekerjaan Umum','Teknik Jalan dan Jembatan Ahli Pertama','S1 Teknik Sipil','S1',20,1500,2,0,{off:1}],
+['Kementerian Pekerjaan Umum','Teknik Pengairan Ahli Pertama','S1 Teknik Sipil/Pengairan','S1',15,900,1,0,{off:1}],
+['Kementerian Pekerjaan Umum','Teknik Tata Bangunan dan Perumahan Ahli Pertama','S1 Arsitektur/Teknik Sipil','S1',8,600,1,0,{off:1}],
+['Kementerian Pertahanan','Pranata Komputer Ahli Pertama','S1 Informatika/Ilmu Komputer','S1',15,1800,2,0,{off:1,tk:.9}],
+['Kementerian Pertahanan','Analis SDM Aparatur Ahli Pertama','S1 Psikologi/Manajemen SDM','S1',10,2500,3,0,{off:1,tk:.9}],
+['Kementerian Imigrasi dan Pemasyarakatan','Penjaga Tahanan','SMA/SMK','SMA',9000,260000,2,1,{bid:'Hukum, HAM, peradilan & pemasyarakatan',kls:[5,6]}],
+['Kementerian Imigrasi dan Pemasyarakatan','Pemeriksa Keimigrasian Ahli Pertama','S1 Hukum','S1',800,40000,3,1,{bid:'Hukum, HAM, peradilan & pemasyarakatan'}],
+['Pemprov DKI Jakarta','Analis Kebijakan Ahli Pertama','S1 Administrasi Publik/Ilmu Pemerintahan','S1',10,2800,3,0,{off:1,pemda:1}],
+['Pemprov DKI Jakarta','Pengawas Lingkungan Hidup Ahli Pertama','D4/S1 Teknik Lingkungan','S1',6,450,1,0,{off:1,pemda:1}],
+['Kementerian Komunikasi dan Digital','Pranata Komputer Ahli Pertama','S1 Informatika/Sistem Informasi','S1',25,2600,2,0,{off:1}],
+['Kementerian Komunikasi dan Digital','Pranata Hubungan Masyarakat Ahli Pertama','S1 Ilmu Komunikasi','S1',10,2400,3,0,{off:1}],
+['Mahkamah Agung','Analis Perkara Peradilan (Calon Hakim)','S1 Hukum','S1',1500,60000,3,1,{bid:'Hukum, HAM, peradilan & pemasyarakatan'}],
+['Mahkamah Agung','Penata Layanan Operasional (Klerek)','S1 Hukum','S1',600,40000,2,0,{bid:'Hukum, HAM, peradilan & pemasyarakatan',kls:[7,7]}],
+['Kementerian Lingkungan Hidup','Pengendali Dampak Lingkungan Ahli Pertama','S1 Teknik Lingkungan','S1',10,1100,2,0,{off:1}],
+['Kementerian Lingkungan Hidup','Pengawas Lingkungan Hidup Ahli Pertama','D4/S1 Teknik & Manajemen Lingkungan','S1',6,520,1,0,{off:1}],
+['Badan Pusat Statistik','Statistisi Ahli Pertama','S1 Statistika/Matematika','S1',4000,90000,2,1,{bid:'Statistik & data pembangunan'}],
+['Badan Pusat Statistik','Statistisi Terampil','D3 Statistika','D3',2500,40000,1,1,{bid:'Statistik & data pembangunan'}],
+['Kementerian Keuangan','Analis Anggaran Ahli Pertama','S1 Akuntansi/Ekonomi','S1',500,45000,3,0,{bid:'Penerimaan & pengawasan keuangan',kemenkeu:1}],
+['Badan Kepegawaian Negara','Analis SDM Aparatur Ahli Pertama','S1 Manajemen/Psikologi','S1',10,2000,3,0,{off:1}],
+['Pemerintah Kabupaten/Kota','Guru Kelas Ahli Pertama','S1 PGSD','S1',40,1500,1,0,{off:1,pemda:1}],
+['Pemerintah Kabupaten/Kota','Penyuluh Pertanian Terampil','D3 Pertanian','D3',20,350,0,0,{off:1,pemda:1}],
+['Pemerintah Kabupaten/Kota','Perawat Terampil','D3 Keperawatan','D3',15,1100,1,0,{off:1,pemda:1}],
+['Pemerintah Kabupaten/Kota','Penata Layanan Operasional','S1 semua jurusan','S1',10,3000,2,0,{off:1,pemda:1}],
+['Pemerintah Kabupaten/Kota','Pengelola Layanan Operasional','D3 semua jurusan','D3',8,1500,1,0,{off:1,pemda:1}],
+['Pemerintah Kabupaten/Kota','Operator Layanan Operasional','SMA/SMK','SMA',5,2600,1,0,{off:1,pemda:1}],
+['Pemerintah Kabupaten (daerah 3T)','Guru Kelas Ahli Pertama','S1 PGSD','S1',30,250,0,0,{off:1,pemda:1}],
+['Pemerintah Kabupaten (daerah 3T)','Bidan Terampil','D3 Kebidanan','D3',12,180,0,0,{off:1,pemda:1}],
+// ---- tambahan 25 Nov 2026 (rincian resmi Kemenhut + perwakilan bidang lain) ----
+['Kementerian Kehutanan','Penyuluh Kehutanan','D3/S1 Kehutanan/Pertanian','S1',1147,30000,1,1,{res:1,bid:'Kehutanan'}],
+['Kementerian Kehutanan','Pengendali Ekosistem Hutan','D3/S1 Kehutanan/Biologi/Lingkungan','S1',1136,28000,1,1,{res:1,bid:'Kehutanan'}],
+['Kementerian Kehutanan','Pelatih dan Perawat Satwa Liar','SMA/SMK/D3','SMA',1000,30000,1,1,{res:1,bid:'Kehutanan',kls:[5,7]}],
+['Kementerian Kehutanan','Jabatan nonbinaan kehutanan (administrasi, keuangan, TI, dll.)','D3/S1 berbagai jurusan','S1',1252,60000,2,1,{res:1,bid:'Kehutanan',kls:[7,8]}],
+['Kementerian Pendidikan Tinggi, Sains, dan Teknologi','Dosen Asisten Ahli','S2 sesuai bidang ilmu','S2',22000,160000,1,1,{bid:'Dosen & tenaga kependidikan tinggi',kls:[9,9]}],
+['Kementerian Pendidikan Tinggi, Sains, dan Teknologi','Pranata Laboratorium Pendidikan Ahli Pertama','S1 sesuai laboratorium','S1',2500,40000,2,1,{bid:'Dosen & tenaga kependidikan tinggi'}],
+['Kementerian Kesehatan','Nutrisionis Ahli Pertama','S1 Gizi','S1',700,12000,1,1,{bid:'Tenaga kesehatan'}],
+['Kementerian Kesehatan','Perawat Terampil','D3 Keperawatan','D3',2500,45000,1,1,{bid:'Tenaga kesehatan'}],
+['Badan Pengawasan Keuangan dan Pembangunan','Auditor Ahli Pertama','S1 Akuntansi','S1',1500,45000,2,1,{bid:'Audit internal pemerintah'}],
+['Badan Gizi Nasional','Nutrisionis Ahli Pertama','S1 Gizi/Kesehatan Masyarakat','S1',1000,22000,1,1,{bid:'Pelayanan pemenuhan gizi'}],
+['Badan Gizi Nasional','Nutrisionis Terampil','D3 Gizi','D3',400,9000,1,1,{bid:'Pelayanan pemenuhan gizi'}],
+['Kementerian Koperasi','Pengawas Koperasi Ahli Pertama','S1 Ekonomi/Akuntansi/Hukum','S1',800,30000,2,1,{bid:'Pengawasan koperasi'}],
+['Kementerian Imigrasi dan Pemasyarakatan','Pembimbing Kemasyarakatan Ahli Pertama','S1 Psikologi/Hukum/Ilmu Sosial','S1',1500,45000,2,1,{bid:'Hukum, HAM, peradilan & pemasyarakatan'}],
+['Kementerian Pertanian','Penyuluh Pertanian Ahli Pertama','S1 Pertanian/Peternakan','S1',1500,25000,1,1,{bid:'Swasembada pangan & ekonomi biru'}],
+['Kementerian Kelautan dan Perikanan','Pengawas Perikanan Ahli Pertama','S1 Perikanan/Kelautan','S1',800,15000,1,1,{bid:'Swasembada pangan & ekonomi biru'}],
+['Kementerian Keuangan','Jabatan pelaksana/terampil (rincian di SSCASN)','SMA/SMK','SMA',700,80000,3,0,{bid:'Penerimaan & pengawasan keuangan',kemenkeu:1,kls:[5,6]}],
+['Kementerian Keuangan','Jabatan terampil (rincian di SSCASN)','D3 Akuntansi/Perpajakan/Kepabeanan','D3',700,50000,3,0,{bid:'Penerimaan & pengawasan keuangan',kemenkeu:1}],
+['BKKBN (Kemendukbangga)','Penyuluh Keluarga Berencana Ahli Pertama','S1 semua jurusan','S1',800,40000,2,1,{bid:'Pembangunan generasi unggul'}],
+['Badan Siber dan Sandi Negara','Sandiman Ahli Pertama','S1 Informatika/Teknik Komputer/Matematika','S1',250,12000,2,1,{bid:'Keamanan siber & diplomasi'}],
+['Kementerian Luar Negeri','Diplomat Ahli Pertama','S1 Hubungan Internasional/Hukum/Ekonomi (semua jurusan sesuai SSCASN)','S1',150,15000,3,1,{bid:'Keamanan siber & diplomasi'}]
 ];
-const FORMASI=FRAW.map((r,i)=>({id:'f'+i,inst:r[0],jab:r[1],pend:r[2],jj:r[3],kuota:r[4],peserta:r[5],lvl:0,pri:!!r[7],est:true}));
-const JJ=[['all','Semua'],['SMA','SMA/SMK'],['D3','D3'],['S1','D4/S1'],['PROF','Profesi']];
+const FORMASI=FRAW.map((r,i)=>{const x=r[8]||{};return {id:'f'+i,inst:r[0],jab:r[1],pend:r[2],jj:r[3],kuota:r[4],peserta:r[5],lvl:0,pri:!!r[7],est:true,res:!!x.res,bid:x.bid||'',off:!!x.off,pemda:!!x.pemda,kls:x.kls||null,tk:x.tk||1,kemenkeu:!!x.kemenkeu}});
+
+/* ---- Estimasi take home pay (THP) per bulan saat masih CPNS ----
+   Gaji pokok PP 5/2024 (masa kerja 0, masih berlaku 2026); CPNS menerima 80% gaji pokok.
+   Tukin mengikuti tabel kelas jabatan nasional (mis. Perpres 34/2024 KLHK / Kemenhut), CPNS 80%; Kemenkeu & Kemhan disesuaikan.
+   Potongan: iuran pensiun & THT 8% gaji pokok, BPJS Kesehatan 1%. PPh 21 atas gaji & tukin ditanggung negara.
+   Asumsi lajang, tanpa tunjangan keluarga/kemahalan daerah/uang makan. */
+const GOL={SMA:['II/a',2184000,180000],D3:['II/c',2485900,180000],S1:['III/a',2785700,185000],PROF:['III/b',2903600,185000],S2:['III/b',2903600,185000]};
+const TK_NAS={5:3134250,6:3510400,7:3915950,8:4595150,9:5079200,10:5979200};
+const TK_KEU={5:3370000,6:3610000,7:3860000,8:3980000,9:4170000,10:4380000};
+const KLS_DEF={SMA:[5,6],D3:[6,7],S1:[8,8],PROF:[8,9],S2:[9,9]};
+const PANGAN=72000;
+function thpNoTukin(f){return /guru/i.test(f.jab)}
+function thpOf(f,full){const g=GOL[f.jj]||GOL.S1;const k=f.kls||KLS_DEF[f.jj]||[8,8];const T=f.kemenkeu||/keuangan/i.test(f.inst)&&!f.inst.match(/pengawasan/i)?TK_KEU:TK_NAS;
+  const fac=full?1:.8;const tkF=(f.tk||(/pertahanan/i.test(f.inst)?.9:1));const gp=g[1]*fac;const nt=thpNoTukin(f);
+  const one=kl=>{const tk=nt?0:(T[kl]||T[8])*tkF*fac;const kotor=gp+g[2]+PANGAN+tk;const pot=g[1]*.08*fac+Math.min(12e6,gp+g[2]+tk)*.01;return {gp,tu:g[2],pg:PANGAN,tk,pot,net:kotor-pot,kl}};
+  const a=one(k[0]),b=one(k[1]);return {gol:g[0],lo:a,hi:b,noTk:nt}}
+const rpJt=n=>'Rp'+(n/1e6).toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+' jt';
+function thpTxt(f){const t=thpOf(f);const a=Math.round(t.lo.net/1e5)*1e5,b=Math.round(t.hi.net/1e5)*1e5;return a===b?rpJt(a):rpJt(a)+'–'+rpJt(b).replace('Rp','')}
+const JJ=[['all','Semua'],['SMA','SMA/SMK'],['D3','D3'],['S1','D4/S1'],['PROF','Profesi'],['S2','S2']];
 const LVL=['Rendah','Sedang','Tinggi','Sangat tinggi'];
 const CUR_Y=2026;
 function _nf(x){return String(x||'').toLowerCase().replace(/\(.*?\)/g,' ').replace(/[^a-z0-9]+/g,' ').trim()}
@@ -3097,6 +3159,7 @@ function doneSub(s){return Object.keys(S.seen||{}).filter(i=>Q[i]&&Q[i].sub===s)
 const IC={
  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>',
+ wallet:'<path d="M19 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"/><path d="M21 9h-5a3 3 0 0 0 0 6h5z"/><circle cx="16" cy="12" r=".6"/>',
  img:'<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
  phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>',
@@ -4432,7 +4495,7 @@ function filtered(){
   const q=F.q.trim().toLowerCase();
   const L=allF().filter(f=>{const jn=(f.jenis||'CPNS')==='PPPK'?'pppk':'cpns';return F.jen[jn]&&(!F.jjs.length||F.jjs.includes(f.jj))&&(F.inst==='all'||f.inst===F.inst)&&(F.lok==='all'||fLok(f)===F.lok)&&(!F.fav||isFav(f.id))&&(!F.myj||!S.myJur||(jurMatch(f,S.myJur)||{}).ok)&&(!F.pri||f.pri)&&(!q||(f.inst+' '+f.jab+' '+f.pend).toLowerCase().includes(q))});
   const r=f=>f.peserta/Math.max(1,f.kuota);
-  const S_={rel:(a,b)=>(b.pri-a.pri)||((b.cloud?1:0)-(a.cloud?1:0)),kuota:(a,b)=>b.kuota-a.kuota,rasio:(a,b)=>r(a)-r(b),peserta:(a,b)=>a.peserta-b.peserta,az:(a,b)=>a.jab.localeCompare(b.jab,'id')};
+  const S_={rel:(a,b)=>((a.off?1:0)-(b.off?1:0))||(b.pri-a.pri)||((b.cloud?1:0)-(a.cloud?1:0))||((b.res?1:0)-(a.res?1:0)),thp:(a,b)=>thpOf(b).hi.net-thpOf(a).hi.net,kuota:(a,b)=>b.kuota-a.kuota,rasio:(a,b)=>r(a)-r(b),peserta:(a,b)=>a.peserta-b.peserta,az:(a,b)=>a.jab.localeCompare(b.jab,'id')};
   return L.map((f,i)=>({f,i})).sort((a,b)=>(S_[F.sort]||S_.rel)(a.f,b.f)||a.i-b.i).map(x=>x.f);
 }
 function fCat(f){const t=(f.jab+' '+f.inst).toLowerCase();
@@ -4503,11 +4566,13 @@ function kalkLvl(){const f=allF().find(x=>x.id===KC.fid);if(f&&lvlSys(f).yrs.len
 let kT=null;function kalkUpd(){clearTimeout(kT);kT=setTimeout(()=>{KC.l=kalkLvl();const v=$('#kal_lv');if(v){v.textContent=LVL[KC.l];v.className='lvro lv'+KC.l}const e=$('#kres');if(e)e.innerHTML=kresHTML(kalk())},120)}
 /* ---- detail formasi ---- */
 function fDetail(id){const f=allF().find(x=>x.id===id);if(!f)return;const J=fJur(f);const m=S.myJur?jurMatch(f,S.myJur):null;const ratio=Math.round(f.peserta/f.kuota);
-  modal(`<div id="fdm"><div class="row" style="gap:8px;flex-wrap:wrap">${f.pri?'<span class="fp pr">Prioritas 2026</span>':''}<span class="fp jj">${esc(J.jj)}</span><span class="fp jj">${esc(f.jenis||'CPNS')}</span>${f.cloud?'<span class="fp ok">Data resmi</span>':f.custom?'<span class="fp ok">Data kamu</span>':'<span class="fp upd">Estimasi</span>'}</div>
+  modal(`<div id="fdm"><div class="row" style="gap:8px;flex-wrap:wrap">${f.pri?'<span class="fp pr">Prioritas 2026</span>':''}<span class="fp jj">${esc(J.jj)}</span><span class="fp jj">${esc(f.jenis||'CPNS')}</span>${f.cloud?'<span class="fp ok">Data resmi</span>':f.custom?'<span class="fp ok">Data kamu</span>':f.res?'<span class="fp ok">Kuota resmi</span>':'<span class="fp upd">Estimasi</span>'}${f.off?'<span class="fp off">Belum tercantum di rincian 2026</span>':''}</div>
    <h2 style="margin:10px 0 2px;font-size:22px">${esc(f.jab)}</h2><div class="muted">${esc(f.inst)}</div>
    <div class="small" style="margin-top:6px;display:flex;gap:6px;align-items:center">${ic('pin',16,2)}<b>Lokasi penempatan:</b> ${esc(fLok(f))}</div>
-   <div class="dgrid"><div><span>Kuota</span><b>${fmt(f.kuota)}</b></div><div><span>Peserta${f.est?' (estimasi)':''}</span><b>${fmt(f.peserta)}</b></div><div><span>Rasio</span><b>1 : ${fmt(ratio)}</b></div><div><span>Persaingan</span><b style="font-size:15px">${LVL[+f.lvl]||'—'}</b></div></div>
+   ${f.bid?`<div class="small" style="margin-top:4px;display:flex;gap:6px;align-items:center">${ic('layers',16,2)}<b>Bidang resmi 2026:</b> ${esc(f.bid)} (${fmt(bidTotal(f.bid))} formasi)</div>`:''}${f.off?`<div class="jm n" style="font-weight:500">Jabatan ini ada di pola seleksi sebelumnya, tapi instansinya belum tercantum di rincian resmi CPNS 2026 (154.052 formasi untuk program prioritas nasional). Pastikan di SSCASN sebelum memilih.</div>`:''}
+   <div class="dgrid"><div><span>Kuota${f.res||f.cloud||f.custom?'':' (estimasi)'}</span><b>${fmt(f.kuota)}</b></div><div><span>Peserta${f.est?' (estimasi)':''}</span><b>${fmt(f.peserta)}</b></div><div><span>Rasio</span><b>1 : ${fmt(ratio)}</b></div><div><span>Persaingan</span><b style="font-size:15px">${LVL[+f.lvl]||'—'}</b></div></div>
    <div class="lvbox lv${f.lvl}"><b>Persaingan ${LVL[f.lvl].toLowerCase()}</b><span>${lvlNote(f)}</span>${lvlHist(f)}</div>
+   ${thpBox(f)}
    <h3 style="margin:6px 0 2px;font-size:16px">Kualifikasi pendidikan</h3><div class="small muted">Jenjang <b style="color:var(--ink)">${esc(J.jj)}</b> · tertulis: “${esc(f.pend)}”</div>
    <div class="jchips">${J.list.map(x=>`<span class="${m&&m.hit.includes(x)?'hit':''}">${esc(x)}</span>`).join('')}</div>
    <label class="f" style="margin-top:14px">Cek jurusanmu</label><div class="row" style="gap:8px;flex-wrap:nowrap"><input type="text" id="myJur" placeholder="mis. Teknik Lingkungan" value="${esc(S.myJur||'')}" onkeydown="if(event.key==='Enter')saveJur('${f.id}')"><button class="btn" style="flex:none" onclick="saveJur('${f.id}')">Cek</button></div>
@@ -4524,7 +4589,7 @@ function cmpModal(){const L=(S.cmpF||[]).map(id=>allF().find(x=>x.id===id)).filt
   const ratios=L.map(f=>f.peserta/f.kuota);const rows=[
    ['Instansi',L.map(f=>esc(f.inst))],['Lokasi penempatan',L.map(f=>esc(fLok(f)))],['Jenjang',L.map(f=>esc(fJur(f).jj))],['Kualifikasi',L.map(f=>esc(f.pend))],
    ['Kuota',L.map(f=>fmt(f.kuota)),best(L.map(f=>f.kuota))],['Peserta',L.map(f=>fmt(f.peserta)+(f.est?' <span class="small muted">(est.)</span>':'')),best(L.map(f=>f.peserta),1)],
-   ['Rasio',ratios.map(r=>'1 : '+fmt(Math.round(r))),best(ratios,1)],['Persaingan',L.map(f=>LVL[+f.lvl]||'—')],
+   ['Rasio',ratios.map(r=>'1 : '+fmt(Math.round(r))),best(ratios,1)],['Persaingan',L.map(f=>LVL[+f.lvl]||'—')],['Estimasi THP CPNS / bulan',L.map(f=>thpTxt(f)),best(L.map(f=>thpOf(f).hi.net))],
    ...(U!=null?[['Peluang lanjut SKB*',kp.map(r=>pct(r.pSKB)),best(kp.map(r=>r.pSKB))],['Peluang peringkat ≤ kuota*',kp.map(r=>pct(r.pTop)),best(kp.map(r=>r.pTop))]]:[]),
    ['Hasil simulasi lengkap',sim.map(x=>x?`<b>${pct(x.pF)}</b> lolos akhir`:'<span class="muted">belum disimulasikan</span>'),best(sim.map(x=>x?x.pF:null))],
    ['Jurusanmu',L.map(f=>{const m=S.myJur?jurMatch(f,S.myJur):null;return m?(m.ok?'✓ cocok':'✗ tidak tercantum'):'<span class="muted">isi di Detail</span>'})],
@@ -4533,13 +4598,23 @@ function cmpModal(){const L=(S.cmpF||[]).map(id=>allF().find(x=>x.id===id)).filt
    <div class="tscroll" style="margin-top:12px"><table class="ctab"><thead><tr><th></th>${L.map(f=>`<td>${esc(f.jab)}<div style="margin-top:6px"><button class="fact" style="padding:4px 9px" onclick="togCmp('${f.id}');${L.length>2?'cmpModal()':"modal('')"}">${ic('x',13,2.4)}Hapus</button></div></td>`).join('')}</tr></thead>
    <tbody>${rows.map(([k,v,b])=>`<tr><th>${k}</th>${v.map((x,i)=>`<td class="${b===i?'best':''}">${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
    <p class="small muted" style="margin:10px 0 0">${U!=null?`*Dihitung dari skor SKD ${U} (tryout terakhir/input manual) dan rasio peserta per kuota. `:'Kerjakan tryout atau isi skor manual untuk melihat peluang. '}Sel hijau = paling menguntungkan.</p>`,1)}
+function bidTotal(b){for(const g of RESMI.grup)for(const [n,v] of g[2])if(n===b)return v;return 0}
+function thpBox(f){const t=thpOf(f),P=thpOf(f,true);const row=(k,a,b)=>`<tr><th>${k}</th><td>${a}</td><td>${b}</td></tr>`;const r=n=>'Rp'+fmt(Math.round(n/1000)*1000);const two=t.lo.kl!==t.hi.kl;
+  const v=(x,y)=>two?`${r(x)}–${r(y).replace('Rp','')}`:r(x);
+  return `<div class="thpbox"><div class="row" style="gap:10px;align-items:center"><span class="ti">${ic('wallet',22,2)}</span><div class="grow"><b>Estimasi THP saat CPNS</b><div class="big">±${thpTxt(f)} <small>/ bulan</small></div></div><div class="pns"><span>Setelah PNS (100%)</span><b>±${(()=>{const a=Math.round(P.lo.net/1e5)*1e5,b=Math.round(P.hi.net/1e5)*1e5;return a===b?rpJt(a):rpJt(a)+'–'+rpJt(b).replace('Rp','')})()}</b></div></div>
+   <details><summary>Lihat rincian hitungan</summary><table class="thpt"><thead><tr><th></th><th>CPNS (80%)</th><th>PNS (100%)</th></tr></thead><tbody>
+   ${row('Gaji pokok gol. '+t.gol+' (masa kerja 0)',r(t.lo.gp),r(P.lo.gp))}${row('Tunjangan umum/fungsional',r(t.lo.tu),r(P.lo.tu))}${row('Tunjangan pangan (beras)',r(t.lo.pg),r(P.lo.pg))}
+   ${row(t.noTk?'Tunjangan kinerja':'Tunjangan kinerja (kelas '+(two?t.lo.kl+'–'+t.hi.kl:t.lo.kl)+')',t.noTk?'— *':v(t.lo.tk,t.hi.tk),t.noTk?'— *':v(P.lo.tk,P.hi.tk))}
+   ${row('Potongan iuran pensiun/THT & BPJS','−'+v(t.lo.pot,t.hi.pot).replace('–','–'),'−'+v(P.lo.pot,P.hi.pot))}
+   <tr class="tot"><th>Perkiraan diterima</th><td>${v(t.lo.net,t.hi.net)}</td><td>${v(P.lo.net,P.hi.net)}</td></tr></tbody></table>
+   <p class="small muted" style="margin:8px 0 0">Gaji pokok mengikuti PP 5/2024 (masih berlaku 2026). Tukin memakai tabel kelas jabatan nasional${t.noTk?'':'; kelas jabatan asli ditetapkan instansi'}. Belum termasuk tunjangan keluarga, uang makan, tunjangan daerah terpencil/kemahalan, THR, dan gaji ke-13. ${t.noTk?'*Guru umumnya tidak menerima tukin; tunjangan profesi guru dibayar setelah lulus sertifikasi. ':''}Angka resmi bisa berbeda per instansi.</p></details></div>`}
 function fCard(f){
   const ratio=Math.round(f.peserta/f.kuota);const [ci,bg,fg]=fCat(f);const jjL=(JJ.find(j=>j[0]===f.jj)||['',f.jj])[1];const U=FUPD||{added:[],changed:[]};
   const isNew=S.fNotif&&U.added.includes(f.id),isUpd=S.fNotif&&U.changed.includes(f.id);const m=S.myJur?jurMatch(f,S.myJur):null;
   return `<div class="fcard ${F.sel===f.id?'sel':''}" role="button" tabindex="0" onclick="fDetail('${f.id}')" onkeydown="if(event.key==='Enter')fDetail('${f.id}')"><span class="tile" style="background:${bg};color:${fg}">${ic(ci,30,1.8)}</span>
-   <span class="bd"><span class="tt"><b>${esc(f.jab)}</b>${isNew?'<span class="fp new">Baru</span>':''}${isUpd?'<span class="fp upd">Diperbarui</span>':''}${f.pri?'<span class="fp pr">Prioritas 2026</span>':''}<span class="fp jj">${esc(jjL)}</span><span class="fp lvc lv${f.lvl}" title="${esc(lvlNote(f))}">${LVL[f.lvl]}</span>${f.custom?'<span class="fp ok">Data kamu</span>':''}${f.cloud?'<span class="fp ok">Data resmi</span>':''}${m&&m.ok?'<span class="fp ok">✓ Jurusanmu</span>':''}</span>
+   <span class="bd"><span class="tt"><b>${esc(f.jab)}</b>${isNew?'<span class="fp new">Baru</span>':''}${isUpd?'<span class="fp upd">Diperbarui</span>':''}${f.pri?'<span class="fp pr">Prioritas 2026</span>':''}<span class="fp jj">${esc(jjL)}</span><span class="fp lvc lv${f.lvl}" title="${esc(lvlNote(f))}">${LVL[f.lvl]}</span>${f.res?'<span class="fp ok">Kuota resmi</span>':''}${f.off?'<span class="fp off">Belum tercantum 2026</span>':''}${f.custom?'<span class="fp ok">Data kamu</span>':''}${f.cloud?'<span class="fp ok">Data resmi</span>':''}${m&&m.ok?'<span class="fp ok">✓ Jurusanmu</span>':''}</span>
    <span class="in" style="display:block">${esc(f.inst)}${fLok(f)!==f.inst?` · <span class="lk">${ic('pin',14,2)}${esc(fLok(f))}</span>`:''}</span>
-   <span class="mt"><span>${ic('home',17,1.9)}Kuota: <b>${fmt(f.kuota)}</b></span><span>${ic('users',17,1.9)}Peserta${f.est?' (estimasi)':''}: <b>${fmt(f.peserta)}</b></span><span>${ic('bars',17,2.2)}Rasio: <b>1 : ${fmt(ratio)}</b></span></span>
+   <span class="mt"><span>${ic('home',17,1.9)}Kuota${f.res?'':' (est.)'}: <b>${fmt(f.kuota)}</b></span><span>${ic('users',17,1.9)}Peserta${f.est?' (estimasi)':''}: <b>${fmt(f.peserta)}</b></span><span>${ic('bars',17,2.2)}Rasio: <b>1 : ${fmt(ratio)}</b></span><span class="thpc" title="Estimasi take home pay per bulan saat masih CPNS">${ic('wallet',17,2)}THP ±<b>${thpTxt(f)}</b></span></span>
    <span class="acts"><button class="fact fav ${isFav(f.id)?'on':''}" onclick="togFav('${f.id}',event)">${ic('heart',15,2)}${isFav(f.id)?'Favorit':'Simpan'}</button><button class="fact ${inCmp(f.id)?'on':''}" onclick="togCmp('${f.id}',event)">${ic('swap',15,2)}${inCmp(f.id)?'Dibandingkan':'Bandingkan'}</button><button class="fact" onclick="event.stopPropagation();selF('${f.id}')">${ic('target',15,2)}Simulasikan</button></span></span>
    <span class="go">${ic('chevr',18,2.2)}</span></div>`;
 }
@@ -4577,10 +4652,11 @@ function vFormasi(){
   const insts=[...new Set(allF().map(x=>x.inst))].sort((a,b)=>a.localeCompare(b,'id'));
   const dirty=!!F.D;
   return `<section class="fhero"><div><span class="arbadge">${ic('file',17,2)}Informasi Resmi</span><h1>Formasi CPNS 2026</h1><p>Temukan rincian formasi CPNS 2026: instansi, jabatan, kuota, dan kualifikasi, lalu simulasikan peluangmu lolos. Data mengacu pada pengumuman SSCASN.</p></div>${ART_GOV}
-   <div class="fstat-c"><h3>${ic('info',22,2)}Status Data</h3>${nJab?`Rincian formasi resmi sudah dimuat admin: <b>${fmt(nJab)}</b> jabatan. Formasi lain di katalog masih berupa perkiraan.`:`Rincian formasi resmi CPNS 2026 belum diumumkan dan diperkirakan rilis sekitar <b>20 November 2026</b> di SSCASN. Kuota dan peserta di katalog ini masih <b>estimasi</b> berdasarkan pola seleksi sebelumnya.`}
+   <div class="fstat-c"><h3>${ic('info',22,2)}Status Data</h3>${nJab?`Rincian formasi resmi sudah dimuat admin: <b>${fmt(nJab)}</b> jabatan. Formasi lain di katalog masih berupa perkiraan.`:`Pemerintah resmi mengumumkan <b>${fmt(RESMI.total)} formasi</b> CPNS 2026 pada ${RESMI.tgl}; pendaftaran dibuka <b>${RESMI.daftar}</b> di SSCASN. Kuota bertanda <b>Kuota resmi</b> sudah diumumkan; kuota lain dan jumlah peserta masih estimasi sampai rincian per instansi tampil di SSCASN.`}
     <label class="fswitch"><input type="checkbox" ${S.fNotif?'checked':''} onchange="S.fNotif=this.checked;if(this.checked&&!S.fSnap&&!cloudF().length)S.fSnap={};save();fRefresh()">Beri tahu saya saat formasi resmi diperbarui</label></div></section>
   ${S.fNotif&&FUPD.n?`<div class="fupd">${ic('bell',26,2)}<div class="tx"><b>Formasi resmi diperbarui</b><br>${FUPD.added.length} formasi baru${FUPD.changed.length?`, ${FUPD.changed.length} berubah`:''}${FUPD.favN?` · ${FUPD.favN} di favoritmu`:''}. Kartu bertanda <b>Baru</b>/<b>Diperbarui</b> di daftar.</div><button class="w" onclick="F.sort='rel';fRefresh();setTimeout(()=>{const e=$('.flist');if(e)e.scrollIntoView({behavior:'smooth'})},30)">Lihat</button><button class="g" onclick="fMarkSeen()">Tandai sudah dilihat</button></div>`:''}
-  <div class="fbar"><div><span class="ico">${ic('bank',28,1.8)}</span><div><b>${fmt(nInst)}</b><span>Instansi</span></div></div><div><span class="ico">${ic('brief',28,1.8)}</span><div><b>${fmt(nJab)}</b><span>Jabatan</span></div></div><div><span class="ico">${ic('users',28,1.8)}</span><div><b>${fmt(nKuota)}</b><span>Total Kuota</span></div></div><div class="rel"><span class="ico">${ic('cal',28,1.8)}</span><div><span>${nJab?'Status':'Perkiraan Rilis'}</span><b>${nJab?'Sudah rilis':'20 November 2026'}</b></div></div></div>
+  <div class="fbar"><div><span class="ico">${ic('bank',28,1.8)}</span><div><b>${nJab?fmt(nInst):fmt(RESMI.grup.reduce((n,g)=>n+g[2].length,0))}</b><span>${nJab?'Instansi':'Bidang prioritas'}</span></div></div><div><span class="ico">${ic('brief',28,1.8)}</span><div><b>${fmt(nJab||FORMASI.filter(x=>!x.off).length)}</b><span>${nJab?'Jabatan':'Jabatan di katalog'}</span></div></div><div><span class="ico">${ic('users',28,1.8)}</span><div><b>${fmt(nJab?nKuota:RESMI.total)}</b><span>Total Kuota${nJab?'':' nasional'}</span></div></div><div class="rel"><span class="ico">${ic('cal',28,1.8)}</span><div><span>Pendaftaran dibuka</span><b>${RESMI.daftar}</b></div></div></div>
+  <details class="fresmi"><summary>${ic('file',18,2)}Rincian resmi per bidang (${RESMI.tgl})</summary><div class="fr-g">${RESMI.grup.map(g=>`<div><h4>${esc(g[0])} <span>${fmt(g[1])}</span></h4>${g[2].map(([n,v])=>`<div class="fr-r"><span>${esc(n)}</span><i><b style="width:${Math.max(2,v/70000*100)}%"></b></i><em>${fmt(v)}</em></div>`).join('')}</div>`).join('')}</div><p class="small muted" style="margin:8px 0 0">Kementerian Kehutanan sudah merinci kuotanya per jabatan (Polisi Kehutanan 60.000, Manggala Agni 5.465, dll.). Rincian instansi lain tampil di SSCASN mulai pendaftaran.</p></details>
   <div class="fgrid"><div>
    <button class="ftogg" onclick="F.fopen=!F.fopen;fRefresh()">${ic('filter',18,2)}${F.fopen?'Tutup filter':'Filter formasi'}${(F.jjs.length||F.inst!=='all'||F.lok!=='all'||F.fav||F.myj||F.pri||F.q||F.jen.pppk)?' · aktif':''}</button>
    <div class="fpanel ${F.fopen?'':'closed'}"><div class="hd">${ic('filter',22,2)}<h2>Filter Formasi</h2><button class="lnk" onclick="fReset()">${ic('reset',16,2.2)}Reset</button></div>
@@ -4597,7 +4673,7 @@ function vFormasi(){
     <div class="fmini"><button onclick="addFModal()">+ Formasi sendiri</button><button onclick="importModal()">Impor data SSCASN</button></div></div>
    <div class="finfo">${ART_BELL}<h3>Info Resmi CPNS &amp; PPPK</h3><p>Pengumuman formasi dan jadwal seleksi resmi hanya dirilis lewat situs SSCASN BKN.</p><a class="bblue" style="padding:11px 16px;font-size:14px;text-decoration:none;display:inline-flex" href="https://sscasn.bkn.go.id" target="_blank" rel="noopener">${ic('arrow',18,2)}Buka SSCASN</a></div>
   </div>
-  <div class="flist"><div class="ftop"><span class="cnt"><b>${fmt(L.length)}</b> formasi ditemukan</span><span class="small muted">Urutkan:</span><select onchange="F.sort=this.value;F.n=10;fRefresh()">${[['rel','Paling Relevan'],['rasio','Persaingan terendah'],['kuota','Kuota terbanyak'],['peserta','Peserta tersedikit'],['az','Nama jabatan A–Z']].map(([k,t])=>`<option value="${k}" ${F.sort===k?'selected':''}>${t}</option>`).join('')}</select></div>
+  <div class="flist"><div class="ftop"><span class="cnt"><b>${fmt(L.length)}</b> formasi ditemukan</span><span class="small muted">Urutkan:</span><select onchange="F.sort=this.value;F.n=10;fRefresh()">${[['rel','Paling Relevan'],['thp','Estimasi THP tertinggi'],['rasio','Persaingan terendah'],['kuota','Kuota terbanyak'],['peserta','Peserta tersedikit'],['az','Nama jabatan A–Z']].map(([k,t])=>`<option value="${k}" ${F.sort===k?'selected':''}>${t}</option>`).join('')}</select></div>
    <div id="flist">${fListHTML()}</div>
    ${cmpL.length?`<div class="cmpbar">${ic('swap',20,2)}<b style="font-size:14px">Bandingkan (${cmpL.length}/3)</b>${cmpL.map(f=>`<span class="ch"><span>${esc(f.jab)}</span><button onclick="togCmp('${f.id}')" aria-label="Hapus">${ic('x',12,2.6)}</button></span>`).join('')}<button class="go2" ${cmpL.length<2?'disabled':''} onclick="cmpModal()">${cmpL.length<2?'Pilih 1 lagi':'Bandingkan sekarang'} ${ic('arrow',16,2.4)}</button></div>`:''}</div>
   </div>
