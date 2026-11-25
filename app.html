@@ -584,7 +584,7 @@ main.wide{max-width:1220px}.v-arena .foot{display:none}
 .fact:hover{border-color:#9cc1f2}.fact.on{background:#e6f0fd;border-color:#9cc1f2;color:#1757b0}.fact.fav.on{background:#fde8ec;border-color:#f3b6c2;color:#d6336c}.fact.fav.on .ic{fill:currentColor}
 [data-theme=dark] .fact.on{background:#1c2f4d;color:#cfe2ff}[data-theme=dark] .fact.fav.on{background:#4a1d2a;color:#ff9ab8}
 .fp.new{background:#e5484d;color:#fff}.fp.upd{background:#fde9c4;color:#c76a00}
-.fp.off{background:#eef0f4;color:#5b6475}.tlsal{background:#fff1f0;border:1px solid #f6c9c5;color:#a1261c;border-radius:12px;padding:10px 12px;font-size:13.5px;margin:0 0 12px;text-align:left}[data-theme=dark] .tlsal{background:#3a1d1b;border-color:#6b2e29;color:#ffb4ad}.tupsal{color:#c2362b;font-weight:600;margin:6px 0 10px}[data-theme=dark] .tupsal{color:#ff9a90}[data-theme=dark] .fp.off{background:#2a3140;color:#b9c2d3}
+.fp.off{background:#eef0f4;color:#5b6475}.ktafsir{margin-top:14px;background:#eef4ff;border:1px solid #cfdcf6;border-left:4px solid #1e6fd9;border-radius:12px;padding:12px 14px}.ktafsir p{margin:4px 0 6px;font-size:14.5px;line-height:1.6}[data-theme=dark] .ktafsir{background:#17253d;border-color:#2d4469}.tlsal{background:#fff1f0;border:1px solid #f6c9c5;color:#a1261c;border-radius:12px;padding:10px 12px;font-size:13.5px;margin:0 0 12px;text-align:left}[data-theme=dark] .tlsal{background:#3a1d1b;border-color:#6b2e29;color:#ffb4ad}.tupsal{color:#c2362b;font-weight:600;margin:6px 0 10px}[data-theme=dark] .tupsal{color:#ff9a90}[data-theme=dark] .fp.off{background:#2a3140;color:#b9c2d3}
 .fcard .mt .thpc{color:#17824a}.fcard .mt .thpc b{color:#17824a}[data-theme=dark] .fcard .mt .thpc,[data-theme=dark] .fcard .mt .thpc b{color:#7be0a4}
 .thpbox{background:linear-gradient(135deg,#e9f8ef,#f4fbf6);border:1px solid #c9ecd6;border-radius:16px;padding:14px 16px;margin:4px 0 16px}
 [data-theme=dark] .thpbox{background:#15301f;border-color:#24573a}
@@ -4548,7 +4548,9 @@ const KCACHE={};
 let KPASS=0;function compAbove(lvl,U){const key=lvl+'|'+S.pg.twk+'|'+S.pg.tiu+'|'+S.pg.tkp;let arr=KCACHE[key];if(!arr){arr=[];for(let i=0;i<6000;i++){const c=genComp(lvl);if(c.twk>=S.pg.twk&&c.tiu>=S.pg.tiu&&c.tkp>=S.pg.tkp)arr.push(c.twk+c.tiu+c.tkp);else arr.push(-1)}arr.sort((a,b)=>a-b);KCACHE[key]=arr}KPASS=arr.filter(x=>x>=0).length/arr.length;
   let lo=0,hi=arr.length;while(lo<hi){const m=(lo+hi)>>1;if(arr[m]<=U)lo=m+1;else hi=m}return (arr.length-lo)/arr.length}
 function kalk(){const k=Math.max(1,KC.k|0),p=Math.max(1,KC.p|0),U=KC.u|0,N=Math.max(0,p-1);const q=compAbove(KC.l,U);
-  return {ratio:p/k,ket:k/p,q,rank:Math.round(N*q)+1,pSKB:binLess(N,q,3*k),pTop:binLess(N,q,k),passPct:KPASS}}
+  const pgT=S.pg.twk+S.pg.tiu+S.pg.tkp,gagal=U<pgT;let tgt=null,tgt3=null;
+  if(!gagal&&Math.round(N*q)+1>k){for(let v=U+1;v<=550;v++){const rk=Math.round(N*compAbove(KC.l,v))+1;if(tgt3==null&&rk<=3*k)tgt3=v;if(rk<=k){tgt=v;break}}compAbove(KC.l,U)}
+  return {tgt,tgt3,k,N,U,ratio:p/k,ket:k/p,q,rank:Math.round(N*q)+1,pSKB:gagal?0:binLess(N,q,3*k),pTop:gagal?0:binLess(N,q,k),passPct:KPASS,gagal,pgT}}
 function kalkHTML(){const f=curF();const u=userSKD();if(!KC)KC={k:f.kuota,p:f.peserta,u:u?u.twk+u.tiu+u.tkp:400,l:+f.lvl||0,fid:f.id};KC.l=kalkLvl();const r=kalk();
   const col=v=>v>=.5?'#22a05b':v>=.2?'#d9822b':'#d64545';
   return `<div class="card" id="kalkC"><div class="row" style="gap:10px;align-items:center"><span style="color:#1e6fd9">${ic('calc2',24,1.9)}</span><h2 class="grow" style="margin:0">Kalkulator Peluang Cepat</h2><button class="lnk" onclick="KC=null;fRefresh()">Isi dari formasi terpilih</button></div>
@@ -4556,12 +4558,23 @@ function kalkHTML(){const f=curF();const u=userSKD();if(!KC)KC={k:f.kuota,p:f.pe
    <div class="kalk"><div><label class="f">Kuota</label><input type="number" min="1" value="${KC.k}" oninput="KC.k=+this.value||1;kalkUpd()"></div><div><label class="f">Peserta / pelamar</label><input type="number" min="1" value="${KC.p}" oninput="KC.p=+this.value||1;kalkUpd()"></div>
     <div><label class="f">Skor SKD-mu (total)</label><input type="number" min="0" max="550" value="${KC.u}" oninput="KC.u=+this.value||0;kalkUpd()"></div><div><label class="f">Persaingan (otomatis)</label><div class="lvro lv${KC.l}" id="kal_lv">${LVL[KC.l]}</div></div></div>
    <div id="kres">${kresHTML(r,col)}</div></div>`}
+function kalkTafsir(r){const P=v=>pct(v),lolosPG=Math.round(r.passPct*Math.max(1,KC.p)),k3=3*r.k;let t=[];
+  if(r.gagal){t.push(`Dengan total <b>${r.U}</b>, kamu belum lolos passing grade. Target pertama: naikkan skor ke minimal <b>${r.pgT}</b> dan pastikan tiap subtes lolos (TWK ${S.pg.twk}, TIU ${S.pg.tiu}, TKP ${S.pg.tkp}). Setelah itu baru peringkat dan kuota ikut menentukan.`)}
+  else{t.push(`Dengan total <b>${r.U}</b>, kamu diperkirakan berada di peringkat <b>#${fmt(r.rank)}</b> dari sekitar ${fmt(lolosPG)} pelamar yang lolos passing grade.`);
+   if(lolosPG<=k3)t.push(`Formasi ini tergolong longgar: yang lolos PG (±${fmt(lolosPG)}) lebih sedikit dari kursi SKB (3× kuota = ${fmt(k3)}), jadi selama lolos PG kamu hampir pasti ikut SKB.`);
+   else t.push(r.pSKB>=.9?`Peluangmu lanjut ke SKB <b>sangat besar</b> (${P(r.pSKB)}).`:r.pSKB>=.5?`Peluangmu lanjut ke SKB <b>cukup besar</b> (${P(r.pSKB)}), tapi belum aman.`:r.pSKB>=.2?`Peluangmu lanjut ke SKB <b>masih terbuka</b> (${P(r.pSKB)}), posisimu di sekitar batas 3× kuota.`:`Peluangmu lanjut ke SKB <b>kecil</b> (${P(r.pSKB)}) karena peringkatmu masih di luar 3× kuota (${fmt(k3)} besar).`);
+   if(r.pTop>=.9)t.push(`Peringkat SKD-mu bahkan sudah masuk jumlah kuota (${fmt(r.k)}). Tinggal jaga nilai SKB supaya tidak tersalip.`);
+   else if(r.pTop>=.5)t.push(`Kamu bersaing ketat di batas kuota (${fmt(r.k)} kursi). Nilai SKB (bobot 60%) akan sangat menentukan.`);
+   else if(r.pSKB<.2)t.push(`Karena peringkatmu belum masuk 3× kuota, nilai SKB belum bisa membantu. Naikkan SKD ke sekitar <b>${r.tgt3||'—'}</b>${r.tgt3?` (+${r.tgt3-r.U} poin)`:''} supaya lanjut ke SKB${r.tgt?`, dan sekitar <b>${r.tgt}</b> (+${r.tgt-r.U} poin) supaya peringkatmu masuk kuota`:''}.`);
+   else t.push(`Peringkat SKD-mu masih di luar kuota (${fmt(r.k)} kursi), jadi kamu perlu nilai SKB tinggi untuk menyalip${r.tgt?`, atau naikkan SKD ke sekitar <b>${r.tgt}</b> (+${r.tgt-r.U} poin) supaya peringkatmu masuk kuota`:''}.`)}
+  return `<div class="ktafsir"><b>Artinya buat kamu</b><p>${t.join(' ')}</p><span class="small muted">Kalkulator ini memakai skor total. Pastikan tiap subtes juga lolos passing grade.</span></div>`}
 function kresHTML(r,col){col=col||(v=>v>=.5?'#22a05b':v>=.2?'#d9822b':'#d64545');
   return `<div class="kres"><div><span>Rasio keketatan</span><b>1 : ${fmt(Math.round(r.ratio))}</b><span>${(r.ket*100).toLocaleString('id-ID',{maximumFractionDigits:2})}% pelamar diterima</span></div>
-   <div><span>Perkiraan peringkat SKD</span><b>#${fmt(r.rank)}</b><span>skormu di atas ${(100-r.q*100).toLocaleString('id-ID',{maximumFractionDigits:1})}% pesaing</span></div>
+   <div><span>Perkiraan peringkat SKD</span><b>${r.gagal?'Belum lolos PG':'#'+fmt(r.rank)}</b><span>${r.gagal?`total minimal ${r.pgT} dan tiap subtes harus lolos`:`dari ${fmt(Math.round(KPASS*Math.max(1,KC.p)))} pelamar yang lolos PG`}</span></div>
    <div><span>Pelamar yang lolos PG (perkiraan)</span><b>${Math.round(r.passPct*100)}%</b><span>dari seluruh peserta</span></div></div>
    <div class="kres" style="grid-template-columns:1fr 1fr"><div><span>Peluang masuk 3× kuota (lanjut SKB)</span><b style="color:${col(r.pSKB)}">${pct(r.pSKB)}</b><div class="kbar"><i style="width:${r.pSKB*100}%;background:${col(r.pSKB)}"></i></div></div>
    <div><span>Peluang peringkat SKD ≤ kuota</span><b style="color:${col(r.pTop)}">${pct(r.pTop)}</b><div class="kbar"><i style="width:${r.pTop*100}%;background:${col(r.pTop)}"></i></div></div></div>
+   ${kalkTafsir(r)}
    <p class="small muted" style="margin:10px 0 0">Ini perkiraan kasar. Kelulusan akhir juga ditentukan nilai SKB (bobot 60%); gunakan simulasi lengkap di atas untuk menghitungnya.</p>`}
 function kalkLvl(){const f=allF().find(x=>x.id===KC.fid);if(f&&lvlSys(f).yrs.length)return f.lvl;return lvlOfRatio(KC.p/Math.max(1,KC.k))}
 let kT=null;function kalkUpd(){clearTimeout(kT);kT=setTimeout(()=>{KC.l=kalkLvl();const v=$('#kal_lv');if(v){v.textContent=LVL[KC.l];v.className='lvro lv'+KC.l}const e=$('#kres');if(e)e.innerHTML=kresHTML(kalk())},120)}
